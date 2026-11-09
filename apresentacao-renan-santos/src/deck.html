@@ -160,6 +160,9 @@ b,strong{font-weight:700}
 .s-eco1 .src{padding:12px 0;text-align:right}
 
 /* ---------- 4 · Economia: escolhas e impactos (amarelo) ---------- */
+.s-eco2 .ph-eco2{top:var(--pad-top);right:var(--pad-x);width:320px;height:216px}
+.s-eco2 .ph-eco2 img{object-position:50% 6%;filter:grayscale(1) contrast(1.05)}
+.s-eco2 .ph-eco2::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--ink)}
 .s-eco2{display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) 0}
 .s-eco2 .h1{font-size:82px}
 .eco2-areas{margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:64px}
@@ -177,6 +180,10 @@ b,strong{font-weight:700}
 .qband.ink .ls{color:var(--paper);opacity:.8}
 
 /* ---------- Segurança ---------- */
+.s3 .ph-sec{top:var(--pad-top);right:var(--pad-x);width:390px;height:200px}
+.s3 .ph-sec img{object-position:50% 50%}
+.s3 .ph-sec::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--ink) 0,rgba(9,9,9,.75) 22%,rgba(9,9,9,0) 48%),linear-gradient(0deg,rgba(9,9,9,.55) 0,rgba(9,9,9,0) 30%)}
+.s3 .ph-sec::before{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--yellow);z-index:3}
 .s3{display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) 0}
 .s3 .h1{font-size:82px}
 .s3-grid{margin-top:46px;display:grid;grid-template-columns:330px 1fr;gap:64px}
@@ -197,6 +204,11 @@ b,strong{font-weight:700}
 .qband p:not(.ls){font-family:var(--f-display);font-weight:800;font-size:46px;line-height:1;text-transform:uppercase}
 
 /* ---------- Saúde (amarelo) ---------- */
+.s4 .ph-health{top:var(--pad-top);right:var(--pad-x);width:360px;height:240px}
+.s4 .ph-health img{object-position:50% 12%}
+.s4 .ph-health::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--ink)}
+.s4 .chap-problem{margin-top:18px;max-width:640px;font-size:var(--t-small);line-height:1.4}
+.s4 .chap-problem .ls{display:inline;margin-right:12px}
 .s4{display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) 40px}
 .s4 .chap{justify-content:space-between}
 .s4 .chap>div{flex:1}
@@ -256,30 +268,6 @@ b,strong{font-weight:700}
 .s6 .src{margin-top:16px}
 
 /* ---------- Análise crítica ---------- */
-/* ---------- Continuidade: como o plano se organiza (mosaico de fotos novas) ---------- */
-.s-org{display:flex;flex-direction:column;padding:var(--pad-top) 0 48px var(--pad-x)}
-.s-org .org-body{width:740px;display:flex;flex-direction:column;flex:1;min-height:0}
-.s-org .h1{font-size:84px}
-.org-lead{margin-top:26px;font-size:var(--t-small);line-height:1.42;color:var(--paper);max-width:680px}
-.parts{margin-top:30px;display:flex;flex-direction:column}
-.parts li{display:grid;grid-template-columns:96px 1fr;gap:22px;padding:16px 0;border-top:1px solid var(--line)}
-.parts .pn{font-family:var(--f-display);font-weight:800;font-size:58px;line-height:.8;color:var(--yellow)}
-.parts h3{font-family:var(--f-display);font-weight:800;font-size:36px;line-height:1;text-transform:uppercase;margin-bottom:6px}
-.parts h3 small{font-family:var(--f-body);font-weight:700;font-size:var(--t-src);letter-spacing:.14em;color:var(--mute);margin-left:12px;vertical-align:middle}
-.parts p{font-size:19px;line-height:1.4;color:var(--mute)}
-.s-org .src{margin-top:auto}
-.mosaic{position:absolute;top:0;right:0;width:720px;height:900px}
-.mosaic .ph-m1{top:0;left:0;width:330px;height:900px}
-.mosaic .ph-m1 img{object-position:54% 50%;filter:grayscale(1) contrast(1.05)}
-.mosaic .ph-m2{top:0;left:336px;width:384px;height:400px}
-.mosaic .ph-m2 img{object-position:50% 0%}
-.mosaic .ph-m3{top:406px;left:336px;width:384px;height:494px}
-.mosaic .ph-m3 img{object-position:65% 50%}
-.mosaic .ph-m1::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--ink) 0,rgba(9,9,9,0) 22%)}
-.mosaic::before,.mosaic::after{content:"";position:absolute;background:var(--yellow);z-index:3}
-.mosaic::before{left:330px;top:0;bottom:0;width:6px}
-.mosaic::after{left:336px;right:0;top:400px;height:6px}
-
 .s7 .ph-back{top:0;left:0;width:380px;height:900px}
 .s7 .ph-back img{object-position:37% 50%;filter:grayscale(1) contrast(1.05)}
 .s7 .ph-back::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(9,9,9,0) 70%,var(--ink) 100%)}
@@ -395,17 +383,9 @@ b,strong{font-weight:700}
 
   .s3,.s4,.s5,.s6,.s-eco1,.s-eco2{padding-top:28px;padding-bottom:28px}
   .s-eco1,.s6{padding-top:0}
-  .s-org{padding-top:0;padding-bottom:28px}
-  .s-org .org-body{width:auto}
-  .mosaic{position:relative;order:-1;width:auto;height:auto;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:20vh 28vh;gap:6px;margin:0 calc(max(20px,env(safe-area-inset-left,0px)) * -1) 24px;background:var(--yellow)}
-  .mosaic::before,.mosaic::after{display:none}
-  .mosaic .ph{margin:0!important}
-  .mosaic .ph-m1{grid-row:1 / span 2}
-  .mosaic .ph img{height:100%}
-  .parts li{grid-template-columns:56px 1fr;gap:14px}
-  .parts .pn{font-size:40px}
-  .parts h3{font-size:26px}
-  .parts p{font-size:15px}
+  .s-eco2 .ph-eco2,.s3 .ph-sec,.s4 .ph-health{order:-1;height:30vh!important;margin-top:-28px!important;margin-bottom:22px!important}
+  .s-eco2 .ph-eco2 img,.s3 .ph-sec img,.s4 .ph-health img{height:100%}
+  .s4 .ph-health img{object-position:50% 14%}
   .s-eco1 .ph-podium,.s6 .ph-flag{order:-1;height:50vh!important;margin-bottom:24px}
   .s-eco1 .ph-podium img{height:100%;object-position:44% 30%}
   .s6 .ph-flag img{height:100%;object-position:68% 40%}
@@ -538,27 +518,7 @@ b,strong{font-weight:700}
         </div>
       </section>
 
-      <!-- 3 · CONTINUIDADE: COMO O PLANO SE ORGANIZA -->
-      <section class="slide s-org tex" data-title="Como o plano se organiza" data-part="abertura" data-tx="mask">
-        <div class="mosaic">
-          <figure class="ph ph-m1" data-mask="v"><img src="../assets/img/retrato-rua.jpg" alt="Retrato em preto e branco fornecido pelo grupo: homem de camisa e colete olhando para a câmera, na rua."></figure>
-          <figure class="ph ph-m2" data-mask="h" data-lag="1"><img src="../assets/img/oculos.jpg" alt="Fotografia fornecida pelo grupo: homem de óculos escuros diante de um microfone, com pessoas de punho erguido ao fundo."></figure>
-          <figure class="ph ph-m3" data-mask="h" data-lag="2"><img src="../assets/img/noite-palco.jpg" alt="Fotografia fornecida pelo grupo: homem falando ao microfone à noite, diante de um público com bandeiras e fumaça."></figure>
-        </div>
-        <div class="org-body">
-          <p class="label rv" style="--d:0;margin-bottom:18px"><span class="sq"></span>O documento analisado</p>
-          <h2 class="h1"><span class="ln rv-t" style="--d:1">Como o plano</span><span class="ln y rv-t" style="--d:2">se organiza</span></h2>
-          <p class="org-lead rv" style="--d:3">O PDF é um resumo executivo: reúne a abertura de cada capítulo do Livro Amarelo, que tem mais de 500 páginas.</p>
-          <ol class="parts">
-            <li class="rv-step" style="--d:4"><span class="pn">I</span><div><h3>Estado Novo<small>Cap. I–IV</small></h3><p>Reorganizar o Estado: ajuste fiscal, segurança, pacto federativo e gestão.</p></div></li>
-            <li class="rv-step" style="--d:5"><span class="pn">II</span><div><h3>Reformas de Base<small>Cap. V–IX</small></h3><p>Economia e serviços públicos: produtividade, infraestrutura, saúde, cultura e educação.</p></div></li>
-            <li class="rv-step" style="--d:6"><span class="pn">III</span><div><h3>País do Futuro<small>Cap. X–XIV</small></h3><p>Projetos de longo prazo: Nordeste, terras raras, agro e IA, política externa e desfavelização.</p></div></li>
-          </ol>
-          <p class="src rv" style="--d:7">Fonte: PDF, sumário (p. 2) e introdução (pp. 5–7).</p>
-        </div>
-      </section>
-
-      <!-- 4 · ECONOMIA: PROBLEMA E PROPOSTA -->
+      <!-- 3 · ECONOMIA: PROBLEMA E PROPOSTA -->
       <section class="slide s-eco1 tex" data-title="Proposta 1, Economia: problema e proposta" data-part="economia" data-tx="mask">
         <figure class="ph ph-podium" data-mask="v"><img src="../assets/img/podio.jpg" alt="Fotografia fornecida pelo grupo: homem de terno azul e gravata amarela em um púlpito, diante de um painel com texto de campanha."></figure>
         <header class="chap">
@@ -604,6 +564,7 @@ b,strong{font-weight:700}
 
       <!-- 4 · ECONOMIA: ESCOLHAS E IMPACTOS -->
       <section class="slide s-eco2 yellow" data-title="Proposta 1, Economia: escolhas e impactos" data-part="economia" data-tx="layers">
+        <figure class="ph ph-eco2" data-mask="h"><img src="../assets/img/retrato-rua.jpg" alt="Retrato em preto e branco fornecido pelo grupo: homem de camisa e colete olhando para a câmera, na rua."></figure>
         <header>
           <p class="label rv" style="--d:0;margin-bottom:16px"><span class="sq"></span>Proposta 1 · Economia · escolhas e impactos</p>
           <h2 class="h1"><span class="ln rv-t" style="--d:1">O ajuste também envolve</span><span class="ln rv-t" style="--d:2">escolhas sociais</span></h2>
@@ -636,6 +597,7 @@ b,strong{font-weight:700}
 
       <!-- 5 · SEGURANÇA -->
       <section class="slide s3 tex" data-title="Proposta 2, Segurança" data-part="propostas" data-tx="layers">
+        <figure class="ph ph-sec" data-mask="h"><img src="../assets/img/noite-palco.jpg" alt="Fotografia fornecida pelo grupo: homem falando ao microfone à noite, diante de um público com bandeiras e fumaça."></figure>
         <header class="chap">
           <span class="num rv" style="--d:0" aria-hidden="true">02</span>
           <div>
@@ -671,13 +633,14 @@ b,strong{font-weight:700}
 
       <!-- 6 · SAÚDE -->
       <section class="slide s4 yellow" data-title="Proposta 3, Saúde" data-part="propostas" data-tx="layers">
+        <figure class="ph ph-health" data-mask="h"><img src="../assets/img/oculos.jpg" alt="Fotografia fornecida pelo grupo: homem de óculos escuros diante de um microfone, com pessoas de punho erguido ao fundo."></figure>
         <header class="chap">
           <span class="num rv" style="--d:0" aria-hidden="true">03</span>
           <div>
             <p class="label rv" style="--d:0">Proposta 3 · Saúde</p>
             <h2 class="h1"><span class="ln rv-t" style="--d:1">Prioridade para</span><span class="ln rv-t" style="--d:2">quem mais precisa</span></h2>
+            <p class="chap-problem rv" style="--d:3"><span class="ls">Problema apontado</span>Meses de espera e informações do paciente espalhadas entre os serviços.</p>
           </div>
-          <p class="side-problem rv" style="--d:3"><span class="ls">Problema apontado</span>Meses de espera e informações do paciente espalhadas entre os serviços.</p>
         </header>
         <div class="props">
           <div class="rv" style="--d:4"><h3>ENER</h3><p>Fila organizada por risco clínico, vulnerabilidade e tempo de espera</p></div>
@@ -743,17 +706,17 @@ b,strong{font-weight:700}
           <li class="rv" style="--d:3">
             <span class="word">Estado</span>
             <div class="concept"><p class="ls">Democracia e governabilidade</p><p>Governar depende do Congresso, dos estados, do Judiciário e da sociedade. O orçamento expressa escolhas sobre direitos, prioridades e quem recebe recursos.</p></div>
-            <p class="ex"><b>No plano · slides 4–5</b>A PEC fiscal redistribui o orçamento e, como a Lei Antifacção, depende de aprovação no Congresso.</p>
+            <p class="ex"><b>No plano · slides 3–4</b>A PEC fiscal redistribui o orçamento e, como a Lei Antifacção, depende de aprovação no Congresso.</p>
           </li>
           <li class="rv" style="--d:4">
             <span class="word">Direitos</span>
             <div class="concept"><p class="ls">Contrato social</p><p>Hobbes, Locke e Rousseau explicam de formas diferentes o que torna o poder legítimo: proteção, direitos, vontade geral.</p></div>
-            <p class="ex"><b>No plano · slide 6</b>Combater facções preservando o devido processo legal.</p>
+            <p class="ex"><b>No plano · slide 5</b>Combater facções preservando o devido processo legal.</p>
           </li>
           <li class="rv" style="--d:5">
             <span class="word">Desigual&shy;dade</span>
             <div class="concept"><p class="ls">Pierre Bourdieu · capital cultural</p><p>Os alunos chegam à escola com conhecimentos e recursos culturais diferentes, e a escola valoriza mais os de alguns.</p></div>
-            <p class="ex"><b>Leitura do grupo · slide 8</b>Bolsas só por mérito podem premiar vantagens de origem.</p>
+            <p class="ex"><b>Leitura do grupo · slide 7</b>Bolsas só por mérito podem premiar vantagens de origem.</p>
           </li>
         </ol>
         <p class="src rv" style="--d:6">Referência: BOURDIEU, Pierre; PASSERON, Jean-Claude. <i>A reprodução</i>. As relações com o plano são interpretação do grupo.</p>
@@ -809,7 +772,7 @@ b,strong{font-weight:700}
           <div class="sources rv" style="--d:5">
             <p class="ls">Fontes</p>
             <ol>
-              <li><b>TSE — DivulgaCandContas</b> (candidatura e plano registrado): <a href="https://divulgacandcontas.tse.jus.br/divulga/" target="_blank" rel="noopener">divulgacandcontas.tse.jus.br/divulga/</a></li>
+              <li><b>TSE — Propostas de governo dos candidatos à Presidência, Eleições 2026: Renan Santos.</b> <a href="https://www.tse.jus.br/eleicoes/eleicoes-2026-content/propostas-de-governo-dos-candidatos-ao-cargo-de-presidente-da-republica-eleicoes-2026/renan-santos-propostas-de-governo" target="_blank" rel="noopener">tse.jus.br › Eleições 2026 › Propostas de governo › Renan Santos</a></li>
               <li><b>Plano consultado:</b> PARTIDO MISSÃO. <i>O Futuro é Glorioso — Resumo executivo do Livro Amarelo</i>. Brasil, 2026. Sumário, p. 2; ajuste fiscal, pp. 9–10; segurança, pp. 11–13; saúde, pp. 25–26; educação, pp. 30–32.</li>
               <li><b>Sociologia:</b> BOURDIEU, Pierre; PASSERON, Jean-Claude. <i>A reprodução: elementos para uma teoria do sistema de ensino</i>.</li>
               <li><b>Imagens:</b> fornecidas pelo grupo; autoria não informada.</li>
