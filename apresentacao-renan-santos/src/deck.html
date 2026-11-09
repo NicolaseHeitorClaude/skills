@@ -1,0 +1,718 @@
+<title>Que Brasil este plano propõe?</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Análise escolar de Sociologia (2º ano) do plano de governo de Renan Santos, Partido Missão, Eleições 2026.">
+<style>
+/* Layout: palco fixo 1600×900 escalado para caber (projetor 16:9); em telas estreitas/verticais vira leitura em coluna.
+   Identidade de trabalho: preto profundo, amarelo sólido, tipografia condensada monumental. */
+@font-face{font-family:"Barlow Condensed";font-weight:600;font-style:normal;font-display:swap;src:url(../assets/fonts/barlowcond-600.woff2) format("woff2")}
+@font-face{font-family:"Barlow Condensed";font-weight:800;font-style:normal;font-display:swap;src:url(../assets/fonts/barlowcond-800.woff2) format("woff2")}
+@font-face{font-family:"Barlow";font-weight:400;font-style:normal;font-display:swap;src:url(../assets/fonts/barlow-400.woff2) format("woff2")}
+@font-face{font-family:"Barlow";font-weight:500;font-style:normal;font-display:swap;src:url(../assets/fonts/barlow-500.woff2) format("woff2")}
+@font-face{font-family:"Barlow";font-weight:600;font-style:normal;font-display:swap;src:url(../assets/fonts/barlow-600.woff2) format("woff2")}
+@font-face{font-family:"Barlow";font-weight:700;font-style:normal;font-display:swap;src:url(../assets/fonts/barlow-700.woff2) format("woff2")}
+
+:root{
+  --ink:#090909;
+  --graphite:#191919;
+  --yellow:#FFD000;
+  --paper:#F4F2E9;
+  --mute:#BDBDBD;
+  --line:rgba(244,242,233,.18);
+  --line-ink:rgba(9,9,9,.28);
+  --letterbox:#050505;
+  --f-display:"Barlow Condensed","Roboto Condensed","Arial Narrow","Helvetica Neue",Impact,sans-serif;
+  --f-body:"Barlow","Inter","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --bar-h:60px;
+  --ease:cubic-bezier(.2,.7,.2,1);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--letterbox);color:var(--paper);font-family:var(--f-body);overflow:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+p,h1,h2,h3,ol,ul,figure{margin:0}
+ol,ul{padding:0;list-style:none}
+b,strong{font-weight:700}
+.y{color:var(--yellow)}
+
+/* ---------- Escala tipográfica (px do palco 1600×900) ---------- */
+.deck{
+  --t-mega:262px; --t-num:200px; --t-h1:88px; --t-h3:46px; --t-lead:31px;
+  --t-body:25px; --t-small:21px; --t-label:17px; --t-src:16px;
+  --pad-x:88px; --pad-top:68px;
+}
+
+/* ---------- Estrutura da aplicação ---------- */
+.app{position:relative;height:100%;display:flex;flex-direction:column}
+.viewport{position:relative;flex:1 1 auto;overflow:hidden;min-height:0}
+.deck{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:50% 50%;transform:translate(-50%,-50%) scale(var(--scale,.5))}
+.slide{position:absolute;inset:0;overflow:hidden;background:var(--ink);color:var(--paper);
+  opacity:0;visibility:hidden;transition:opacity .6s var(--ease),visibility 0s linear .6s}
+.slide.is-active{opacity:1;visibility:visible;transition:opacity .6s var(--ease),visibility 0s}
+.slide.tex::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.07;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.slide.yellow{background:var(--yellow);color:var(--ink)}
+
+/* revelação de entrada */
+.rv{opacity:0;transform:translateY(22px)}
+.is-active .rv{opacity:1;transform:none;transition:opacity .6s var(--ease) calc(var(--d,0) * 90ms + 120ms),transform .65s var(--ease) calc(var(--d,0) * 90ms + 120ms)}
+.ph img{transform:scale(1.035)}
+.is-active .ph img{transform:none;transition:transform 1.4s var(--ease)}
+.wipe{transform:scaleX(0);transform-origin:left center}
+.is-active .wipe{transform:none;transition:transform .7s var(--ease) .35s}
+
+/* ---------- Elementos comuns ---------- */
+.label{font-family:var(--f-body);font-weight:600;font-size:var(--t-label);letter-spacing:.18em;text-transform:uppercase;color:var(--mute);display:flex;align-items:center;gap:14px}
+.label .sq{width:14px;height:14px;background:var(--yellow);flex:none}
+.yellow .label{color:var(--ink)}
+.yellow .label .sq{background:var(--ink)}
+.ls{display:block;font-family:var(--f-body);font-weight:700;font-size:var(--t-label);letter-spacing:.16em;text-transform:uppercase;color:var(--yellow);margin-bottom:8px}
+.yellow .ls{color:var(--ink);opacity:.72}
+.h1{font-family:var(--f-display);font-weight:800;font-size:var(--t-h1);line-height:.9;letter-spacing:-.005em;text-transform:uppercase;text-wrap:balance}
+.src{font-size:var(--t-src);color:var(--mute);letter-spacing:.02em}
+.yellow .src{color:rgba(9,9,9,.75)}
+.chap{display:flex;align-items:flex-start;gap:40px}
+.num{font-family:var(--f-display);font-weight:800;font-size:var(--t-num);line-height:.74;color:var(--yellow);letter-spacing:-.03em;flex:none;font-variant-numeric:tabular-nums}
+.yellow .num{color:var(--ink)}
+.chap .label{margin-bottom:16px}
+.ph{position:absolute;margin:0;overflow:hidden;background:var(--graphite)}
+.ph img{display:block;width:100%;height:100%;object-fit:cover}
+.ph.noimg img{display:none}
+.ph.noimg::after{content:"Imagem indisponível";position:absolute;left:24px;bottom:24px;font-size:var(--t-src);color:var(--mute)}
+
+/* ---------- 1 · Capa ---------- */
+.s1 .ph-cover{top:0;right:0;width:960px;height:900px;background:transparent;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,rgba(0,0,0,.55) 22%,#000 44%);mask-image:linear-gradient(90deg,transparent 0,rgba(0,0,0,.55) 22%,#000 44%)}
+.s1 .ph-cover img{object-position:64% 30%;filter:contrast(1.06)}
+.s1 .ph-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,var(--ink) 0,rgba(9,9,9,0) 26%)}
+.cover{position:absolute;inset:0;padding:var(--pad-top) var(--pad-x) 64px;display:flex;flex-direction:column;justify-content:space-between;width:960px}
+.mega{font-family:var(--f-display);font-weight:800;font-size:var(--t-mega);line-height:.8;text-transform:uppercase;letter-spacing:-.01em;display:flex;flex-direction:column}
+.mega .y{margin-top:6px}
+.cover-q{margin-top:40px;font-family:var(--f-display);font-weight:600;font-size:52px;line-height:1;color:var(--paper)}
+.cover-q::before{content:"";display:inline-block;width:56px;height:6px;background:var(--yellow);vertical-align:middle;margin-right:20px;transform:translateY(-4px)}
+.idbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 0;font-weight:700;font-size:18px;letter-spacing:.16em;text-transform:uppercase;border-top:2px solid var(--yellow);padding-top:16px}
+.idbar span+span::before{content:"•";color:var(--yellow);margin:0 16px}
+.cover-desc{margin-top:16px;font-size:26px;color:var(--mute)}
+.cover-desc b{color:var(--paper);font-weight:600}
+.members{margin-top:26px;font-size:26px;font-weight:600;display:flex;align-items:baseline;gap:18px;flex-wrap:wrap}
+.members .ls{margin:0;color:var(--mute)}
+
+/* ---------- 2 · Diagnóstico ---------- */
+.s2 .ph-stage{top:0;right:0;width:560px;height:900px}
+.s2 .ph-stage img{object-position:49% 50%}
+.s2 .ph-stage::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--ink) 0,rgba(9,9,9,.55) 9%,rgba(9,9,9,0) 24%)}
+.s2-body{position:absolute;inset:0 560px 0 0;padding:var(--pad-top) 72px 56px var(--pad-x);display:flex;flex-direction:column;gap:26px}
+.s2 .h1{font-size:80px}
+.diag{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.diag li{display:grid;grid-template-columns:120px 1fr;align-items:baseline;gap:20px;padding:13px 0;border-bottom:1px solid var(--line);font-size:28px;font-weight:500;line-height:1.15}
+.pg{font-size:var(--t-src);font-weight:700;letter-spacing:.1em;color:var(--yellow);text-transform:uppercase;font-variant-numeric:tabular-nums}
+.also{font-size:var(--t-small);line-height:1.45;color:var(--mute)}
+.also .ls{color:var(--paper);opacity:.85}
+.cut{margin-top:auto;display:flex;align-items:center;gap:28px;background:var(--yellow);color:var(--ink);padding:18px 28px}
+.cut .ls{margin:0;color:var(--ink);opacity:.75;max-width:130px;line-height:1.25}
+.cut strong{font-family:var(--f-display);font-weight:800;font-size:46px;letter-spacing:.02em;text-transform:uppercase;line-height:1}
+
+/* ---------- 3 · Segurança ---------- */
+.s3{display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) 0}
+.s3 .h1{font-size:82px}
+.s3-grid{margin-top:46px;display:grid;grid-template-columns:330px 1fr;gap:64px}
+.lead{font-size:var(--t-body);line-height:1.38}
+.nodes{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:40px;padding-top:30px}
+.nodes::before{content:"";position:absolute;left:0;right:0;top:6px;height:2px;background:var(--line)}
+.node{position:relative}
+.node::before{content:"";position:absolute;top:-30px;left:0;width:14px;height:14px;background:var(--yellow)}
+.node h3{font-family:var(--f-display);font-weight:800;font-size:var(--t-h3);text-transform:uppercase;line-height:1;margin-bottom:10px}
+.node p{font-size:var(--t-small);line-height:1.38;color:var(--mute)}
+.s3-row{margin-top:40px;display:grid;grid-template-columns:1fr 470px;gap:64px;padding-top:26px;border-top:1px solid var(--line)}
+.s3-row p:not(.ls){font-size:var(--t-small);line-height:1.42}
+.s3-row .warn p:not(.ls){color:var(--paper)}
+.s3-row .warn em{font-style:normal;color:var(--mute)}
+.s3 .src{margin-top:auto;padding:14px 0;text-align:right}
+.qband{margin:0 calc(var(--pad-x) * -1);background:var(--yellow);color:var(--ink);padding:24px var(--pad-x) 28px;display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center}
+.qband .ls{margin:0;color:var(--ink);opacity:.72}
+.qband p:not(.ls){font-family:var(--f-display);font-weight:800;font-size:46px;line-height:1;text-transform:uppercase}
+
+/* ---------- 4 · Saúde (amarelo) ---------- */
+.s4{display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) 40px}
+.s4 .chap{justify-content:space-between}
+.s4 .chap>div{flex:1}
+.side-problem{width:380px;font-size:var(--t-small);line-height:1.4;padding-top:10px;border-top:3px solid var(--ink)}
+.props{margin-top:44px;display:grid;grid-template-columns:repeat(3,1fr);gap:48px}
+.props h3{font-family:var(--f-display);font-weight:800;font-size:58px;line-height:.9;text-transform:uppercase;letter-spacing:.01em;margin-bottom:10px}
+.props p{font-size:var(--t-small);line-height:1.38;font-weight:500}
+.flow{margin-top:40px;padding:22px 0 20px;border-top:3px solid var(--ink);border-bottom:1px solid var(--line-ink)}
+.flow ol{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.flow li{display:flex;align-items:center;gap:22px;font-family:var(--f-display);font-weight:800;font-size:60px;line-height:1;text-transform:uppercase;letter-spacing:.01em}
+.flow li+li::before{content:"";width:62px;height:24px;flex:none;background:no-repeat center/contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 62 24'><path d='M0 12h56M46 3l11 9-11 9' fill='none' stroke='%23090909' stroke-width='3.5'/></svg>")}
+.s4-foot{margin-top:auto;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:end}
+.s4-foot p:not(.ls){font-size:var(--t-small);line-height:1.4;font-weight:500}
+.qbox{background:var(--ink);color:var(--yellow);padding:22px 28px}
+.qbox .ls{color:var(--paper);opacity:.8}
+.qbox p:not(.ls){font-family:var(--f-display);font-weight:800;font-size:36px!important;line-height:1.02!important;text-transform:uppercase}
+.s4 .src{margin-top:18px}
+
+/* ---------- 5 · Educação ---------- */
+.s5{display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) 40px}
+.problem-line{margin-top:32px;font-size:var(--t-small);line-height:1.4;max-width:1180px;color:var(--paper)}
+.problem-line .ls{display:inline;margin-right:12px}
+.axes{margin-top:30px;display:grid;grid-template-columns:1.32fr 1fr;flex:1;min-height:0}
+.axis{padding-top:20px;border-top:2px solid var(--line);min-width:0}
+.axis.a2{padding-left:56px;border-left:3px solid var(--yellow);margin-left:56px;border-top-color:var(--yellow)}
+.axis-t{font-family:var(--f-display);font-weight:800;font-size:72px;line-height:.9;text-transform:uppercase;margin-bottom:22px;letter-spacing:.005em}
+.a2 .axis-t{color:var(--yellow)}
+.axis ul{display:flex;flex-direction:column;gap:14px}
+.axis li{font-size:var(--t-small);line-height:1.38;color:var(--mute);padding-left:26px;position:relative}
+.axis li::before{content:"";position:absolute;left:0;top:.55em;width:12px;height:2px;background:var(--yellow)}
+.axis li b{color:var(--paper);font-weight:600}
+.axis .benefit{margin-top:22px;font-size:var(--t-small);line-height:1.4}
+.swap{font-family:var(--f-display);font-weight:800;font-size:50px;line-height:1;text-transform:uppercase;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.swap s{font-size:.62em}
+.swap .to{color:var(--yellow);margin-right:14px}
+.swap s{text-decoration-thickness:4px;text-decoration-color:var(--yellow);color:var(--mute)}
+.swap-note{margin-top:8px;font-size:var(--t-src);color:var(--mute)}
+.a2 .q{margin-top:28px}
+.a2 .q p:not(.ls){font-family:var(--f-display);font-weight:600;font-size:40px;line-height:1.02;color:var(--paper)}
+.s5 .src{margin-top:16px}
+
+/* ---------- 6 · Sociologia ---------- */
+.s6{display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) 36px}
+.s6 header{display:flex;justify-content:space-between;align-items:flex-end;gap:40px}
+.s6 .h1{font-size:72px}
+.rel{margin-top:30px;display:flex;flex-direction:column;flex:1;border-top:2px solid var(--yellow)}
+.rel>li{flex:1;display:grid;grid-template-columns:520px 1fr 360px;gap:40px;align-items:center;border-bottom:1px solid var(--line);padding:6px 0}
+.word{font-family:var(--f-display);font-weight:800;font-size:104px;line-height:.86;text-transform:uppercase;color:var(--yellow);letter-spacing:-.005em}
+.concept .ls{color:var(--paper);opacity:.9}
+.concept p:not(.ls){font-size:var(--t-small);line-height:1.38;color:var(--paper)}
+.ex{font-size:19px;line-height:1.38;color:var(--mute);padding-left:22px;border-left:2px solid var(--line)}
+.ex b{display:block;color:var(--yellow);font-size:var(--t-src);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}
+.s6 .src{margin-top:16px}
+
+/* ---------- 7 · Análise crítica ---------- */
+.s7 .ph-back{top:0;left:0;width:380px;height:900px}
+.s7 .ph-back img{object-position:37% 50%;filter:grayscale(1) contrast(1.05)}
+.s7 .ph-back::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(9,9,9,0) 70%,var(--ink) 100%)}
+.s7-body{position:absolute;inset:0 0 0 380px;display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) 0 76px}
+.s7 .h1{font-size:80px}
+.two{margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:56px}
+.two h3{font-family:var(--f-display);font-weight:800;font-size:38px;text-transform:uppercase;line-height:1;padding-bottom:14px;margin-bottom:16px;border-bottom:2px solid var(--line)}
+.two .open h3{border-bottom-color:var(--yellow);color:var(--yellow)}
+.two ul{display:flex;flex-direction:column;gap:14px}
+.two li{font-size:var(--t-small);line-height:1.38;padding-left:26px;position:relative}
+.two li::before{content:"";position:absolute;left:0;top:.6em;width:12px;height:2px;background:var(--paper)}
+.two .open li::before{background:var(--yellow)}
+.two li em{font-style:normal;color:var(--mute)}
+.s7 .src{margin-top:auto;padding:14px 0}
+.s7 .qband{margin:0 calc(var(--pad-x) * -1) 0 -76px;padding-left:76px;grid-template-columns:1fr;gap:10px}
+.s7 .qband p:not(.ls){font-size:44px}
+
+/* ---------- 8 · Fontes e reflexão ---------- */
+.s8 .ph-arms{top:0;right:0;width:800px;height:466px;background:transparent}
+.s8 .ph-arms img{object-position:50% 40%}
+.s8 .ph-arms::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--ink) 0,rgba(9,9,9,0) 30%),linear-gradient(0deg,var(--ink) 0,rgba(9,9,9,0) 40%)}
+.s8-body{position:absolute;inset:0;padding:var(--pad-top) var(--pad-x) 40px;display:grid;grid-template-columns:690px 1fr;grid-template-rows:auto 1fr;column-gap:72px}
+.s8 .h1{font-size:132px;line-height:.84;grid-column:1;align-self:start}
+.reflect{grid-column:1;grid-row:2;align-self:start;margin-top:64px;display:flex;flex-direction:column;gap:22px}
+.reflect .q{font-family:var(--f-display);font-weight:600;font-size:42px;line-height:1.06}
+.reflect .a{font-size:var(--t-body);line-height:1.42;padding-left:24px;border-left:6px solid var(--yellow)}
+.sources{grid-column:2;grid-row:2;align-self:end;display:flex;flex-direction:column;gap:13px;min-width:0}
+.sources>.ls{margin-bottom:2px}
+.sources li{font-size:18px;line-height:1.4;color:var(--mute);padding-top:12px;border-top:1px solid var(--line);overflow-wrap:anywhere}
+.sources li b{color:var(--paper);font-weight:600}
+.sources a{color:var(--yellow);text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- Controles (fora do palco) ---------- */
+.controls{position:relative;flex:none;height:calc(var(--bar-h) + env(safe-area-inset-bottom,0px));padding:0 max(16px,env(safe-area-inset-right,0px)) env(safe-area-inset-bottom,0px) max(16px,env(safe-area-inset-left,0px));
+  background:var(--ink);border-top:1px solid #222;display:flex;align-items:center;gap:12px;z-index:5}
+.progress{position:absolute;left:0;top:-1px;height:3px;background:var(--yellow);width:calc(var(--p,0.125) * 100%);transition:width .5s var(--ease)}
+.btn{font:600 14px/1 var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--paper);background:transparent;border:1px solid #333;height:38px;min-width:38px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
+.btn:hover{border-color:var(--mute)}
+.btn:disabled{opacity:.35;cursor:default}
+.btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+.dots{display:flex;gap:4px;margin:0 auto;overflow-x:auto;scrollbar-width:none}
+.dot{font:700 13px/1 var(--f-body);font-variant-numeric:tabular-nums;color:var(--mute);background:transparent;border:0;border-bottom:2px solid transparent;height:38px;padding:0 8px;cursor:pointer}
+.dot[aria-current="true"]{color:var(--yellow);border-bottom-color:var(--yellow)}
+.dot:hover{color:var(--paper)}
+.count{font:600 14px/1 var(--f-body);font-variant-numeric:tabular-nums;color:var(--mute);min-width:62px;text-align:center}
+.count b{color:var(--paper)}
+.tools{display:flex;gap:8px}
+
+/* ---------- Notas do apresentador ---------- */
+.notes{position:absolute;top:0;right:0;bottom:calc(var(--bar-h) + env(safe-area-inset-bottom,0px));width:min(460px,100%);background:var(--graphite);border-left:1px solid #333;z-index:6;overflow-y:auto;padding:22px max(22px,env(safe-area-inset-right,0px)) 28px 24px}
+.notes .warn{background:var(--yellow);color:var(--ink);font-size:13px;font-weight:600;line-height:1.35;padding:10px 12px;margin-bottom:18px}
+.notes h2{font-family:var(--f-display);font-weight:800;font-size:28px;text-transform:uppercase;line-height:1;margin-bottom:4px}
+.notes .who{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--yellow);font-weight:700;margin-bottom:14px}
+.notes p{font-size:16px;line-height:1.55;color:var(--paper);margin-bottom:12px}
+.notes .tip{font-size:14px;color:var(--mute)}
+.notes .tip b{color:var(--paper)}
+.notes .next{border-top:1px solid #333;padding-top:12px;font-style:italic}
+
+/* ---------- Modo leitura: celular / telas verticais ---------- */
+@media screen and (max-width:820px), screen and (max-aspect-ratio:1/1){
+  body{overflow:hidden}
+  .viewport{overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .deck{position:relative;left:auto;top:auto;width:100%;height:auto;transform:none!important;
+    --t-mega:min(27vw,150px); --t-num:84px; --t-h1:clamp(38px,10.5vw,64px); --t-h3:30px; --t-lead:21px;
+    --t-body:18px; --t-small:17px; --t-label:12px; --t-src:13px;
+    --pad-x:max(20px,env(safe-area-inset-left,0px)); --pad-top:28px}
+  .slide{position:relative;inset:auto;display:none;min-height:100%;overflow:visible;
+    padding-left:max(20px,env(safe-area-inset-left,0px))!important;padding-right:max(20px,env(safe-area-inset-right,0px))!important}
+  .slide.is-active{display:flex;flex-direction:column}
+  .ph{position:relative;inset:auto!important;width:auto!important;height:auto!important;margin:0 calc(max(20px,env(safe-area-inset-left,0px)) * -1)}
+  .ph img{height:auto;aspect-ratio:auto}
+  .cover,.s2-body,.s7-body,.s8-body{position:relative;inset:auto;width:auto;padding:0}
+  .h1,.s2 .h1,.s3 .h1,.s7 .h1,.s6 .h1{font-size:var(--t-h1)}
+  .chap{gap:18px;flex-wrap:wrap}
+  .chap>div{min-width:0;flex:1 1 220px}
+  .cut strong,.qband p:not(.ls),.s7 .qband p:not(.ls){font-size:28px}
+
+  .s1{padding-bottom:28px}
+  .s1 .ph-cover{order:-1;height:56vh!important;-webkit-mask-image:linear-gradient(0deg,transparent 0,#000 30%);mask-image:linear-gradient(0deg,transparent 0,#000 30%)}
+  .s1 .ph-cover img{height:100%;object-position:62% 28%}
+  .cover{margin-top:-9vh;gap:22px}
+  .cover-q{font-size:28px;margin-top:22px}
+  .cover-q::before{width:30px;height:4px;margin-right:12px}
+  .idbar{font-size:12px}.idbar span+span::before{margin:0 8px}
+  .cover-desc,.members{font-size:18px}
+
+  .s2{padding-top:0}
+  .s2 .ph-stage{height:46vh!important}
+  .s2 .ph-stage img{height:100%;object-position:49% 45%}
+  .s2 .ph-stage::after{background:linear-gradient(0deg,var(--ink) 0,rgba(9,9,9,0) 40%)}
+  .s2-body{padding:8px 0 28px;gap:18px}
+  .diag li{grid-template-columns:72px 1fr;font-size:18px;gap:12px;padding:10px 0}
+  .cut{flex-direction:column;align-items:flex-start;gap:6px;padding:14px 16px}
+  .cut .ls{max-width:none}
+
+  .s3,.s4,.s5,.s6{padding-top:28px;padding-bottom:28px}
+  .s3-grid,.s3-row,.props,.s4-foot,.two{grid-template-columns:1fr;gap:24px;margin-top:26px}
+  .nodes{grid-template-columns:1fr;gap:22px;padding-top:0;padding-left:28px}
+  .nodes::before{top:0;bottom:0;left:6px;right:auto;width:2px;height:auto}
+  .node::before{top:6px;left:-28px}
+  .qband{grid-template-columns:1fr;gap:8px;margin:20px calc(max(20px,env(safe-area-inset-left,0px)) * -1) 0;padding:18px max(20px,env(safe-area-inset-left,0px))}
+  .s3 .src{text-align:left;margin-top:16px;padding:0}
+  .s3{padding-bottom:0}
+  .side-problem{width:auto;flex-basis:100%}
+  .props h3{font-size:40px}
+  .flow ol{flex-direction:column;align-items:flex-start;gap:6px}
+  .flow li{font-size:34px;gap:12px}
+  .flow li+li::before{width:26px;transform:rotate(90deg)}
+  .s4-foot{margin-top:28px}
+  .qbox p:not(.ls){font-size:26px!important}
+  .axes{grid-template-columns:1fr;gap:28px}
+  .axis.a2{margin-left:0;padding-left:20px}
+  .axis-t{font-size:46px}
+  .swap{font-size:34px}
+  .a2 .q p:not(.ls){font-size:28px}
+  .s6 header{flex-direction:column;align-items:flex-start;gap:12px}
+  .rel>li{grid-template-columns:1fr;gap:12px;padding:20px 0}
+  .word{font-size:56px}
+  .ex{font-size:15px}
+  .s7{padding-top:0}
+  .s7 .ph-back{height:40vh!important}
+  .s7 .ph-back img{height:100%;object-position:37% 55%}
+  .s7 .ph-back::after{background:linear-gradient(0deg,var(--ink) 0,rgba(9,9,9,0) 45%)}
+  .s7-body{padding:8px 0 0}
+  .s7 .src{margin-top:20px;padding:0}
+  .s7 .qband{margin:20px calc(max(20px,env(safe-area-inset-left,0px)) * -1) 0;padding:18px max(20px,env(safe-area-inset-left,0px))}
+  .s8{padding-top:0;padding-bottom:28px}
+  .s8 .ph-arms{height:auto!important}
+  .s8-body{display:flex;flex-direction:column;gap:26px;padding-top:0;margin-top:-40px}
+  .s8 .h1{font-size:var(--t-h1)}
+  .reflect .q{font-size:26px}
+  .reflect{margin-top:0}
+  .sources li{font-size:15px}
+  .controls{gap:6px}
+  .btn{padding:0 9px}
+  .btn .t{display:none}
+  .count{display:none}
+}
+@media screen and (max-width:520px){ .dots{display:none} .count{display:block;margin:0 auto} }
+
+/* ---------- Movimento reduzido ---------- */
+@media (prefers-reduced-motion:reduce){
+  .slide,.slide.is-active,.is-active .rv,.is-active .ph img,.is-active .wipe,.progress{transition:none!important}
+  .rv,.ph img,.wipe{opacity:1!important;transform:none!important}
+}
+
+/* ---------- Impressão / PDF: uma página 16:9 por slide ---------- */
+@page{size:1600px 900px;margin:0}
+@media print{
+  html,body{height:auto;overflow:visible;background:var(--ink)}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .controls,.notes{display:none!important}
+  .app,.viewport{display:block;height:auto;overflow:visible}
+  .deck{position:static;transform:none!important;width:1600px;height:auto}
+  .slide{position:relative!important;inset:auto;width:1600px;height:900px;opacity:1!important;visibility:visible!important;display:block;break-after:page;page-break-after:always;transition:none!important}
+  .slide.s3,.slide.s4,.slide.s5,.slide.s6{display:flex!important}
+  .slide:last-child{break-after:auto;page-break-after:auto}
+  .rv,.ph img,.wipe{opacity:1!important;transform:none!important;transition:none!important}
+}
+</style>
+<!--BODY-->
+<div class="app" id="app">
+  <main class="viewport" id="viewport" aria-label="Apresentação: análise do plano de governo">
+    <div class="deck" id="deck" aria-live="polite">
+
+      <!-- 1 · CAPA -->
+      <section class="slide s1" data-who="Gabriela" aria-roledescription="slide" aria-label="1 de 8: Capa">
+        <figure class="ph ph-cover"><img src="../assets/img/retrato-capa.jpg" alt="Retrato em preto e branco fornecido pelo grupo: homem de terno e gravata, olhando para o lado."></figure>
+        <div class="cover">
+          <p class="label rv" style="--d:0"><span class="sq"></span>Sociologia — 2º ano</p>
+          <div>
+            <h1 class="mega rv" style="--d:1"><span>Renan</span><span class="y">Santos</span></h1>
+            <p class="cover-q rv" style="--d:2">Que Brasil este plano propõe?</p>
+          </div>
+          <div>
+            <p class="idbar rv" style="--d:3"><span>Partido Missão</span><span>Presidência da República</span><span>Eleições 2026</span></p>
+            <p class="cover-desc rv" style="--d:4">Uma análise do <b>Livro Amarelo</b> pela Sociologia</p>
+            <p class="members rv" style="--d:5"><span class="ls">Integrantes</span><span>Gabriela • Heitor • Nicolas • Sabrina</span></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2 · DIAGNÓSTICO -->
+      <section class="slide s2" data-who="Gabriela" aria-roledescription="slide" aria-label="2 de 8: Diagnóstico e áreas do plano">
+        <figure class="ph ph-stage"><img src="../assets/img/palco-amarelo.jpg" alt="Fotografia fornecida pelo grupo: silhueta de uma pessoa em um palco com luz amarela e fumaça, diante de um público."></figure>
+        <div class="s2-body">
+          <div class="rv" style="--d:0">
+            <p class="label" style="margin-bottom:18px"><span class="sq"></span>Diagnóstico do documento</p>
+            <h2 class="h1">Os problemas que orientam o <span class="y">projeto</span></h2>
+          </div>
+          <ol class="diag rv" style="--d:1">
+            <li><span class="pg">p. 9</span><span>Desequilíbrio fiscal e dificuldades de gestão</span></li>
+            <li><span class="pg">p. 11</span><span>Crime organizado e insegurança</span></li>
+            <li><span class="pg">p. 23</span><span>Gargalos de infraestrutura e desenvolvimento</span></li>
+            <li><span class="pg">p. 25</span><span>Barreiras de acesso à saúde</span></li>
+            <li><span class="pg">p. 30–31</span><span>Baixa aprendizagem e violência escolar</span></li>
+          </ol>
+          <p class="also rv" style="--d:2"><span class="ls">O plano também aborda</span>Pacto federativo · gestão pública · cultura · indústria e terras raras · agricultura · política externa · desfavelização</p>
+          <div class="cut rv" style="--d:3"><span class="ls">Recorte desta análise</span><strong>Segurança • Saúde • Educação</strong></div>
+          <p class="src rv" style="--d:4">Fonte: sumário (p. 2) e capítulos I, II, VI, VII e IX do PDF.</p>
+        </div>
+      </section>
+
+      <!-- 3 · SEGURANÇA -->
+      <section class="slide s3 tex" data-who="Heitor" aria-roledescription="slide" aria-label="3 de 8: Proposta 1, Segurança">
+        <header class="chap rv" style="--d:0">
+          <span class="num" aria-hidden="true">01</span>
+          <div>
+            <p class="label">Proposta 1 · Segurança pública</p>
+            <h2 class="h1">Recuperar o controle.<br><span class="y">Com quais limites?</span></h2>
+          </div>
+        </header>
+        <div class="s3-grid">
+          <div class="rv" style="--d:1">
+            <p class="ls">Problema apontado</p>
+            <p class="lead">Facções com poder territorial e financeiro; forças de segurança que pouco integram dados e ações.</p>
+          </div>
+          <ul class="nodes rv" style="--d:2" aria-label="Propostas selecionadas">
+            <li class="node"><h3>Inteligência</h3><p>Dados integrados e monitoramento de portos, aeroportos e fronteiras</p></li>
+            <li class="node"><h3>Financiamento</h3><p>Asfixia financeira das organizações criminosas</p></li>
+            <li class="node"><h3>Território</h3><p>Retomada de áreas e líderes isolados em presídios de segurança máxima</p></li>
+          </ul>
+        </div>
+        <div class="s3-row rv" style="--d:3">
+          <div class="warn">
+            <p class="ls">Também no capítulo</p>
+            <p>Direito Penal do Inimigo, Estado de Defesa e restrição de direitos de pessoas associadas a facções. <em>O plano afirma que as medidas são constitucionais; isso não substitui uma avaliação jurídica independente.</em></p>
+          </div>
+          <div>
+            <p class="ls">Benefício pretendido</p>
+            <p>Reduzir a capacidade de atuação e de comando das facções.</p>
+          </div>
+        </div>
+        <p class="src">Fonte: PDF, pp. 11–13</p>
+        <div class="qband"><p class="ls">Questão de análise</p><p>Como garantir segurança, devido processo legal e proteção de inocentes?</p></div>
+      </section>
+
+      <!-- 4 · SAÚDE -->
+      <section class="slide s4 yellow" data-who="Heitor" aria-roledescription="slide" aria-label="4 de 8: Proposta 2, Saúde">
+        <header class="chap rv" style="--d:0">
+          <span class="num" aria-hidden="true">02</span>
+          <div>
+            <p class="label">Proposta 2 · Saúde</p>
+            <h2 class="h1">Prioridade para<br>quem mais precisa</h2>
+          </div>
+          <p class="side-problem"><span class="ls">Problema apontado</span>Meses de espera e informações do paciente espalhadas entre os serviços.</p>
+        </header>
+        <div class="props rv" style="--d:1">
+          <div><h3>ENER</h3><p>Fila organizada por risco clínico, vulnerabilidade e tempo de espera</p></div>
+          <div><h3>PRONTO</h3><p>Prontuário eletrônico integrado entre os serviços de saúde</p></div>
+          <div><h3>Rede</h3><p>Mais telemedicina e coordenação por centros regionais</p></div>
+        </div>
+        <div class="flow rv" style="--d:2">
+          <p class="ls">Ilustração conceitual do grupo · não é uma etapa descrita no plano</p>
+          <ol aria-label="Fluxo conceitual"><li>Avaliar</li><li>Priorizar</li><li>Encaminhar</li><li>Acompanhar</li></ol>
+        </div>
+        <div class="s4-foot rv" style="--d:3">
+          <div><p class="ls">Benefício pretendido</p><p>Atendimento mais coordenado e prioridade adequada aos casos de maior risco.</p></div>
+          <div class="qbox"><p class="ls">Questão de execução</p><p>Como financiar a integração e atender quem tem pouco acesso digital?</p></div>
+        </div>
+        <p class="src">Fonte: PDF, pp. 25–26 · “SUS Fila Zero” é o nome do capítulo, não uma garantia de fim das filas.</p>
+      </section>
+
+      <!-- 5 · EDUCAÇÃO -->
+      <section class="slide s5 tex" data-who="Nicolas" aria-roledescription="slide" aria-label="5 de 8: Proposta 3, Educação">
+        <header class="chap rv" style="--d:0">
+          <span class="num" aria-hidden="true">03</span>
+          <div>
+            <p class="label">Proposta 3 · Educação</p>
+            <h2 class="h1">Aprender mais.<br><span class="y">Ampliar oportunidades?</span></h2>
+          </div>
+        </header>
+        <p class="problem-line rv" style="--d:1"><span class="ls">Problema apontado</span>Baixa aprendizagem (o plano cita cerca de 73% abaixo do mínimo em matemática no PISA 2022) e violência no ambiente escolar.</p>
+        <div class="axes">
+          <div class="axis rv" style="--d:2">
+            <h3 class="axis-t">Aprendizagem</h3>
+            <ul>
+              <li><b>Português e matemática</b> como foco, com alfabetização pelo método fônico</li>
+              <li><b>Práticas do Ceará</b> levadas para o país</li>
+              <li><b>Código disciplinar</b> nacional e escolas civis-militares onde a situação é crítica</li>
+            </ul>
+            <p class="benefit"><span class="ls">Benefício pretendido</span>Melhorar a aprendizagem e as condições de ensino.</p>
+          </div>
+          <div class="axis a2 rv" style="--d:3">
+            <h3 class="axis-t">Oportunidades</h3>
+            <p class="swap"><s>Cotas</s><span><span class="to" aria-hidden="true">→</span>Bolsas de mérito</span></p>
+            <p class="swap-note">Proposta para o ensino superior</p>
+            <div class="q"><p class="ls">Questão crítica</p><p>Como avaliar mérito sem ignorar desigualdades de origem?</p></div>
+          </div>
+        </div>
+        <p class="src">Fonte: PDF, pp. 30–32</p>
+      </section>
+
+      <!-- 6 · SOCIOLOGIA -->
+      <section class="slide s6" data-who="Nicolas" aria-roledescription="slide" aria-label="6 de 8: Relação com a Sociologia">
+        <header class="rv" style="--d:0">
+          <div>
+            <p class="label" style="margin-bottom:14px"><span class="sq"></span>Relação com a Sociologia</p>
+            <h2 class="h1">Estado, direitos e desigualdade</h2>
+          </div>
+        </header>
+        <ol class="rel">
+          <li class="rv" style="--d:1">
+            <span class="word">Estado</span>
+            <div class="concept"><p class="ls">Democracia e governabilidade</p><p>Governar depende do Congresso, dos estados, do Judiciário e da participação social. Capacidade de governar não é concentração de poder.</p></div>
+            <p class="ex"><b>No plano</b>PEC fiscal, Lei Antifacção e mais poder à União na educação dependem de aprovação.</p>
+          </li>
+          <li class="rv" style="--d:2">
+            <span class="word">Direitos</span>
+            <div class="concept"><p class="ls">Contrato social</p><p>Hobbes, Locke e Rousseau explicam de formas diferentes o que torna o poder legítimo: proteção, direitos, vontade geral.</p></div>
+            <p class="ex"><b>No plano · slide 3</b>Combater facções preservando o devido processo legal.</p>
+          </li>
+          <li class="rv" style="--d:3">
+            <span class="word">Desigual&shy;dade</span>
+            <div class="concept"><p class="ls">Pierre Bourdieu · capital cultural</p><p>Os alunos chegam à escola com conhecimentos e recursos culturais diferentes, e a escola valoriza mais os de alguns.</p></div>
+            <p class="ex"><b>Leitura do grupo · slide 5</b>Bolsas só por mérito podem premiar vantagens de origem.</p>
+          </li>
+        </ol>
+        <p class="src">Referência: BOURDIEU, Pierre; PASSERON, Jean-Claude. <i>A reprodução</i>. As relações com o plano são interpretação do grupo.</p>
+      </section>
+
+      <!-- 7 · ANÁLISE CRÍTICA -->
+      <section class="slide s7" data-who="Sabrina" aria-roledescription="slide" aria-label="7 de 8: Análise crítica">
+        <figure class="ph ph-back"><img src="../assets/img/bastidores.jpg" alt="Fotografia em preto e branco fornecida pelo grupo: homem de camisa e gravata sentado, olhando para baixo, em um camarim."></figure>
+        <div class="s7-body">
+          <div class="rv" style="--d:0">
+            <p class="label" style="margin-bottom:18px"><span class="sq"></span>Análise crítica</p>
+            <h2 class="h1">Uma proposta também<br>precisa <span class="y">responder</span></h2>
+          </div>
+          <div class="two">
+            <div class="rv" style="--d:1">
+              <h3>O que ficou claro</h3>
+              <ul>
+                <li>As prioridades: crime, saúde, educação e ajuste fiscal</li>
+                <li>Os instrumentos têm nome: Lei Antifacção, ENER, PRONTO, código disciplinar</li>
+                <li>A intenção de reorganizar o Estado e dar mais poder à União</li>
+              </ul>
+            </div>
+            <div class="open rv" style="--d:2">
+              <h3>O que exige mais detalhe</h3>
+              <ul>
+                <li>Custo de cada proposta e fonte dos recursos <em>(o ajuste fiscal traz estimativas, p. 10)</em></li>
+                <li>Cronograma e indicadores <em>(há metas pontuais, como 80% de resolução na atenção primária, p. 26)</em></li>
+                <li>Salvaguardas de direitos e efeitos sobre os mais pobres</li>
+              </ul>
+            </div>
+          </div>
+          <p class="src">Base: resumo executivo. O Livro Amarelo completo tem mais de 500 páginas (PDF, p. 5).</p>
+          <div class="qband rv" style="--d:3"><p class="ls">Pergunta ao candidato</p><p>Como financiar essas mudanças e demonstrar resultados sem ampliar desigualdades nem enfraquecer direitos?</p></div>
+        </div>
+      </section>
+
+      <!-- 8 · FONTES E REFLEXÃO -->
+      <section class="slide s8" data-who="Sabrina" aria-roledescription="slide" aria-label="8 de 8: Fontes e reflexão final">
+        <figure class="ph ph-arms"><img src="../assets/img/bracos-abertos.jpg" alt="Fotografia fornecida pelo grupo: pessoa de costas, de braços abertos, diante de um público com fumaça amarela."></figure>
+        <div class="s8-body">
+          <div class="rv" style="--d:0">
+            <p class="label" style="margin-bottom:22px"><span class="sq"></span>Reflexão final</p>
+            <h2 class="h1">Conhecer<br><span class="y">para avaliar</span></h2>
+          </div>
+          <div class="reflect rv" style="--d:1">
+            <p class="q">Por que é importante conhecer diretamente as propostas de um candidato antes de formar uma opinião sobre elas?</p>
+            <p class="a">Porque a leitura direta permite comparar propostas, avaliar consequências e formar uma opinião fundamentada, além dos slogans e recortes das redes.</p>
+          </div>
+          <div class="sources rv" style="--d:2">
+            <p class="ls">Fontes</p>
+            <ol>
+              <li><b>TSE — DivulgaCandContas</b> (candidatura e plano registrado): <a href="https://divulgacandcontas.tse.jus.br/divulga/" target="_blank" rel="noopener">divulgacandcontas.tse.jus.br/divulga/</a></li>
+              <li><b>Plano consultado:</b> PARTIDO MISSÃO. <i>O Futuro é Glorioso — Resumo executivo do Livro Amarelo</i>. Brasil, 2026. Sumário, p. 2; segurança, pp. 11–13; saúde, pp. 25–26; educação, pp. 30–32.</li>
+              <li><b>Sociologia:</b> BOURDIEU, Pierre; PASSERON, Jean-Claude. <i>A reprodução: elementos para uma teoria do sistema de ensino</i>.</li>
+              <li><b>Imagens:</b> fornecidas pelo grupo; autoria não informada.</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <aside class="notes" id="notes" hidden aria-label="Notas do apresentador">
+    <p class="warn">Estas notas aparecem na tela compartilhada. Para apresentar com notas, abra o ROTEIRO em outro aparelho.</p>
+    <div id="notes-body"></div>
+  </aside>
+
+  <nav class="controls" aria-label="Navegação dos slides">
+    <span class="progress" id="progress" aria-hidden="true"></span>
+    <button class="btn" id="prev" type="button" aria-label="Slide anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <button class="btn" id="next" type="button" aria-label="Próximo slide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+    <div class="dots" id="dots" role="group" aria-label="Ir para o slide"></div>
+    <span class="count" id="count" aria-live="off"><b>01</b> / 08</span>
+    <div class="tools">
+      <button class="btn" id="notesBtn" type="button" aria-expanded="false" aria-controls="notes" title="Notas (N)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5zM8 9h8M8 13h8M8 17h5"/></svg><span class="t">Notas</span></button>
+      <button class="btn" id="printBtn" type="button" title="Imprimir ou salvar em PDF"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V3h10v6M7 17H4v-7h16v7h-3M7 14h10v7H7z"/></svg><span class="t">PDF</span></button>
+      <button class="btn" id="fsBtn" type="button" title="Tela cheia (F)" aria-label="Tela cheia"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+    </div>
+  </nav>
+</div>
+
+<script id="notes-data" type="application/json">{{NOTES_JSON}}</script>
+<script>
+(function(){
+  document.documentElement.lang = "pt-BR";
+  var deck = document.getElementById("deck");
+  var slides = Array.prototype.slice.call(deck.querySelectorAll(".slide"));
+  var N = slides.length, cur = 0;
+  var viewport = document.getElementById("viewport");
+  var dots = document.getElementById("dots");
+  var count = document.getElementById("count");
+  var progress = document.getElementById("progress");
+  var prev = document.getElementById("prev"), next = document.getElementById("next");
+  var notes = document.getElementById("notes"), notesBody = document.getElementById("notes-body"), notesBtn = document.getElementById("notesBtn");
+  var notesData = [];
+  try { notesData = JSON.parse(document.getElementById("notes-data").textContent); } catch(e) {}
+  var pad = function(n){ return (n < 10 ? "0" : "") + n; };
+  var flowMQ = window.matchMedia("screen and (max-width:820px), screen and (max-aspect-ratio:1/1)");
+
+  slides.forEach(function(s, i){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "dot"; b.textContent = pad(i + 1);
+    b.setAttribute("aria-label", "Ir para o slide " + (i + 1) + ": " + s.getAttribute("aria-label").replace(/^\d+ de \d+: /, ""));
+    b.addEventListener("click", function(){ go(i); });
+    dots.appendChild(b);
+    var img = s.querySelector(".ph img");
+    if (img) { img.addEventListener("error", function(){ img.parentNode.classList.add("noimg"); }); }
+  });
+
+  function fit(){
+    if (flowMQ.matches) { deck.style.removeProperty("--scale"); return; }
+    var w = viewport.clientWidth, h = viewport.clientHeight;
+    deck.style.setProperty("--scale", Math.min(w / 1600, h / 900));
+  }
+
+  function renderNotes(){
+    var d = notesData[cur];
+    if (!d) { notesBody.innerHTML = ""; return; }
+    var html = "<h2>" + pad(cur + 1) + " · " + d.titulo + "</h2><p class='who'>" + d.quem + " · cerca de 45–60 s</p>";
+    d.fala.forEach(function(p){ html += "<p>" + p + "</p>"; });
+    if (d.termos) html += "<p class='tip'><b>Termos:</b> " + d.termos + "</p>";
+    if (d.conferir) html += "<p class='tip'><b>Conferir:</b> " + d.conferir + "</p>";
+    if (d.transicao) html += "<p class='next'>" + d.transicao + "</p>";
+    notesBody.innerHTML = html;
+  }
+
+  function go(i, fromHash){
+    i = Math.max(0, Math.min(N - 1, i));
+    slides.forEach(function(s, k){
+      var on = k === i;
+      s.classList.toggle("is-active", on);
+      s.setAttribute("aria-hidden", on ? "false" : "true");
+      if ("inert" in s) s.inert = !on;
+    });
+    Array.prototype.forEach.call(dots.children, function(b, k){ b.setAttribute("aria-current", k === i ? "true" : "false"); });
+    cur = i;
+    count.innerHTML = "<b>" + pad(i + 1) + "</b> / " + pad(N);
+    progress.style.setProperty("--p", (i + 1) / N);
+    prev.disabled = i === 0; next.disabled = i === N - 1;
+    viewport.scrollTop = 0;
+    renderNotes();
+    if (!fromHash) { try { history.replaceState(null, "", "#slide-" + (i + 1)); } catch(e) {} }
+  }
+
+  prev.addEventListener("click", function(){ go(cur - 1); });
+  next.addEventListener("click", function(){ go(cur + 1); });
+
+  function toggleNotes(){
+    var open = notes.hidden;
+    notes.hidden = !open;
+    notesBtn.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+  notesBtn.addEventListener("click", toggleNotes);
+
+  var fsBtn = document.getElementById("fsBtn");
+  var root = document.documentElement;
+  var canFS = !!(document.fullscreenEnabled || document.webkitFullscreenEnabled);
+  if (!canFS) fsBtn.hidden = true;
+  function toggleFS(){
+    if (!canFS) return;
+    var isFS = document.fullscreenElement || document.webkitFullscreenElement;
+    try {
+      if (isFS) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); }
+      else { var r = (root.requestFullscreen || root.webkitRequestFullscreen).call(root); if (r && r.catch) r.catch(function(){}); }
+    } catch(e) {}
+  }
+  fsBtn.addEventListener("click", toggleFS);
+
+  // Impressão: funciona com o arquivo aberto no navegador. Dentro de molduras que bloqueiam impressão, o botão some.
+  var printBtn = document.getElementById("printBtn");
+  var framed = false; try { framed = window.self !== window.top; } catch(e) { framed = true; }
+  if (framed) printBtn.hidden = true;
+  printBtn.addEventListener("click", function(){ window.print(); });
+
+  document.addEventListener("keydown", function(e){
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    var t = e.target, tag = t && t.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || (t && t.isContentEditable)) return;
+    var onButton = tag === "BUTTON" || tag === "A";
+    switch (e.key) {
+      case "ArrowRight": case "PageDown": go(cur + 1); e.preventDefault(); break;
+      case "ArrowLeft": case "PageUp": go(cur - 1); e.preventDefault(); break;
+      case " ": if (onButton) return; go(e.shiftKey ? cur - 1 : cur + 1); e.preventDefault(); break;
+      case "Home": go(0); e.preventDefault(); break;
+      case "End": go(N - 1); e.preventDefault(); break;
+      case "n": case "N": toggleNotes(); break;
+      case "f": case "F": toggleFS(); break;
+    }
+  });
+
+  // gesto de deslizar no celular
+  var sx = null, sy = null;
+  viewport.addEventListener("touchstart", function(e){ sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, {passive:true});
+  viewport.addEventListener("touchend", function(e){
+    if (sx === null) return;
+    var dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) go(cur + (dx < 0 ? 1 : -1));
+    sx = sy = null;
+  }, {passive:true});
+
+  function fromHash(){
+    var m = /^#slide-(\d+)$/.exec(location.hash || "");
+    return m ? parseInt(m[1], 10) - 1 : 0;
+  }
+  window.addEventListener("hashchange", function(){ go(fromHash(), true); });
+  window.addEventListener("resize", fit);
+  if (flowMQ.addEventListener) flowMQ.addEventListener("change", fit);
+  fit();
+  go(fromHash(), true);
+})();
+</script>
