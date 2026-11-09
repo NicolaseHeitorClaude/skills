@@ -256,13 +256,38 @@ b,strong{font-weight:700}
 .s6 .src{margin-top:16px}
 
 /* ---------- Análise crítica ---------- */
-.s7 .ph-duo1{top:0;left:0;width:440px;height:560px}
-.s7 .ph-duo1 img{object-position:50% 20%;filter:grayscale(1) contrast(1.05)}
-.s7 .ph-duo2{top:566px;left:0;width:440px;height:334px}
-.s7 .ph-duo2 img{object-position:38% 40%;filter:grayscale(1)}
-.s7 .ph-duo1::after,.s7 .ph-duo2::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(9,9,9,0) 72%,var(--ink) 100%)}
-.duo-line{position:absolute;left:0;top:560px;width:440px;height:6px;background:var(--yellow);z-index:3}
-.s7-body{position:absolute;inset:0 0 0 440px;display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) 0 76px}
+/* ---------- Continuidade: como o plano se organiza (mosaico de fotos novas) ---------- */
+.s-org{display:flex;flex-direction:column;padding:var(--pad-top) 0 48px var(--pad-x)}
+.s-org .org-body{width:740px;display:flex;flex-direction:column;flex:1;min-height:0}
+.s-org .h1{font-size:84px}
+.org-lead{margin-top:26px;font-size:var(--t-small);line-height:1.42;color:var(--paper);max-width:680px}
+.parts{margin-top:30px;display:flex;flex-direction:column}
+.parts li{display:grid;grid-template-columns:96px 1fr;gap:22px;padding:16px 0;border-top:1px solid var(--line)}
+.parts .pn{font-family:var(--f-display);font-weight:800;font-size:58px;line-height:.8;color:var(--yellow)}
+.parts h3{font-family:var(--f-display);font-weight:800;font-size:36px;line-height:1;text-transform:uppercase;margin-bottom:6px}
+.parts h3 small{font-family:var(--f-body);font-weight:700;font-size:var(--t-src);letter-spacing:.14em;color:var(--mute);margin-left:12px;vertical-align:middle}
+.parts p{font-size:19px;line-height:1.4;color:var(--mute)}
+.s-org .src{margin-top:auto}
+.mosaic{position:absolute;top:0;right:0;width:720px;height:900px}
+.mosaic .ph-m1{top:0;left:0;width:330px;height:900px}
+.mosaic .ph-m1 img{object-position:54% 50%;filter:grayscale(1) contrast(1.05)}
+.mosaic .ph-m2{top:0;left:336px;width:384px;height:400px}
+.mosaic .ph-m2 img{object-position:50% 0%}
+.mosaic .ph-m3{top:406px;left:336px;width:384px;height:494px}
+.mosaic .ph-m3 img{object-position:65% 50%}
+.mosaic .ph-m1::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--ink) 0,rgba(9,9,9,0) 22%)}
+.mosaic::before,.mosaic::after{content:"";position:absolute;background:var(--yellow);z-index:3}
+.mosaic::before{left:330px;top:0;bottom:0;width:6px}
+.mosaic::after{left:336px;right:0;top:400px;height:6px}
+
+.s7 .ph-back{top:0;left:0;width:380px;height:900px}
+.s7 .ph-back img{object-position:37% 50%;filter:grayscale(1) contrast(1.05)}
+.s7 .ph-back::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(9,9,9,0) 70%,var(--ink) 100%)}
+.s7-body{position:absolute;inset:0 0 0 380px;display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) 0 76px}
+/* foto adicional: discurso em P&B, no canto superior direito, ao lado do título */
+.s7 .ph-speech{top:var(--pad-top);right:var(--pad-x);width:300px;height:172px;z-index:2}
+.s7 .ph-speech img{object-position:30% 45%;filter:grayscale(1)}
+.s7 .ph-speech::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--yellow)}
 .s7 .h1{font-size:76px}
 .two{margin-top:34px;display:grid;grid-template-columns:1fr 1fr;gap:56px}
 .two>div{min-width:0}
@@ -370,6 +395,17 @@ b,strong{font-weight:700}
 
   .s3,.s4,.s5,.s6,.s-eco1,.s-eco2{padding-top:28px;padding-bottom:28px}
   .s-eco1,.s6{padding-top:0}
+  .s-org{padding-top:0;padding-bottom:28px}
+  .s-org .org-body{width:auto}
+  .mosaic{position:relative;order:-1;width:auto;height:auto;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:20vh 28vh;gap:6px;margin:0 calc(max(20px,env(safe-area-inset-left,0px)) * -1) 24px;background:var(--yellow)}
+  .mosaic::before,.mosaic::after{display:none}
+  .mosaic .ph{margin:0!important}
+  .mosaic .ph-m1{grid-row:1 / span 2}
+  .mosaic .ph img{height:100%}
+  .parts li{grid-template-columns:56px 1fr;gap:14px}
+  .parts .pn{font-size:40px}
+  .parts h3{font-size:26px}
+  .parts p{font-size:15px}
   .s-eco1 .ph-podium,.s6 .ph-flag{order:-1;height:50vh!important;margin-bottom:24px}
   .s-eco1 .ph-podium img{height:100%;object-position:44% 30%}
   .s6 .ph-flag img{height:100%;object-position:68% 40%}
@@ -408,11 +444,12 @@ b,strong{font-weight:700}
   .word{font-size:56px}
   .ex{font-size:15px}
   .s7{padding-top:0}
-  .s7 .ph-duo1{height:46vh!important}
-  .s7 .ph-duo2{height:26vh!important;border-top:6px solid var(--yellow)}
-  .s7 .ph-duo1 img,.s7 .ph-duo2 img{height:100%}
-  .s7 .ph-duo1::after,.s7 .ph-duo2::after{background:linear-gradient(0deg,var(--ink) 0,rgba(9,9,9,0) 45%)}
-  .duo-line{display:none}
+  .s7 .ph-back{height:40vh!important}
+  .s7 .ph-back img{height:100%;object-position:37% 55%}
+  .s7 .ph-back::after{background:linear-gradient(0deg,var(--ink) 0,rgba(9,9,9,0) 45%)}
+  .s7 .ph-speech{order:2;height:24vh!important;margin-top:6px!important}
+  .s7 .ph-speech img{height:100%}
+  .s7 .ph-speech::after{top:0;bottom:auto}
   .s7-body{padding:8px 0 0}
   .s7 .src{margin-top:20px;padding:0}
   .s7 .qband{margin:20px calc(max(20px,env(safe-area-inset-left,0px)) * -1) 0;padding:18px max(20px,env(safe-area-inset-left,0px))}
@@ -501,7 +538,27 @@ b,strong{font-weight:700}
         </div>
       </section>
 
-      <!-- 3 · ECONOMIA: PROBLEMA E PROPOSTA -->
+      <!-- 3 · CONTINUIDADE: COMO O PLANO SE ORGANIZA -->
+      <section class="slide s-org tex" data-title="Como o plano se organiza" data-part="abertura" data-tx="mask">
+        <div class="mosaic">
+          <figure class="ph ph-m1" data-mask="v"><img src="../assets/img/retrato-rua.jpg" alt="Retrato em preto e branco fornecido pelo grupo: homem de camisa e colete olhando para a câmera, na rua."></figure>
+          <figure class="ph ph-m2" data-mask="h" data-lag="1"><img src="../assets/img/oculos.jpg" alt="Fotografia fornecida pelo grupo: homem de óculos escuros diante de um microfone, com pessoas de punho erguido ao fundo."></figure>
+          <figure class="ph ph-m3" data-mask="h" data-lag="2"><img src="../assets/img/noite-palco.jpg" alt="Fotografia fornecida pelo grupo: homem falando ao microfone à noite, diante de um público com bandeiras e fumaça."></figure>
+        </div>
+        <div class="org-body">
+          <p class="label rv" style="--d:0;margin-bottom:18px"><span class="sq"></span>O documento analisado</p>
+          <h2 class="h1"><span class="ln rv-t" style="--d:1">Como o plano</span><span class="ln y rv-t" style="--d:2">se organiza</span></h2>
+          <p class="org-lead rv" style="--d:3">O PDF é um resumo executivo: reúne a abertura de cada capítulo do Livro Amarelo, que tem mais de 500 páginas.</p>
+          <ol class="parts">
+            <li class="rv-step" style="--d:4"><span class="pn">I</span><div><h3>Estado Novo<small>Cap. I–IV</small></h3><p>Reorganizar o Estado: ajuste fiscal, segurança, pacto federativo e gestão.</p></div></li>
+            <li class="rv-step" style="--d:5"><span class="pn">II</span><div><h3>Reformas de Base<small>Cap. V–IX</small></h3><p>Economia e serviços públicos: produtividade, infraestrutura, saúde, cultura e educação.</p></div></li>
+            <li class="rv-step" style="--d:6"><span class="pn">III</span><div><h3>País do Futuro<small>Cap. X–XIV</small></h3><p>Projetos de longo prazo: Nordeste, terras raras, agro e IA, política externa e desfavelização.</p></div></li>
+          </ol>
+          <p class="src rv" style="--d:7">Fonte: PDF, sumário (p. 2) e introdução (pp. 5–7).</p>
+        </div>
+      </section>
+
+      <!-- 4 · ECONOMIA: PROBLEMA E PROPOSTA -->
       <section class="slide s-eco1 tex" data-title="Proposta 1, Economia: problema e proposta" data-part="economia" data-tx="mask">
         <figure class="ph ph-podium" data-mask="v"><img src="../assets/img/podio.jpg" alt="Fotografia fornecida pelo grupo: homem de terno azul e gravata amarela em um púlpito, diante de um painel com texto de campanha."></figure>
         <header class="chap">
@@ -686,17 +743,17 @@ b,strong{font-weight:700}
           <li class="rv" style="--d:3">
             <span class="word">Estado</span>
             <div class="concept"><p class="ls">Democracia e governabilidade</p><p>Governar depende do Congresso, dos estados, do Judiciário e da sociedade. O orçamento expressa escolhas sobre direitos, prioridades e quem recebe recursos.</p></div>
-            <p class="ex"><b>No plano · slides 3–4</b>A PEC fiscal redistribui o orçamento e, como a Lei Antifacção, depende de aprovação no Congresso.</p>
+            <p class="ex"><b>No plano · slides 4–5</b>A PEC fiscal redistribui o orçamento e, como a Lei Antifacção, depende de aprovação no Congresso.</p>
           </li>
           <li class="rv" style="--d:4">
             <span class="word">Direitos</span>
             <div class="concept"><p class="ls">Contrato social</p><p>Hobbes, Locke e Rousseau explicam de formas diferentes o que torna o poder legítimo: proteção, direitos, vontade geral.</p></div>
-            <p class="ex"><b>No plano · slide 5</b>Combater facções preservando o devido processo legal.</p>
+            <p class="ex"><b>No plano · slide 6</b>Combater facções preservando o devido processo legal.</p>
           </li>
           <li class="rv" style="--d:5">
             <span class="word">Desigual&shy;dade</span>
             <div class="concept"><p class="ls">Pierre Bourdieu · capital cultural</p><p>Os alunos chegam à escola com conhecimentos e recursos culturais diferentes, e a escola valoriza mais os de alguns.</p></div>
-            <p class="ex"><b>Leitura do grupo · slide 7</b>Bolsas só por mérito podem premiar vantagens de origem.</p>
+            <p class="ex"><b>Leitura do grupo · slide 8</b>Bolsas só por mérito podem premiar vantagens de origem.</p>
           </li>
         </ol>
         <p class="src rv" style="--d:6">Referência: BOURDIEU, Pierre; PASSERON, Jean-Claude. <i>A reprodução</i>. As relações com o plano são interpretação do grupo.</p>
@@ -704,9 +761,8 @@ b,strong{font-weight:700}
 
       <!-- 9 · ANÁLISE CRÍTICA -->
       <section class="slide s7" data-title="Análise crítica" data-part="analise" data-tx="mask">
-        <figure class="ph ph-duo1" data-mask="v"><img src="../assets/img/retrato-rua.jpg" alt="Retrato em preto e branco fornecido pelo grupo: homem de camisa e colete olhando para a câmera, na rua."></figure>
-        <figure class="ph ph-duo2" data-mask="h" data-lag="1"><img src="../assets/img/discurso-pb.jpg" alt="Fotografia em preto e branco fornecida pelo grupo: homem de terno falando ao microfone."></figure>
-        <span class="duo-line wipe" style="--d:1" aria-hidden="true"></span>
+        <figure class="ph ph-back" data-mask="v"><img src="../assets/img/bastidores.jpg" alt="Fotografia em preto e branco fornecida pelo grupo: homem de camisa e gravata sentado, olhando para baixo, em um camarim."></figure>
+        <figure class="ph ph-speech" data-mask="h" data-lag="2"><img src="../assets/img/discurso-pb.jpg" alt="Fotografia em preto e branco fornecida pelo grupo: homem de terno falando ao microfone."></figure>
         <div class="s7-body">
           <div>
             <p class="label rv" style="--d:0;margin-bottom:18px"><span class="sq"></span>Análise crítica</p>
@@ -962,7 +1018,7 @@ b,strong{font-weight:700}
     // fotografias
     q(".ph").forEach(function(ph){
       var img = ph.querySelector("img"), veil = ph.querySelector(".veil");
-      var lag = ph.hasAttribute("data-lag") ? 200 : 0;
+      var lag = (parseInt(ph.getAttribute("data-lag"), 10) || 0) * 200;
       if (mode === "mask") {
         var v = ph.getAttribute("data-mask") === "v";
         var from = v ? (dir > 0 ? "inset(100% 0% 0% 0%)" : "inset(0% 0% 100% 0%)")

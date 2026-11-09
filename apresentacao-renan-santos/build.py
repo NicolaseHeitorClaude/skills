@@ -42,22 +42,34 @@ NOTAS = [
         "transicao": None,
     },
     {
-        "titulo": "Economia — problema e proposta",
+        "titulo": "Como o plano se organiza",
         "quem": "Gabriela",
         "fala": [
-            "Começamos pela economia, porque o próprio plano diz que as outras propostas dependem das contas em ordem. O problema apontado é o desequilíbrio das contas públicas: as despesas obrigatórias crescem acima do limite do arcabouço fiscal e, segundo o documento, sobra pouco para investir (p. 9).",
+            "Antes das propostas, vale entender o documento. O PDF que lemos é um resumo executivo: ele junta a abertura de cada capítulo do Livro Amarelo, que tem mais de 500 páginas.",
+            "O plano tem três partes. A primeira, Estado Novo, trata de reorganizar o Estado: ajuste fiscal, segurança, pacto federativo e gestão. A segunda, Reformas de Base, fala de economia e serviços públicos, como saúde e educação. A terceira, País do Futuro, reúne projetos de longo prazo, como o Nordeste, as terras raras e a política externa.",
+            "As fotos foram trazidas pelo grupo e servem só como elemento visual; não são prova de apoio nem de resultado.",
+        ],
+        "termos": "Resumo executivo: versão curta de um documento longo, com as ideias principais.",
+        "conferir": "Sumário, p. 2; introdução com a descrição das três partes, pp. 5–7.",
+        "transicao": "Gabriela: “Agora o Heitor começa pelas propostas, a partir da economia.”",
+    },
+    {
+        "titulo": "Economia — problema e proposta",
+        "quem": "Heitor",
+        "fala": [
+            "Valeu, Gabi. Começamos pela economia, porque o próprio plano diz que as outras propostas dependem das contas em ordem. O problema apontado é o desequilíbrio das contas públicas: as despesas obrigatórias crescem acima do limite do arcabouço fiscal e, segundo o documento, sobra pouco para investir (p. 9).",
             "A proposta central é uma PEC de ajuste fiscal, que o plano chama de PEC do Equilíbrio Fiscal. Ela inclui revisar benefícios fiscais e o abono salarial. O plano também quer acabar com os supersalários e mudar as emendas parlamentares (p. 10).",
             "O benefício pretendido é abrir espaço no orçamento para investimentos e deixar as contas mais sustentáveis. O diagrama embaixo mostra a lógica do plano: rever despesas, reorganizar o orçamento e ampliar a capacidade de investir. Isso é o que o plano espera; os efeitos dependem de o Congresso aprovar e de a medida ser bem executada.",
         ],
         "termos": "Ajuste fiscal: mudanças nas receitas e nas despesas para equilibrar as contas. PEC: Proposta de Emenda à Constituição; precisa de 3/5 dos votos na Câmara e no Senado, em dois turnos. Benefícios fiscais: isenções e reduções de impostos que diminuem a arrecadação (o plano fala em “renúncias fiscais” ou “gastos tributários”). Abono salarial: benefício anual pago a trabalhadores formais de baixa renda. Supersalários: salários de servidores acima do teto. Emendas parlamentares: parte do orçamento indicada por deputados e senadores.",
         "conferir": "Problema e números do déficit e da dívida, p. 9; PEC do Equilíbrio Fiscal e medidas do CDPP, p. 10.",
-        "transicao": "Gabriela: “O ajuste também tem consequências sociais. O Heitor explica quais.”",
+        "transicao": None,
     },
     {
         "titulo": "Economia — escolhas e impactos",
         "quem": "Heitor",
         "fala": [
-            "Valeu, Gabi. A PEC tem duas medidas que mexem diretamente com a vida das pessoas.",
+            "O ajuste também tem consequências sociais. A PEC tem duas medidas que mexem diretamente com a vida das pessoas.",
             "A primeira: aposentadorias e benefícios assistenciais deixariam de ser reajustados pelo salário mínimo e passariam a ser corrigidos só pela inflação. A correção pela inflação preserva o poder de compra, mas, se o salário mínimo tiver aumento real, o benefício não acompanha.",
             "A segunda: os pisos de saúde e educação deixariam de ser ligados à receita. Hoje existe um gasto mínimo calculado sobre o que o governo arrecada. Desvincular muda essa regra; não quer dizer acabar com o SUS nem com a escola pública, nem zerar esses gastos.",
             "O argumento a favor é ter mais flexibilidade para organizar o orçamento. O plano cita uma economia de R$ 1,1 trilhão até 2031, mas é uma projeção do documento, não um resultado. A nossa pergunta: como equilibrar as contas sem prejudicar a proteção social e a qualidade dos serviços?",

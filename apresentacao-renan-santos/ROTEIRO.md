@@ -29,10 +29,23 @@ Como não dá para analisar tudo, escolhemos quatro áreas: economia, segurança
 - *Termos:* Diagnóstico: a leitura dos problemas que justifica as propostas. Desfavelização: nome que o plano dá ao seu projeto urbano para favelas (p. 48).
 - *Conferir no PDF:* Sumário, p. 2.
 
-## Slide 3 — Economia — problema e proposta
+## Slide 3 — Como o plano se organiza
 **Gabriela**
 
-Começamos pela economia, porque o próprio plano diz que as outras propostas dependem das contas em ordem. O problema apontado é o desequilíbrio das contas públicas: as despesas obrigatórias crescem acima do limite do arcabouço fiscal e, segundo o documento, sobra pouco para investir (p. 9).
+Antes das propostas, vale entender o documento. O PDF que lemos é um resumo executivo: ele junta a abertura de cada capítulo do Livro Amarelo, que tem mais de 500 páginas.
+
+O plano tem três partes. A primeira, Estado Novo, trata de reorganizar o Estado: ajuste fiscal, segurança, pacto federativo e gestão. A segunda, Reformas de Base, fala de economia e serviços públicos, como saúde e educação. A terceira, País do Futuro, reúne projetos de longo prazo, como o Nordeste, as terras raras e a política externa.
+
+As fotos foram trazidas pelo grupo e servem só como elemento visual; não são prova de apoio nem de resultado.
+
+- *Termos:* Resumo executivo: versão curta de um documento longo, com as ideias principais.
+- *Conferir no PDF:* Sumário, p. 2; introdução com a descrição das três partes, pp. 5–7.
+- *Transição:* Gabriela: “Agora o Heitor começa pelas propostas, a partir da economia.”
+
+## Slide 4 — Economia — problema e proposta
+**Heitor**
+
+Valeu, Gabi. Começamos pela economia, porque o próprio plano diz que as outras propostas dependem das contas em ordem. O problema apontado é o desequilíbrio das contas públicas: as despesas obrigatórias crescem acima do limite do arcabouço fiscal e, segundo o documento, sobra pouco para investir (p. 9).
 
 A proposta central é uma PEC de ajuste fiscal, que o plano chama de PEC do Equilíbrio Fiscal. Ela inclui revisar benefícios fiscais e o abono salarial. O plano também quer acabar com os supersalários e mudar as emendas parlamentares (p. 10).
 
@@ -40,12 +53,11 @@ O benefício pretendido é abrir espaço no orçamento para investimentos e deix
 
 - *Termos:* Ajuste fiscal: mudanças nas receitas e nas despesas para equilibrar as contas. PEC: Proposta de Emenda à Constituição; precisa de 3/5 dos votos na Câmara e no Senado, em dois turnos. Benefícios fiscais: isenções e reduções de impostos que diminuem a arrecadação (o plano fala em “renúncias fiscais” ou “gastos tributários”). Abono salarial: benefício anual pago a trabalhadores formais de baixa renda. Supersalários: salários de servidores acima do teto. Emendas parlamentares: parte do orçamento indicada por deputados e senadores.
 - *Conferir no PDF:* Problema e números do déficit e da dívida, p. 9; PEC do Equilíbrio Fiscal e medidas do CDPP, p. 10.
-- *Transição:* Gabriela: “O ajuste também tem consequências sociais. O Heitor explica quais.”
 
-## Slide 4 — Economia — escolhas e impactos
+## Slide 5 — Economia — escolhas e impactos
 **Heitor**
 
-Valeu, Gabi. A PEC tem duas medidas que mexem diretamente com a vida das pessoas.
+O ajuste também tem consequências sociais. A PEC tem duas medidas que mexem diretamente com a vida das pessoas.
 
 A primeira: aposentadorias e benefícios assistenciais deixariam de ser reajustados pelo salário mínimo e passariam a ser corrigidos só pela inflação. A correção pela inflação preserva o poder de compra, mas, se o salário mínimo tiver aumento real, o benefício não acompanha.
 
@@ -57,7 +69,7 @@ O argumento a favor é ter mais flexibilidade para organizar o orçamento. O pla
 - *Conferir no PDF:* Desindexação, desvinculação dos pisos e estimativa de R$ 1,1 trilhão até 2031, p. 10; crescimento de cerca de 6% ao ano dos gastos com Previdência e Assistência, p. 9.
 - *Transição:* Heitor: “Agora a segurança, que o plano chama de maior problema do Brasil.”
 
-## Slide 5 — Segurança
+## Slide 6 — Segurança
 **Heitor**
 
 O plano diz que facções como PCC e CV controlam territórios e funcionam quase como governos paralelos, e que as polícias não compartilham dados.
@@ -72,7 +84,7 @@ O plano afirma que isso é compatível com a Constituição. Essa é a posição
 - *Conferir no PDF:* Problema, p. 11; Direito Penal do Inimigo e Lei Antifacção, p. 12; fronteiras, asfixia financeira e presídios, p. 13.
 - *Transição:* Heitor: “O Nicolas segue com saúde e educação.”
 
-## Slide 6 — Saúde
+## Slide 7 — Saúde
 **Nicolas**
 
 Obrigado, Heitor. Na saúde, o capítulo se chama “SUS Fila Zero”. É o nome do capítulo, não uma garantia de que as filas vão acabar. O problema apontado é a espera de meses e a falta de um prontuário unificado.
@@ -86,7 +98,7 @@ O fluxo na tela é um resumo nosso. O benefício esperado é um atendimento mais
 - *Termos:* Prontuário: histórico de saúde do paciente. Hub-and-spoke: modelo em que centros regionais (hubs) recebem os casos complexos das cidades menores.
 - *Conferir no PDF:* ENER e critérios, p. 25; PRONTO, telemedicina, piloto em algumas cidades, meta de 80% de resolução na atenção primária e inspiração no DoctorSV de El Salvador, p. 26.
 
-## Slide 7 — Educação
+## Slide 8 — Educação
 **Nicolas**
 
 Na educação, o plano aponta dois problemas: a baixa aprendizagem, citando o PISA 2022, em que cerca de 73% dos alunos brasileiros ficaram abaixo do mínimo em matemática, e a violência nas escolas.
@@ -99,7 +111,7 @@ No eixo das oportunidades, o plano propõe acabar com as cotas e criar bolsas de
 - *Conferir no PDF:* PISA e problema, p. 30; Ceará, método fônico, código e bolsas de mérito, p. 31; lista de propostas, incluindo abolir as cotas (item 4), p. 32.
 - *Transição:* Nicolas: “A Sabrina relaciona tudo isso com a Sociologia.”
 
-## Slide 8 — Relação com a Sociologia
+## Slide 9 — Relação com a Sociologia
 **Sabrina**
 
 Obrigada, Nicolas. Primeiro, democracia e governabilidade. Governabilidade é a capacidade de aprovar e executar políticas, negociando com o Congresso, os estados e a sociedade. Isso é diferente de concentrar poder. E o orçamento é onde isso aparece: decidir quanto vai para aposentadorias, saúde, educação ou investimento é uma escolha política sobre direitos e prioridades. Por isso a PEC fiscal, assim como a Lei Antifacção, depende do Congresso.
@@ -111,7 +123,7 @@ Terceiro, Pierre Bourdieu e o capital cultural. Os alunos chegam à escola com c
 - *Termos:* Capital cultural: conhecimentos, gostos, linguagem e diplomas que dão vantagem na escola. Referência: Bourdieu e Passeron, A reprodução.
 - *Conferir no PDF:* Confirmem com a professora se Bourdieu foi estudado em aula. Se não, troquem pelo autor estudado (Habermas ou Bauman).
 
-## Slide 9 — Análise crítica
+## Slide 10 — Análise crítica
 **Sabrina**
 
 Algumas coisas ficaram claras: o plano escolhe prioridades, dá nome aos instrumentos, como a PEC do Equilíbrio Fiscal, a Lei Antifacção, a ENER, o PRONTO e o código disciplinar, e quer reorganizar o Estado, com mais poder para a União.
@@ -123,7 +135,7 @@ Lembrando: lemos o resumo. O livro completo tem mais de 500 páginas e pode traz
 - *Termos:* Indicador: número usado para medir se uma política funcionou. Salvaguarda: regra que protege direitos durante a execução de uma política.
 - *Conferir no PDF:* Estimativa da PEC do Equilíbrio Fiscal (R$ 1,1 trilhão até 2031), p. 10; meta de 80%, p. 26; prazos processuais de 30 e 60 dias, p. 12.
 
-## Slide 10 — Fontes e reflexão final
+## Slide 11 — Fontes e reflexão final
 **Sabrina**
 
 Para fechar, as fontes. A atividade pede pesquisa no site do TSE, o DivulgaCandContas, onde ficam as candidaturas e os planos registrados. O documento que analisamos é o PDF O Futuro é Glorioso, do Partido Missão; as páginas usadas, incluindo o ajuste fiscal nas páginas 9 e 10, estão na tela. A referência de Sociologia é A reprodução, de Bourdieu e Passeron, e as fotos foram trazidas pelo grupo.
