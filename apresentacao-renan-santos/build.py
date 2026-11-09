@@ -132,12 +132,12 @@ NOTAS = [
         "titulo": "Fontes e reflexão final",
         "quem": "Sabrina",
         "fala": [
-            "Para fechar, as fontes. A atividade pede pesquisa no site oficial do TSE: usamos a página de propostas de governo dos candidatos à Presidência em 2026, na parte do Renan Santos. O documento que analisamos é o PDF <i>O Futuro é Glorioso</i>, do Partido Missão; as páginas usadas, incluindo o ajuste fiscal nas páginas 9 e 10, estão na tela. A referência de Sociologia é <i>A reprodução</i>, de Bourdieu e Passeron, e as fotos foram trazidas pelo grupo.",
+            "Para fechar, as fontes. A atividade pede pesquisa no site oficial do TSE: consultamos em 9 de novembro a página “Renan Santos — Propostas de Governo”, que organiza as propostas por tema e indica as páginas do plano. O documento que analisamos é o PDF <i>O Futuro é Glorioso</i>, do Partido Missão; as páginas usadas, incluindo o ajuste fiscal nas páginas 9 e 10, estão na tela. A referência de Sociologia é <i>A reprodução</i>, de Bourdieu e Passeron, e as fotos foram trazidas pelo grupo.",
             "A pergunta final da professora é: por que é importante conhecer diretamente as propostas de um candidato antes de formar uma opinião sobre elas? A nossa resposta: porque a leitura direta permite comparar propostas, avaliar consequências e formar uma opinião fundamentada, além dos slogans e dos recortes das redes.",
             "Obrigada. Estamos abertos a perguntas.",
         ],
         "termos": "TSE: Tribunal Superior Eleitoral, que registra as candidaturas e publica os planos de governo.",
-        "conferir": "Antes da entrega, abram o link do TSE e confiram se o plano publicado lá é o mesmo PDF (título, 51 páginas e páginas citadas).",
+        "conferir": "Página do TSE consultada pelo grupo em 9 nov. 2026. As páginas que ela indica para economia (pp. 9–10), segurança (pp. 11–13), saúde (pp. 25–26) e educação (pp. 30–32) coincidem com as do PDF usado.",
         "transicao": None,
     },
 ]

@@ -43,6 +43,8 @@ Ao voltar, a direção se inverte. O texto fica pronto para leitura em cerca de 
 
 O texto fica em `src/deck.html` e as notas em `build.py`. Depois de editar, rode `python3 build.py` para gerar de novo `index.html` e `ROTEIRO.md`.
 
-## Pendências antes da entrega
+## Fonte oficial
 
-- **TSE:** a página oficial indicada pelo grupo está nas fontes (https://www.tse.jus.br/eleicoes/eleicoes-2026-content/propostas-de-governo-dos-candidatos-ao-cargo-de-presidente-da-republica-eleicoes-2026/renan-santos-propostas-de-governo). O site bloqueou a consulta automática, então a comparação não foi feita aqui: abram a página e confiram se o plano publicado é o mesmo PDF (título, 51 páginas e páginas citadas).
+Página do TSE “Renan Santos — Propostas de Governo”, consultada pelo grupo em 9 nov. 2026: https://www.tse.jus.br/eleicoes/eleicoes-2026-content/propostas-de-governo-dos-candidatos-ao-cargo-de-presidente-da-republica-eleicoes-2026/renan-santos-propostas-de-governo
+
+As páginas que ela indica para os temas analisados coincidem com as do PDF usado na apresentação.
