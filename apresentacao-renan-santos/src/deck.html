@@ -233,7 +233,8 @@ b,strong{font-weight:700}
 /* foto ampla sangrando no canto superior direito; o recorte deixa o logotipo do fundo de fora */
 .s4 .ph-health{top:0;right:0;width:600px;height:340px}
 .s4 .ph-health img{position:absolute;left:-40%;top:-20%;width:140%;height:140%;max-width:none}
-.s4 .ph-health::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--ink)}
+/* fade: camada do slide 4 px mais larga que a foto, para cobrir a borda também na impressão */
+.s4::after{content:"";position:absolute;top:0;right:0;width:604px;height:340px;z-index:2;pointer-events:none;background:linear-gradient(90deg,var(--yellow) 0,var(--yellow) 1%,rgba(255,208,0,.55) 14%,rgba(255,208,0,0) 40%),linear-gradient(0deg,var(--yellow) 0,rgba(255,208,0,.55) 14%,rgba(255,208,0,0) 42%)}
 .s4 .h1{font-size:80px}
 .s4 .chap-problem{max-width:520px!important}
 .s4 .props{margin-top:36px}
@@ -421,6 +422,8 @@ b,strong{font-weight:700}
   .s4 .ph-health{height:32vh!important}
   .s-eco2 .ph-eco2 img,.s3 .ph-sec img{height:100%}
   .s4 .ph-health img{position:relative;left:0;top:0;width:100%;height:100%;object-position:72% 40%}
+  .s4::after{display:none}
+  .s4 .ph-health::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,var(--yellow) 0,rgba(255,208,0,.55) 14%,rgba(255,208,0,0) 42%)}
   .s3 .ph-sec::after{background:linear-gradient(0deg,var(--ink) 0,var(--ink) 10%,rgba(9,9,9,0) 42%)}
   .s-eco2 .ph-eco2::after{display:none}
   .s3 .qband,.s-eco2 .qband{margin-right:calc(max(20px,env(safe-area-inset-right,0px)) * -1)!important}
