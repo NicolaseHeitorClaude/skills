@@ -58,33 +58,20 @@ b,strong{font-weight:700}
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
 .slide.yellow{background:var(--yellow);color:var(--ink)}
 
-/* ---------- Coreografia de entrada ----------
-   d = ordem: 0 rótulo, 1 título, 2+ conteúdo, último pergunta/conclusão. */
-.rv,.rv-t,.rv-band,.wipe,.rv-step{--delay:calc(var(--base) + var(--d,0) * var(--step))}
-.rv{opacity:0;transform:translate3d(0,20px,0)}
-.rv-t{opacity:0;transform:translate3d(0,.32em,0);clip-path:inset(0 -6% 100% -6%)}
-.rv-band{clip-path:inset(0 100% 0 0)}
-.rv-band>*{opacity:0;transform:translate3d(-14px,0,0)}
-.wipe{transform:scaleX(0);transform-origin:left center}
-.rv-step{opacity:0;transform:translate3d(-18px,0,0)}
-.ph img{transform:scale(1.035)}
-
-.is-active .rv,.is-active .rv-step{opacity:1;transform:none;
-  transition:opacity var(--t-in) var(--ease) var(--delay),transform calc(var(--t-in) + .08s) var(--ease) var(--delay)}
-.is-active .rv-t{opacity:1;transform:none;clip-path:inset(-12% -6% -12% -6%);
-  transition:opacity .5s var(--ease) var(--delay),transform .8s var(--ease) var(--delay),clip-path .8s var(--ease) var(--delay)}
-.is-active .rv-band{clip-path:inset(0 0 0 0);transition:clip-path .75s var(--ease) var(--delay)}
-.is-active .rv-band>*{opacity:1;transform:none;transition:opacity .5s var(--ease) calc(var(--delay) + .28s),transform .6s var(--ease) calc(var(--delay) + .28s)}
-.is-active .wipe{transform:none;transition:transform .8s var(--ease) var(--delay)}
-.is-active .ph img{transform:none;transition:transform 1.4s var(--ease) .05s}
-
-/* saída: o conteúdo some depressa sobre o próprio fundo, sem tela preta */
-.is-leaving .rv,.is-leaving .rv-t,.is-leaving .rv-step,.is-leaving .rv-band>*{opacity:0;transform:translate3d(0,-8px,0);clip-path:none;
-  transition:opacity .26s var(--ease-out),transform .34s var(--ease-out)}
-.is-leaving .rv-band{clip-path:inset(0 0 0 0)}
-.is-leaving .ph,.is-leaving .rv-band,.is-leaving .wipe,.is-leaving .rule,.is-leaving .num{opacity:0;transition:opacity .3s var(--ease-out)}
-.is-leaving .wipe{transform:none}
-.is-leaving .ph img{transform:none}
+/* ---------- Movimento ----------
+   Todo elemento repousa visível e parado; o JavaScript (Web Animations API) anima só
+   elementos internos dos slides, nunca o palco escalado (.deck).
+   Três transições: máscara (slides com foto), passagem editorial (troca de parte) e camadas (conteúdo). */
+.rv-t{display:block;clip-path:inset(-.42em -.4em -.26em -.4em)}
+.ln-i{display:block}
+.wipe{transform-origin:left center}
+.wipe-y{transform-origin:center top}
+.veil{position:absolute;inset:0;z-index:0;background:var(--yellow);pointer-events:none;opacity:0}
+.tx-band{position:absolute;top:0;bottom:0;left:0;width:260px;z-index:6;pointer-events:none;background:var(--yellow);opacity:0}
+.tx-band::before{content:"";position:absolute;top:0;bottom:0;left:0;width:12px;background:var(--ink)}
+.tx-band.rev::before{left:auto;right:0}
+.tx-band::after{content:"";position:absolute;top:0;bottom:0;left:38px;width:2px;background:var(--ink);opacity:.35}
+.tx-band.rev::after{left:auto;right:38px}
 
 /* ---------- Elementos comuns ---------- */
 .label{font-family:var(--f-body);font-weight:600;font-size:var(--t-label);letter-spacing:.18em;text-transform:uppercase;color:var(--mute);display:flex;align-items:center;gap:14px}
@@ -101,10 +88,12 @@ b,strong{font-weight:700}
 .num{font-family:var(--f-display);font-weight:800;font-size:var(--t-num);line-height:.74;color:var(--yellow);letter-spacing:-.03em;flex:none;font-variant-numeric:tabular-nums}
 .yellow .num{color:var(--ink)}
 .chap .label{margin-bottom:16px}
-.ph{position:absolute;margin:0;overflow:hidden;background:var(--graphite)}
-.ph img{display:block;width:100%;height:100%;object-fit:cover}
+.ph{position:absolute;margin:0;overflow:hidden;background:transparent}
+.ph img{position:relative;z-index:1;display:block;width:100%;height:100%;object-fit:cover}
+.ph::after{z-index:2}
 .ph.noimg img{display:none}
-.ph.noimg::after{content:"Imagem indisponível";position:absolute;left:24px;bottom:24px;font-size:var(--t-src);color:var(--mute)}
+.ph.noimg{background:var(--graphite)}
+.ph.noimg::after{content:"Imagem indisponível";position:absolute;left:24px;bottom:24px;font-size:var(--t-src);color:var(--mute);background:none}
 .rule{display:block;height:2px;background:var(--line)}
 .rule.yl{background:var(--yellow)}
 .rule.ink{background:var(--ink);height:3px}
@@ -147,22 +136,27 @@ b,strong{font-weight:700}
 .cut strong{font-family:var(--f-display);font-weight:800;font-size:38px;letter-spacing:.02em;text-transform:uppercase;line-height:1.05}
 
 /* ---------- 3 · Economia: problema e proposta ---------- */
-.s-eco1{display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) 0}
-.s-eco1 .h1{font-size:82px}
-.eco-cols{margin-top:42px;display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:56px}
+.s-eco1{display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) 0 512px}
+.s-eco1 .ph-podium{top:0;left:0;width:440px;height:900px}
+.s-eco1 .ph-podium img{object-position:44% 50%}
+.s-eco1 .ph-podium::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(9,9,9,0) 64%,var(--ink) 100%)}
+.s-eco1 .num{font-size:156px}
+.s-eco1 .chap{gap:32px}
+.s-eco1 .h1{font-size:74px}
+.eco-cols{margin-top:36px;display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:40px}
 .eco-cols>div{min-width:0}
-.eco-cols .rule{margin-bottom:18px}
-.eco-cols p:not(.ls){font-size:var(--t-small);line-height:1.42}
-.eco-cols .muted{color:var(--mute)}
-.steps-wrap{margin:auto calc(var(--pad-x) * -1) 0;background:var(--graphite);padding:22px var(--pad-x) 30px;position:relative}
+.eco-cols .rule{margin-bottom:16px}
+.eco-cols p:not(.ls){font-size:20px;line-height:1.4}
+.eco-cols .bullets li{font-size:20px}
+.steps-wrap{margin:auto calc(var(--pad-x) * -1) 0 -72px;background:var(--graphite);padding:20px var(--pad-x) 28px 72px;position:relative}
 .steps-wrap .ls{color:var(--mute)}
-.steps{display:grid;grid-template-columns:1fr 1fr 1fr;align-items:start;gap:0;margin-top:16px}
+.steps{display:grid;grid-template-columns:1fr 1fr 1fr;align-items:start;gap:0;margin-top:14px}
 .step{display:flex;align-items:flex-start;gap:0;min-width:0}
-.step b{font-family:var(--f-display);font-weight:800;font-size:44px;line-height:.95;text-transform:uppercase;letter-spacing:.01em}
+.step b{font-family:var(--f-display);font-weight:800;font-size:38px;line-height:.95;text-transform:uppercase;letter-spacing:.01em}
 .step small{display:block;font-family:var(--f-body);font-size:var(--t-src);font-weight:700;letter-spacing:.14em;color:var(--yellow);margin-bottom:8px}
 .step:last-child b{color:var(--yellow)}
-.step+.step{position:relative;padding-left:96px}
-.step+.step::before{content:"";position:absolute;left:14px;top:34px;width:62px;height:24px;background:no-repeat center/contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 62 24'><path d='M0 12h56M46 3l11 9-11 9' fill='none' stroke='%23FFD000' stroke-width='3.5'/></svg>")}
+.step+.step{position:relative;padding-left:80px}
+.step+.step::before{content:"";position:absolute;left:10px;top:31px;width:54px;height:22px;background:no-repeat center/contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 62 24'><path d='M0 12h56M46 3l11 9-11 9' fill='none' stroke='%23FFD000' stroke-width='3.5'/></svg>")}
 .s-eco1 .src{padding:12px 0;text-align:right}
 
 /* ---------- 4 · Economia: escolhas e impactos (amarelo) ---------- */
@@ -230,8 +224,7 @@ b,strong{font-weight:700}
 .axis{min-width:0;position:relative}
 .axis>.rule{margin-bottom:20px}
 .axis.a2{padding-left:56px;margin-left:56px}
-.axis.a2::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--yellow);transform-origin:top;transform:scaleY(var(--grow,0));transition:transform .8s var(--ease) calc(var(--base) + 3 * var(--step))}
-.is-active .axis.a2::before,.is-leaving .axis.a2::before{--grow:1}
+.axis.a2::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--yellow);transform-origin:top}
 .axis-t{font-family:var(--f-display);font-weight:800;font-size:72px;line-height:.9;text-transform:uppercase;margin-bottom:22px;letter-spacing:.005em}
 .a2 .axis-t{color:var(--yellow)}
 .axis li{color:var(--mute)}
@@ -246,23 +239,30 @@ b,strong{font-weight:700}
 .s5 .src{margin-top:16px}
 
 /* ---------- Sociologia ---------- */
-.s6{display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) 36px}
+.s6{display:flex;flex-direction:column;padding:var(--pad-top) 494px 36px var(--pad-x)}
+.s6 .ph-flag{top:0;right:0;width:430px;height:900px}
+.s6 .ph-flag img{object-position:72% 50%}
+.s6 .ph-flag::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--ink) 0,rgba(9,9,9,.4) 10%,rgba(9,9,9,0) 26%)}
+.s6 .flag-rule{position:absolute;top:0;bottom:0;right:430px;width:4px;background:var(--yellow);z-index:3}
 .s6 .h1{font-size:72px}
 .s6 .rule.yl{margin-top:28px}
 .rel{display:flex;flex-direction:column;flex:1}
-.rel>li{flex:1;display:grid;grid-template-columns:520px 1fr 360px;gap:40px;align-items:center;border-bottom:1px solid var(--line);padding:6px 0}
-.word{font-family:var(--f-display);font-weight:800;font-size:104px;line-height:.86;text-transform:uppercase;color:var(--yellow);letter-spacing:-.005em}
+.rel>li{flex:1;display:grid;grid-template-columns:330px 1fr 250px;gap:32px;align-items:center;border-bottom:1px solid var(--line);padding:6px 0}
+.word{font-family:var(--f-display);font-weight:800;font-size:78px;line-height:.86;text-transform:uppercase;color:var(--yellow);letter-spacing:-.005em}
 .concept .ls{color:var(--paper);opacity:.9}
-.concept p:not(.ls){font-size:var(--t-small);line-height:1.38;color:var(--paper)}
-.ex{font-size:19px;line-height:1.38;color:var(--mute);padding-left:22px;border-left:2px solid var(--line)}
+.concept p:not(.ls){font-size:20px;line-height:1.38;color:var(--paper)}
+.ex{font-size:18px;line-height:1.38;color:var(--mute);padding-left:22px;border-left:2px solid var(--line)}
 .ex b{display:block;color:var(--yellow);font-size:var(--t-src);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}
 .s6 .src{margin-top:16px}
 
 /* ---------- Análise crítica ---------- */
-.s7 .ph-back{top:0;left:0;width:380px;height:900px}
-.s7 .ph-back img{object-position:37% 50%;filter:grayscale(1) contrast(1.05)}
-.s7 .ph-back::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(9,9,9,0) 70%,var(--ink) 100%)}
-.s7-body{position:absolute;inset:0 0 0 380px;display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) 0 76px}
+.s7 .ph-duo1{top:0;left:0;width:440px;height:560px}
+.s7 .ph-duo1 img{object-position:50% 20%;filter:grayscale(1) contrast(1.05)}
+.s7 .ph-duo2{top:566px;left:0;width:440px;height:334px}
+.s7 .ph-duo2 img{object-position:38% 40%;filter:grayscale(1)}
+.s7 .ph-duo1::after,.s7 .ph-duo2::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(9,9,9,0) 72%,var(--ink) 100%)}
+.duo-line{position:absolute;left:0;top:560px;width:440px;height:6px;background:var(--yellow);z-index:3}
+.s7-body{position:absolute;inset:0 0 0 440px;display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) 0 76px}
 .s7 .h1{font-size:76px}
 .two{margin-top:34px;display:grid;grid-template-columns:1fr 1fr;gap:56px}
 .two>div{min-width:0}
@@ -307,14 +307,13 @@ b,strong{font-weight:700}
 #prev:hover:not(:disabled) svg{transform:translateX(-2px)}
 #next:hover:not(:disabled) svg{transform:translateX(2px)}
 :focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
-.dots{display:flex;gap:2px;margin:0 auto;overflow-x:auto;scrollbar-width:none}
+.dots{position:relative;display:flex;gap:2px;margin:0 auto;overflow:hidden}
 .dot{position:relative;font:700 13px/1 var(--f-body);font-variant-numeric:tabular-nums;color:var(--mute);background:transparent;border:0;height:38px;padding:0 8px;cursor:pointer;transition:color .2s var(--ease-out),transform .2s var(--ease)}
-.dot::after{content:"";position:absolute;left:8px;right:8px;bottom:2px;height:2px;background:var(--yellow);transform:scaleX(0);transition:transform .45s var(--ease)}
 .dot:hover{color:var(--paper);transform:translateY(-1px)}
-.dot:hover::after{transform:scaleX(.4)}
 .dot:active{transform:scale(.94)}
 .dot[aria-current="true"]{color:var(--yellow)}
-.dot[aria-current="true"]::after{transform:scaleX(1)}
+.dot-ind{position:absolute;left:0;bottom:2px;width:1px;height:2px;background:var(--yellow);transform-origin:left center;pointer-events:none;transition:transform .7s var(--ease)}
+.count b{display:inline-block}
 .count{font:600 14px/1 var(--f-body);font-variant-numeric:tabular-nums;color:var(--mute);min-width:62px;text-align:center}
 .count b{color:var(--paper)}
 .tools{display:flex;gap:8px}
@@ -370,6 +369,13 @@ b,strong{font-weight:700}
   .cut .ls{max-width:none}
 
   .s3,.s4,.s5,.s6,.s-eco1,.s-eco2{padding-top:28px;padding-bottom:28px}
+  .s-eco1,.s6{padding-top:0}
+  .s-eco1 .ph-podium,.s6 .ph-flag{order:-1;height:50vh!important;margin-bottom:24px}
+  .s-eco1 .ph-podium img{height:100%;object-position:44% 30%}
+  .s6 .ph-flag img{height:100%;object-position:68% 40%}
+  .s-eco1 .ph-podium::after,.s6 .ph-flag::after{background:linear-gradient(0deg,var(--ink) 0,rgba(9,9,9,0) 35%)}
+  .s6 .flag-rule{display:none}
+  .s-eco1 .num{font-size:var(--t-num)}
   .s3-grid,.s3-row,.props,.s4-foot,.two,.eco-cols,.eco2-areas,.eco2-row{grid-template-columns:1fr;gap:24px;margin-top:26px}
   .nodes{grid-template-columns:1fr;gap:22px;padding-top:0;padding-left:28px}
   .nodes>.rule{top:0;bottom:0;left:6px;right:auto;width:2px;height:auto;transform-origin:top}
@@ -377,7 +383,7 @@ b,strong{font-weight:700}
   .qband{grid-template-columns:1fr;gap:8px;margin:20px calc(max(20px,env(safe-area-inset-left,0px)) * -1) 0;padding:18px max(20px,env(safe-area-inset-left,0px))}
   .s3 .src,.s-eco1 .src,.s-eco2 .src{text-align:left;margin-top:16px;padding:0}
   .s3,.s-eco2{padding-bottom:0}
-  .steps-wrap{margin:26px calc(max(20px,env(safe-area-inset-left,0px)) * -1) 0;padding:18px max(20px,env(safe-area-inset-left,0px)) 22px}
+  .steps-wrap{margin:26px calc(max(20px,env(safe-area-inset-left,0px)) * -1) 0;padding:18px max(20px,env(safe-area-inset-left,0px)) 22px!important}
   .steps{grid-template-columns:1fr;gap:18px}
   .step+.step{padding-left:0;padding-top:30px}
   .step+.step::before{left:0;top:0;margin-top:0;width:24px;transform:rotate(90deg);transform-origin:center}
@@ -402,9 +408,11 @@ b,strong{font-weight:700}
   .word{font-size:56px}
   .ex{font-size:15px}
   .s7{padding-top:0}
-  .s7 .ph-back{height:40vh!important}
-  .s7 .ph-back img{height:100%;object-position:37% 55%}
-  .s7 .ph-back::after{background:linear-gradient(0deg,var(--ink) 0,rgba(9,9,9,0) 45%)}
+  .s7 .ph-duo1{height:46vh!important}
+  .s7 .ph-duo2{height:26vh!important;border-top:6px solid var(--yellow)}
+  .s7 .ph-duo1 img,.s7 .ph-duo2 img{height:100%}
+  .s7 .ph-duo1::after,.s7 .ph-duo2::after{background:linear-gradient(0deg,var(--ink) 0,rgba(9,9,9,0) 45%)}
+  .duo-line{display:none}
   .s7-body{padding:8px 0 0}
   .s7 .src{margin-top:20px;padding:0}
   .s7 .qband{margin:20px calc(max(20px,env(safe-area-inset-left,0px)) * -1) 0;padding:18px max(20px,env(safe-area-inset-left,0px))}
@@ -425,8 +433,8 @@ b,strong{font-weight:700}
 
 /* ---------- Movimento reduzido: sem deslocamentos, só troca suave de opacidade ---------- */
 @media (prefers-reduced-motion:reduce){
-  .rv,.rv-t,.rv-band,.rv-band>*,.wipe,.rv-step,.ph img,.axis.a2::before{opacity:1!important;transform:none!important;clip-path:none!important;transition:none!important}
-  .progress,.btn,.btn svg,.dot,.dot::after{transition:none!important}
+  .tx-band,.veil{display:none}
+  .dot-ind,.progress,.btn,.btn svg,.dot{transition:none!important}
   .btn:hover:not(:disabled),.dot:hover{transform:none}
   .notes{animation:none}
 }
@@ -441,7 +449,9 @@ b,strong{font-weight:700}
   .deck{position:static;transform:none!important;width:1600px;height:auto;overflow:visible}
   .slide{position:relative!important;inset:auto;width:1600px;height:900px;opacity:1!important;visibility:visible!important;break-after:page;page-break-after:always;transform:none!important}
   .slide:last-child{break-after:auto;page-break-after:auto}
-  .rv,.rv-t,.rv-band,.rv-band>*,.wipe,.rv-step,.ph img,.axis.a2::before{opacity:1!important;transform:none!important;clip-path:none!important;transition:none!important}
+  .tx-band,.veil{display:none!important}
+  .rv,.rv-t,.ln-i,.rv-band,.rv-band>*,.wipe,.wipe-y,.rv-step,.ph,.ph img,.num{opacity:1!important;transform:none!important}
+  .rv-band,.ph img{clip-path:none!important}
 }
 </style>
 <!--BODY-->
@@ -450,8 +460,8 @@ b,strong{font-weight:700}
     <div class="deck" id="deck">
 
       <!-- 1 · CAPA -->
-      <section class="slide s1" data-title="Capa">
-        <figure class="ph ph-cover"><img src="../assets/img/retrato-capa.jpg" alt="Retrato em preto e branco fornecido pelo grupo: homem de terno e gravata, olhando para o lado."></figure>
+      <section class="slide s1" data-title="Capa" data-part="abertura" data-tx="mask">
+        <figure class="ph ph-cover" data-mask="h"><img src="../assets/img/retrato-capa.jpg" alt="Retrato em preto e branco fornecido pelo grupo: homem de terno e gravata, olhando para o lado."></figure>
         <div class="cover">
           <p class="label rv" style="--d:0"><span class="sq"></span>Sociologia — 2º ano</p>
           <div>
@@ -468,8 +478,8 @@ b,strong{font-weight:700}
       </section>
 
       <!-- 2 · DIAGNÓSTICO -->
-      <section class="slide s2" data-title="Diagnóstico e áreas do plano">
-        <figure class="ph ph-stage"><img src="../assets/img/palco-amarelo.jpg" alt="Fotografia fornecida pelo grupo: silhueta de uma pessoa em um palco com luz amarela e fumaça, diante de um público."></figure>
+      <section class="slide s2" data-title="Diagnóstico e áreas do plano" data-part="abertura" data-tx="mask">
+        <figure class="ph ph-stage" data-mask="v"><img src="../assets/img/palco-amarelo.jpg" alt="Fotografia fornecida pelo grupo: silhueta de uma pessoa em um palco com luz amarela e fumaça, diante de um público."></figure>
         <div class="s2-body">
           <div>
             <p class="label rv" style="--d:0;margin-bottom:18px"><span class="sq"></span>Diagnóstico do documento</p>
@@ -492,12 +502,13 @@ b,strong{font-weight:700}
       </section>
 
       <!-- 3 · ECONOMIA: PROBLEMA E PROPOSTA -->
-      <section class="slide s-eco1 tex" data-title="Proposta 1, Economia: problema e proposta">
+      <section class="slide s-eco1 tex" data-title="Proposta 1, Economia: problema e proposta" data-part="economia" data-tx="mask">
+        <figure class="ph ph-podium" data-mask="v"><img src="../assets/img/podio.jpg" alt="Fotografia fornecida pelo grupo: homem de terno azul e gravata amarela em um púlpito, diante de um painel com texto de campanha."></figure>
         <header class="chap">
           <span class="num rv" style="--d:0" aria-hidden="true">01</span>
           <div>
             <p class="label rv" style="--d:0">Proposta 1 · Economia</p>
-            <h2 class="h1"><span class="ln rv-t" style="--d:1">Equilibrar as contas.</span><span class="ln y rv-t" style="--d:2">Abrir espaço para investir.</span></h2>
+            <h2 class="h1"><span class="ln rv-t" style="--d:1">Equilibrar as contas.</span><span class="ln y rv-t" style="--d:2">Abrir espaço</span><span class="ln y rv-t" style="--d:2">para investir.</span></h2>
           </div>
         </header>
         <div class="eco-cols">
@@ -535,7 +546,7 @@ b,strong{font-weight:700}
       </section>
 
       <!-- 4 · ECONOMIA: ESCOLHAS E IMPACTOS -->
-      <section class="slide s-eco2 yellow" data-title="Proposta 1, Economia: escolhas e impactos">
+      <section class="slide s-eco2 yellow" data-title="Proposta 1, Economia: escolhas e impactos" data-part="economia" data-tx="layers">
         <header>
           <p class="label rv" style="--d:0;margin-bottom:16px"><span class="sq"></span>Proposta 1 · Economia · escolhas e impactos</p>
           <h2 class="h1"><span class="ln rv-t" style="--d:1">O ajuste também envolve</span><span class="ln rv-t" style="--d:2">escolhas sociais</span></h2>
@@ -567,7 +578,7 @@ b,strong{font-weight:700}
       </section>
 
       <!-- 5 · SEGURANÇA -->
-      <section class="slide s3 tex" data-title="Proposta 2, Segurança">
+      <section class="slide s3 tex" data-title="Proposta 2, Segurança" data-part="propostas" data-tx="layers">
         <header class="chap">
           <span class="num rv" style="--d:0" aria-hidden="true">02</span>
           <div>
@@ -602,7 +613,7 @@ b,strong{font-weight:700}
       </section>
 
       <!-- 6 · SAÚDE -->
-      <section class="slide s4 yellow" data-title="Proposta 3, Saúde">
+      <section class="slide s4 yellow" data-title="Proposta 3, Saúde" data-part="propostas" data-tx="layers">
         <header class="chap">
           <span class="num rv" style="--d:0" aria-hidden="true">03</span>
           <div>
@@ -631,7 +642,7 @@ b,strong{font-weight:700}
       </section>
 
       <!-- 7 · EDUCAÇÃO -->
-      <section class="slide s5 tex" data-title="Proposta 4, Educação">
+      <section class="slide s5 tex" data-title="Proposta 4, Educação" data-part="propostas" data-tx="layers">
         <header class="chap">
           <span class="num rv" style="--d:0" aria-hidden="true">04</span>
           <div>
@@ -663,7 +674,9 @@ b,strong{font-weight:700}
       </section>
 
       <!-- 8 · SOCIOLOGIA -->
-      <section class="slide s6" data-title="Relação com a Sociologia">
+      <section class="slide s6" data-title="Relação com a Sociologia" data-part="analise" data-tx="mask">
+        <figure class="ph ph-flag" data-mask="v"><img src="../assets/img/bandeira.jpg" alt="Fotografia fornecida pelo grupo: homem segurando uma bandeira do Brasil sobre um monumento, com uma faixa amarela e preta ao fundo e pessoas em primeiro plano."></figure>
+        <span class="flag-rule wipe-y" style="--d:2" aria-hidden="true"></span>
         <header>
           <p class="label rv" style="--d:0;margin-bottom:14px"><span class="sq"></span>Relação com a Sociologia</p>
           <h2 class="h1"><span class="ln rv-t" style="--d:1">Estado, direitos e desigualdade</span></h2>
@@ -690,8 +703,10 @@ b,strong{font-weight:700}
       </section>
 
       <!-- 9 · ANÁLISE CRÍTICA -->
-      <section class="slide s7" data-title="Análise crítica">
-        <figure class="ph ph-back"><img src="../assets/img/bastidores.jpg" alt="Fotografia em preto e branco fornecida pelo grupo: homem de camisa e gravata sentado, olhando para baixo, em um camarim."></figure>
+      <section class="slide s7" data-title="Análise crítica" data-part="analise" data-tx="mask">
+        <figure class="ph ph-duo1" data-mask="v"><img src="../assets/img/retrato-rua.jpg" alt="Retrato em preto e branco fornecido pelo grupo: homem de camisa e colete olhando para a câmera, na rua."></figure>
+        <figure class="ph ph-duo2" data-mask="h" data-lag="1"><img src="../assets/img/discurso-pb.jpg" alt="Fotografia em preto e branco fornecida pelo grupo: homem de terno falando ao microfone."></figure>
+        <span class="duo-line wipe" style="--d:1" aria-hidden="true"></span>
         <div class="s7-body">
           <div>
             <p class="label rv" style="--d:0;margin-bottom:18px"><span class="sq"></span>Análise crítica</p>
@@ -724,8 +739,8 @@ b,strong{font-weight:700}
       </section>
 
       <!-- 10 · FONTES E REFLEXÃO -->
-      <section class="slide s8" data-title="Fontes e reflexão final">
-        <figure class="ph ph-arms"><img src="../assets/img/bracos-abertos.jpg" alt="Fotografia fornecida pelo grupo: pessoa de costas, de braços abertos, diante de um público com fumaça amarela."></figure>
+      <section class="slide s8" data-title="Fontes e reflexão final" data-part="analise" data-tx="mask">
+        <figure class="ph ph-arms" data-mask="h"><img src="../assets/img/bracos-abertos.jpg" alt="Fotografia fornecida pelo grupo: pessoa de costas, de braços abertos, diante de um público com fumaça amarela."></figure>
         <div class="s8-body">
           <div>
             <p class="label rv" style="--d:0;margin-bottom:22px"><span class="sq"></span>Reflexão final</p>
@@ -789,9 +804,27 @@ b,strong{font-weight:700}
   var pad = function(n){ return (n < 10 ? "0" : "") + n; };
   var flowMQ = window.matchMedia("screen and (max-width:820px), screen and (max-aspect-ratio:1/1)");
   var reduceMQ = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
-  var running = [];     // animações de troca em curso
-  var leaving = null;   // slide que está saindo
+  var CAN = typeof deck.animate === "function";
+
+  /* Curvas: saída longa e macia para entradas, entrada e saída simétricas para máscaras e faixas. */
+  var OUT = "cubic-bezier(0.22, 1, 0.36, 1)";
+  var EXPO = "cubic-bezier(0.16, 1, 0.3, 1)";
+  var INOUT = "cubic-bezier(0.76, 0, 0.24, 1)";
+  var IN = "cubic-bezier(0.55, 0, 0.75, 0.2)";
+
+  /* ---------- Preparação: linhas de título com máscara, véus das fotos, faixa editorial ---------- */
+  Array.prototype.forEach.call(deck.querySelectorAll(".rv-t"), function(el){
+    var inner = document.createElement("span"); inner.className = "ln-i";
+    while (el.firstChild) inner.appendChild(el.firstChild);
+    el.appendChild(inner);
+  });
+  Array.prototype.forEach.call(deck.querySelectorAll(".ph"), function(ph){
+    var v = document.createElement("span"); v.className = "veil"; v.setAttribute("aria-hidden", "true");
+    ph.insertBefore(v, ph.firstChild);
+  });
+  var band = document.createElement("div"); band.className = "tx-band"; band.setAttribute("aria-hidden", "true");
+  deck.appendChild(band);
+  var ind = document.createElement("span"); ind.className = "dot-ind"; ind.setAttribute("aria-hidden", "true");
 
   slides.forEach(function(s, i){
     var t = s.getAttribute("data-title");
@@ -803,14 +836,24 @@ b,strong{font-weight:700}
     b.setAttribute("aria-label", "Ir para o slide " + (i + 1) + ": " + t);
     b.addEventListener("click", function(){ go(i); });
     dots.appendChild(b);
-    var img = s.querySelector(".ph img");
-    if (img) { img.addEventListener("error", function(){ img.parentNode.classList.add("noimg"); }); }
+    Array.prototype.forEach.call(s.querySelectorAll(".ph img"), function(img){
+      img.addEventListener("error", function(){ img.parentNode.classList.add("noimg"); });
+    });
   });
+  dots.appendChild(ind);
 
   function fit(){
-    if (flowMQ.matches) { deck.style.removeProperty("--scale"); return; }
-    var w = viewport.clientWidth, h = viewport.clientHeight;
-    deck.style.setProperty("--scale", Math.min(w / 1600, h / 900));
+    if (flowMQ.matches) deck.style.removeProperty("--scale");
+    else deck.style.setProperty("--scale", Math.min(viewport.clientWidth / 1600, viewport.clientHeight / 900));
+    moveIndicator(false);
+  }
+
+  function moveIndicator(animate){
+    var d = dots.children[cur];
+    if (!d || !d.offsetWidth) return;
+    if (!animate) ind.style.transition = "none";
+    ind.style.transform = "translateX(" + (d.offsetLeft + 8) + "px) scaleX(" + Math.max(1, d.offsetWidth - 16) + ")";
+    if (!animate) { void ind.offsetWidth; ind.style.transition = ""; }
   }
 
   function renderNotes(){
@@ -829,60 +872,190 @@ b,strong{font-weight:700}
     if ("inert" in s) s.inert = hidden;
   }
 
-  // Interrompe qualquer troca em andamento e deixa o estado limpo (sem fila acumulada).
+  /* ---------- Registro de animações: uma troca por vez, sem fila ---------- */
+  var running = [], leaving = null, finishTimer = null;
+  function anim(el, kf, opt){
+    if (!el || !CAN) return null;
+    opt.fill = opt.fill || "both";
+    var a = el.animate(kf, opt);
+    running.push(a);
+    a.onfinish = function(){
+      if (leaving && (el === leaving || leaving.contains(el))) return;   // saída: mantém até a troca terminar
+      if (el === band) return;
+      var k = running.indexOf(a); if (k !== -1) running.splice(k, 1);
+      try { a.cancel(); } catch(e) {}                                     // repouso = estado final
+    };
+    return a;
+  }
+  // Interrompe a troca anterior: cancela tudo, o que entrou fica em repouso e o que saía some.
   function settle(){
+    clearTimeout(finishTimer);
     running.forEach(function(a){ try { a.cancel(); } catch(e) {} });
     running = [];
     if (leaving) { leaving.classList.remove("is-leaving"); leaving = null; }
   }
 
+  function dOf(el){ var v = parseFloat(el.style.getPropertyValue("--d")); return isNaN(v) ? 0 : v; }
+  function topLevel(list, root){
+    return list.filter(function(el){
+      var p = el.parentElement;
+      while (p && p !== root) { if (list.indexOf(p) !== -1) return false; p = p.parentElement; }
+      return true;
+    });
+  }
+
+  /* ---------- Entrada coreografada ----------
+     mode: "mask" (foto revelada por véu amarelo), "band" (passagem editorial), "layers" (profundidade). */
+  function enter(slide, mode, dir){
+    var base = mode === "band" ? 280 : mode === "mask" ? 200 : 110;
+    var q = function(sel){ return Array.prototype.slice.call(slide.querySelectorAll(sel)); };
+    var items = [];
+    q(".num").forEach(function(el){ items.push({el:el, k:"num", d:-1}); });
+    q(".rv-t").forEach(function(el){ items.push({el:el, k:"line", d:dOf(el)}); });
+    q(".rv").forEach(function(el){ if (!el.classList.contains("num")) items.push({el:el, k:"block", d:dOf(el)}); });
+    q(".rv-step").forEach(function(el){ items.push({el:el, k:"step", d:dOf(el)}); });
+    q(".rv-band").forEach(function(el){ items.push({el:el, k:"band", d:dOf(el)}); });
+    q(".wipe").forEach(function(el){ items.push({el:el, k:"wipe", d:dOf(el)}); });
+    q(".wipe-y").forEach(function(el){ items.push({el:el, k:"wipey", d:dOf(el)}); });
+
+    // ritmo: 85 ms entre os primeiros grupos (rótulo, título, conteúdo), depois 30 ms, para o texto ficar pronto em ~1,3 s
+    var ds = items.map(function(it){ return Math.max(0, it.d); }).filter(function(v, i, a){ return a.indexOf(v) === i; }).sort(function(a, b){ return a - b; });
+    var delayOf = function(d){ var r = ds.indexOf(Math.max(0, d)); return base + Math.min(r, 4) * 85 + Math.max(0, r - 4) * 30; };
+
+    items.forEach(function(it){
+      var el = it.el, t = delayOf(it.d);
+      switch (it.k) {
+        case "num":
+          anim(el, [{opacity:0, transform:"translate3d(" + (dir * 70) + "px,0,0)"},{opacity:1, transform:"none"}], {duration:1050, delay:base - 60, easing:EXPO});
+          break;
+        case "line":
+          anim(el.firstChild, [{transform:"translate3d(0,120%,0)"},{transform:"none"}], {duration:850, delay:t, easing:EXPO});
+          if (mode === "layers") anim(el, [{transform:"translate3d(" + (dir * 36) + "px,0,0)"},{transform:"none"}], {duration:900, delay:t, easing:EXPO});
+          break;
+        case "block":
+          if (mode === "layers") anim(el, [{opacity:0, transform:"translate3d(" + (dir * 96) + "px,0,0)"},{opacity:1, transform:"none"}], {duration:700, delay:t, easing:OUT});
+          else anim(el, [{opacity:0, transform:"translate3d(0,28px,0)"},{opacity:1, transform:"none"}], {duration:600, delay:t, easing:OUT});
+          break;
+        case "step":
+          anim(el, [{opacity:0, transform:"translate3d(-30px,0,0)"},{opacity:1, transform:"none"}], {duration:560, delay:t, easing:OUT});
+          break;
+        case "band":
+          anim(el, [{clipPath:"inset(0 100% 0 0)"},{clipPath:"inset(0 0% 0 0)"}], {duration:700, delay:t, easing:INOUT});
+          Array.prototype.forEach.call(el.children, function(c){
+            anim(c, [{opacity:0, transform:"translate3d(-16px,0,0)"},{opacity:1, transform:"none"}], {duration:460, delay:t + 220, easing:OUT});
+          });
+          break;
+        case "wipe":
+          anim(el, [{transform:"scaleX(0)"},{transform:"scaleX(1)"}], {duration:760, delay:t, easing:EXPO});
+          break;
+        case "wipey":
+          anim(el, [{transform:"scaleY(0)"},{transform:"scaleY(1)"}], {duration:900, delay:t, easing:EXPO});
+          break;
+      }
+    });
+
+    // linha amarela do eixo "Oportunidades" (pseudo-elemento)
+    q(".axis.a2").forEach(function(el){
+      try { anim(el, [{transform:"scaleY(0)"},{transform:"scaleY(1)"}], {duration:900, delay:delayOf(5), easing:EXPO, pseudoElement:"::before"}); } catch(e) {}
+    });
+
+    // fotografias
+    q(".ph").forEach(function(ph){
+      var img = ph.querySelector("img"), veil = ph.querySelector(".veil");
+      var lag = ph.hasAttribute("data-lag") ? 200 : 0;
+      if (mode === "mask") {
+        var v = ph.getAttribute("data-mask") === "v";
+        var from = v ? (dir > 0 ? "inset(100% 0% 0% 0%)" : "inset(0% 0% 100% 0%)")
+                     : (dir > 0 ? "inset(0% 0% 0% 100%)" : "inset(0% 100% 0% 0%)");
+        var to = "inset(0% 0% 0% 0%)";
+        anim(veil, [{clipPath:from, opacity:1, offset:0, easing:INOUT},{clipPath:to, opacity:1, offset:.62},{clipPath:to, opacity:0, offset:1}], {duration:1150, delay:40 + lag, easing:"linear"});
+        anim(img, [{clipPath:from},{clipPath:to}], {duration:820, delay:190 + lag, easing:INOUT});
+        anim(img, [{transform:"scale(1.12)"},{transform:"scale(1)"}], {duration:1450, delay:150 + lag, easing:OUT});
+      } else {
+        anim(img, [{transform:"scale(1.07)"},{transform:"scale(1)"}], {duration:1400, delay:60, easing:OUT});
+        if (mode === "layers") anim(ph, [{opacity:0, transform:"translate3d(" + (dir * 40) + "px,0,0)"},{opacity:1, transform:"none"}], {duration:900, easing:OUT});
+      }
+    });
+  }
+
+  /* ---------- Saída coordenada ---------- */
+  function exit(slide, mode, dir){
+    var list = Array.prototype.slice.call(slide.querySelectorAll(".ph, .num, .rv, .rv-t, .rv-step, .rv-band, .wipe, .wipe-y"));
+    topLevel(list, slide).forEach(function(el){
+      var depth = el.classList.contains("ph") ? .45 : el.classList.contains("num") ? .7 : 1;
+      if (mode === "band") {
+        anim(el, [{transform:"none"},{transform:"translate3d(" + (-dir * 90 * depth) + "px,0,0)"}], {duration:1000, easing:INOUT});
+      } else {
+        var dist = (mode === "layers" ? 110 : 60) * depth;
+        anim(el, [{opacity:1, transform:"none"},{opacity:0, transform:"translate3d(" + (-dir * dist) + "px,0,0)"}], {duration:420, easing:IN});
+      }
+    });
+  }
+
+  function partOf(i){ return slides[i].getAttribute("data-part"); }
+
   function go(i, fromHash){
     i = Math.max(0, Math.min(N - 1, i));
     if (i === cur) return;
-    var from = cur, dir = i > from ? 1 : -1;
+    var from = cur, dir = from < 0 || i > from ? 1 : -1;
     settle();
 
     var inn = slides[i], out = from >= 0 ? slides[from] : null;
+    if (out && out.contains(document.activeElement)) (dir > 0 ? next : prev).focus();
     slides.forEach(function(s, k){ if (k !== i && k !== from) { s.classList.remove("is-active", "is-leaving"); setHidden(s, true); } });
+    if (out) { out.classList.remove("is-active"); out.classList.add("is-leaving"); setHidden(out, true); leaving = out; }
+    inn.classList.add("is-active"); setHidden(inn, false);
+    viewport.scrollTop = 0;
 
-    if (out) {
-      out.classList.remove("is-active");
-      out.classList.add("is-leaving");
-      setHidden(out, true);
-      leaving = out;
+    var finish = function(){ settleOut(out); };
+    if (!CAN) { finish(); }
+    else if (reduceMQ.matches) {
+      // movimento reduzido: apenas troca suave de opacidade, sem deslocamentos
+      anim(inn, [{opacity:0},{opacity:1}], {duration:200, easing:"linear"});
+      finishTimer = setTimeout(finish, 220);
+    } else {
+      var mode = inn.getAttribute("data-tx") || "layers";
+      if (out && Math.abs(i - from) === 1 && partOf(i) !== partOf(from)) mode = "band";
+      if (out) exit(out, mode, dir);
+      if (mode === "band") {
+        var W = deck.offsetWidth, BW = band.offsetWidth;
+        band.classList.toggle("rev", dir < 0);
+        var bx = dir > 0 ? [W, -BW] : [-BW, W];
+        anim(band, [{opacity:1, transform:"translate3d(" + bx[0] + "px,0,0)"},{opacity:1, transform:"translate3d(" + bx[1] + "px,0,0)"}], {duration:1000, easing:INOUT});
+        var clip = dir > 0 ? ["inset(0px 0px 0px " + (W + BW) + "px)", "inset(0px 0px 0px 0px)"]
+                           : ["inset(0px " + (W + BW) + "px 0px 0px)", "inset(0px 0px 0px 0px)"];
+        anim(inn, [{clipPath:clip[0]},{clipPath:clip[1]}], {duration:1000, easing:INOUT});
+        finishTimer = setTimeout(finish, 1010);
+      } else {
+        anim(inn, [{opacity:0},{opacity:1}], {duration:mode === "mask" ? 520 : 460, easing:OUT});
+        finishTimer = setTimeout(finish, 540);
+      }
+      enter(inn, mode, dir);
     }
-    // reinicia a coreografia do slide que entra
-    inn.classList.remove("is-active", "is-leaving");
-    void inn.offsetWidth;
-    inn.classList.add("is-active");
-    setHidden(inn, false);
 
-    var canAnimate = out && typeof inn.animate === "function";
-    if (canAnimate) {
-      var reduce = reduceMQ.matches;
-      var aIn = reduce
-        ? inn.animate([{opacity:0},{opacity:1}], {duration:220, easing:"linear"})
-        : inn.animate([{opacity:0, transform:"translate3d(" + (dir * 6) + "%,0,0)"},{opacity:1, transform:"translate3d(0,0,0)"}], {duration:760, easing:EASE});
-      var aOut = reduce ? null
-        : out.animate([{transform:"translate3d(0,0,0)"},{transform:"translate3d(" + (-dir * 3) + "%,0,0)"}], {duration:760, easing:EASE});
-      running = [aIn].concat(aOut ? [aOut] : []);
-      aIn.onfinish = function(){
-        if (leaving === out) { out.classList.remove("is-leaving"); leaving = null; }
-        running = [];
-      };
-    } else if (out) {
-      out.classList.remove("is-leaving"); leaving = null;
-    }
-
-    Array.prototype.forEach.call(dots.children, function(b, k){ b.setAttribute("aria-current", k === i ? "true" : "false"); });
+    Array.prototype.forEach.call(dots.children, function(b, k){ if (b.classList.contains("dot")) b.setAttribute("aria-current", k === i ? "true" : "false"); });
+    var oldCur = cur;
     cur = i;
+    moveIndicator(oldCur >= 0 && !reduceMQ.matches);
     count.innerHTML = "<b>" + pad(i + 1) + "</b> / " + pad(N);
+    if (CAN && oldCur >= 0 && !reduceMQ.matches) count.firstChild.animate([{opacity:0, transform:"translateY(" + (dir * 70) + "%)"},{opacity:1, transform:"none"}], {duration:450, easing:OUT});
     live.textContent = inn.getAttribute("aria-label");
     progress.style.setProperty("--p", (i + 1) / N);
     prev.disabled = i === 0; next.disabled = i === N - 1;
-    viewport.scrollTop = 0;
     renderNotes();
     if (!fromHash) { try { history.replaceState(null, "", "#slide-" + (i + 1)); } catch(e) {} }
+  }
+
+  // remove só o slide que saiu; as animações de entrada continuam até o fim e terminam em repouso
+  function settleOut(out){
+    if (!out || leaving !== out) return;
+    out.classList.remove("is-leaving"); leaving = null;
+    running = running.filter(function(a){
+      var t = a.effect && a.effect.target;
+      if (t && (t === out || out.contains(t) || t === band)) { try { a.cancel(); } catch(e) {} return false; }
+      if (a.playState === "finished") { try { a.cancel(); } catch(e) {} return false; }
+      return true;
+    });
   }
 
   prev.addEventListener("click", function(){ go(cur - 1); });
@@ -951,5 +1124,6 @@ b,strong{font-weight:700}
   if (flowMQ.addEventListener) flowMQ.addEventListener("change", fit);
   fit();
   go(fromHash(), true);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ moveIndicator(false); });
 })();
 </script>

@@ -31,7 +31,13 @@ Não há exportação para PowerPoint.
 
 ## Movimento
 
-Ao avançar, o slide novo entra pela direita; ao voltar, pela esquerda. Rótulo, título, conteúdo e pergunta aparecem em sequência curta (a maioria em cerca de 1 s; os diagramas mais longos terminam em até 2 s). Se o computador estiver com “reduzir movimento” ativado, a troca vira só um esmaecimento rápido e o conteúdo aparece direto.
+Três tipos de transição, escolhidos pela composição (sem biblioteca externa; funciona offline):
+
+- **Máscara** (slides com foto): um véu amarelo atravessa a área da foto, a imagem aparece logo atrás dele com uma leve aproximação, e os títulos sobem linha a linha por uma área de recorte.
+- **Passagem editorial** (só nas mudanças de parte: 2→3, 4→5 e 7→8): uma faixa amarela atravessa a tela e revela o slide seguinte.
+- **Camadas** (slides de conteúdo): fundo, número, título e blocos se deslocam com distâncias e tempos diferentes, criando profundidade.
+
+Ao voltar, a direção se inverte. O texto fica pronto para leitura em cerca de 1,3 s e depois tudo fica parado. Apertar as setas rapidamente interrompe a troca anterior, sem acumular animações. Com “reduzir movimento” ativado no sistema, a troca vira só um esmaecimento rápido.
 
 ## Editar
 
