@@ -23,7 +23,12 @@
   --f-display:"Barlow Condensed","Roboto Condensed","Arial Narrow","Helvetica Neue",Impact,sans-serif;
   --f-body:"Barlow","Inter","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --bar-h:60px;
-  --ease:cubic-bezier(.2,.7,.2,1);
+  /* movimento: desaceleração longa e macia */
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-out:cubic-bezier(.4,0,.2,1);
+  --t-in:.68s;
+  --step:80ms;
+  --base:170ms;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -44,21 +49,42 @@ b,strong{font-weight:700}
 /* ---------- Estrutura da aplicação ---------- */
 .app{position:relative;height:100%;display:flex;flex-direction:column}
 .viewport{position:relative;flex:1 1 auto;overflow:hidden;min-height:0}
-.deck{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:50% 50%;transform:translate(-50%,-50%) scale(var(--scale,.5))}
+.deck{position:absolute;left:50%;top:50%;width:1600px;height:900px;overflow:hidden;transform-origin:50% 50%;transform:translate(-50%,-50%) scale(var(--scale,.5))}
 .slide{position:absolute;inset:0;overflow:hidden;background:var(--ink);color:var(--paper);
-  opacity:0;visibility:hidden;transition:opacity .6s var(--ease),visibility 0s linear .6s}
-.slide.is-active{opacity:1;visibility:visible;transition:opacity .6s var(--ease),visibility 0s}
+  visibility:hidden;z-index:0;pointer-events:none;will-change:transform,opacity}
+.slide.is-active{visibility:visible;z-index:2;pointer-events:auto}
+.slide.is-leaving{visibility:visible;z-index:1}
 .slide.tex::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.07;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
 .slide.yellow{background:var(--yellow);color:var(--ink)}
 
-/* revelação de entrada */
-.rv{opacity:0;transform:translateY(22px)}
-.is-active .rv{opacity:1;transform:none;transition:opacity .6s var(--ease) calc(var(--d,0) * 90ms + 120ms),transform .65s var(--ease) calc(var(--d,0) * 90ms + 120ms)}
-.ph img{transform:scale(1.035)}
-.is-active .ph img{transform:none;transition:transform 1.4s var(--ease)}
+/* ---------- Coreografia de entrada ----------
+   d = ordem: 0 rótulo, 1 título, 2+ conteúdo, último pergunta/conclusão. */
+.rv,.rv-t,.rv-band,.wipe,.rv-step{--delay:calc(var(--base) + var(--d,0) * var(--step))}
+.rv{opacity:0;transform:translate3d(0,20px,0)}
+.rv-t{opacity:0;transform:translate3d(0,.32em,0);clip-path:inset(0 -6% 100% -6%)}
+.rv-band{clip-path:inset(0 100% 0 0)}
+.rv-band>*{opacity:0;transform:translate3d(-14px,0,0)}
 .wipe{transform:scaleX(0);transform-origin:left center}
-.is-active .wipe{transform:none;transition:transform .7s var(--ease) .35s}
+.rv-step{opacity:0;transform:translate3d(-18px,0,0)}
+.ph img{transform:scale(1.035)}
+
+.is-active .rv,.is-active .rv-step{opacity:1;transform:none;
+  transition:opacity var(--t-in) var(--ease) var(--delay),transform calc(var(--t-in) + .08s) var(--ease) var(--delay)}
+.is-active .rv-t{opacity:1;transform:none;clip-path:inset(-12% -6% -12% -6%);
+  transition:opacity .5s var(--ease) var(--delay),transform .8s var(--ease) var(--delay),clip-path .8s var(--ease) var(--delay)}
+.is-active .rv-band{clip-path:inset(0 0 0 0);transition:clip-path .75s var(--ease) var(--delay)}
+.is-active .rv-band>*{opacity:1;transform:none;transition:opacity .5s var(--ease) calc(var(--delay) + .28s),transform .6s var(--ease) calc(var(--delay) + .28s)}
+.is-active .wipe{transform:none;transition:transform .8s var(--ease) var(--delay)}
+.is-active .ph img{transform:none;transition:transform 1.4s var(--ease) .05s}
+
+/* saída: o conteúdo some depressa sobre o próprio fundo, sem tela preta */
+.is-leaving .rv,.is-leaving .rv-t,.is-leaving .rv-step,.is-leaving .rv-band>*{opacity:0;transform:translate3d(0,-8px,0);clip-path:none;
+  transition:opacity .26s var(--ease-out),transform .34s var(--ease-out)}
+.is-leaving .rv-band{clip-path:inset(0 0 0 0)}
+.is-leaving .ph,.is-leaving .rv-band,.is-leaving .wipe,.is-leaving .rule,.is-leaving .num{opacity:0;transition:opacity .3s var(--ease-out)}
+.is-leaving .wipe{transform:none}
+.is-leaving .ph img{transform:none}
 
 /* ---------- Elementos comuns ---------- */
 .label{font-family:var(--f-body);font-weight:600;font-size:var(--t-label);letter-spacing:.18em;text-transform:uppercase;color:var(--mute);display:flex;align-items:center;gap:14px}
@@ -68,6 +94,7 @@ b,strong{font-weight:700}
 .ls{display:block;font-family:var(--f-body);font-weight:700;font-size:var(--t-label);letter-spacing:.16em;text-transform:uppercase;color:var(--yellow);margin-bottom:8px}
 .yellow .ls{color:var(--ink);opacity:.72}
 .h1{font-family:var(--f-display);font-weight:800;font-size:var(--t-h1);line-height:.9;letter-spacing:-.005em;text-transform:uppercase;text-wrap:balance}
+.h1 .ln{display:block}
 .src{font-size:var(--t-src);color:var(--mute);letter-spacing:.02em}
 .yellow .src{color:rgba(9,9,9,.75)}
 .chap{display:flex;align-items:flex-start;gap:40px}
@@ -78,6 +105,13 @@ b,strong{font-weight:700}
 .ph img{display:block;width:100%;height:100%;object-fit:cover}
 .ph.noimg img{display:none}
 .ph.noimg::after{content:"Imagem indisponível";position:absolute;left:24px;bottom:24px;font-size:var(--t-src);color:var(--mute)}
+.rule{display:block;height:2px;background:var(--line)}
+.rule.yl{background:var(--yellow)}
+.rule.ink{background:var(--ink);height:3px}
+.bullets{display:flex;flex-direction:column;gap:14px}
+.bullets li{font-size:var(--t-small);line-height:1.38;padding-left:26px;position:relative}
+.bullets li::before{content:"";position:absolute;left:0;top:.6em;width:12px;height:2px;background:var(--yellow)}
+.yellow .bullets li::before{background:var(--ink)}
 
 /* ---------- 1 · Capa ---------- */
 .s1 .ph-cover{top:0;right:0;width:960px;height:900px;background:transparent;
@@ -86,10 +120,11 @@ b,strong{font-weight:700}
 .s1 .ph-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,var(--ink) 0,rgba(9,9,9,0) 26%)}
 .cover{position:absolute;inset:0;padding:var(--pad-top) var(--pad-x) 64px;display:flex;flex-direction:column;justify-content:space-between;width:960px}
 .mega{font-family:var(--f-display);font-weight:800;font-size:var(--t-mega);line-height:.8;text-transform:uppercase;letter-spacing:-.01em;display:flex;flex-direction:column}
+.mega>span{display:block}
 .mega .y{margin-top:6px}
 .cover-q{margin-top:40px;font-family:var(--f-display);font-weight:600;font-size:52px;line-height:1;color:var(--paper)}
 .cover-q::before{content:"";display:inline-block;width:56px;height:6px;background:var(--yellow);vertical-align:middle;margin-right:20px;transform:translateY(-4px)}
-.idbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 0;font-weight:700;font-size:18px;letter-spacing:.16em;text-transform:uppercase;border-top:2px solid var(--yellow);padding-top:16px}
+.idbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 0;font-weight:700;font-size:18px;letter-spacing:.16em;text-transform:uppercase;padding-top:16px}
 .idbar span+span::before{content:"•";color:var(--yellow);margin:0 16px}
 .cover-desc{margin-top:16px;font-size:26px;color:var(--mute)}
 .cover-desc b{color:var(--paper);font-weight:600}
@@ -100,24 +135,60 @@ b,strong{font-weight:700}
 .s2 .ph-stage{top:0;right:0;width:560px;height:900px}
 .s2 .ph-stage img{object-position:49% 50%}
 .s2 .ph-stage::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--ink) 0,rgba(9,9,9,.55) 9%,rgba(9,9,9,0) 24%)}
-.s2-body{position:absolute;inset:0 560px 0 0;padding:var(--pad-top) 72px 56px var(--pad-x);display:flex;flex-direction:column;gap:26px}
+.s2-body{position:absolute;inset:0 560px 0 0;padding:var(--pad-top) 72px 56px var(--pad-x);display:flex;flex-direction:column;gap:24px}
 .s2 .h1{font-size:80px}
-.diag{display:flex;flex-direction:column;border-top:1px solid var(--line)}
-.diag li{display:grid;grid-template-columns:120px 1fr;align-items:baseline;gap:20px;padding:13px 0;border-bottom:1px solid var(--line);font-size:28px;font-weight:500;line-height:1.15}
+.diag{display:flex;flex-direction:column}
+.diag li{display:grid;grid-template-columns:120px 1fr;align-items:baseline;gap:20px;padding:12px 0;border-bottom:1px solid var(--line);font-size:28px;font-weight:500;line-height:1.15}
 .pg{font-size:var(--t-src);font-weight:700;letter-spacing:.1em;color:var(--yellow);text-transform:uppercase;font-variant-numeric:tabular-nums}
 .also{font-size:var(--t-small);line-height:1.45;color:var(--mute)}
 .also .ls{color:var(--paper);opacity:.85}
-.cut{margin-top:auto;display:flex;align-items:center;gap:28px;background:var(--yellow);color:var(--ink);padding:18px 28px}
-.cut .ls{margin:0;color:var(--ink);opacity:.75;max-width:130px;line-height:1.25}
-.cut strong{font-family:var(--f-display);font-weight:800;font-size:46px;letter-spacing:.02em;text-transform:uppercase;line-height:1}
+.cut{margin-top:auto;display:flex;align-items:center;gap:26px;background:var(--yellow);color:var(--ink);padding:18px 26px}
+.cut .ls{margin:0;color:var(--ink);opacity:.75;max-width:120px;line-height:1.25;flex:none}
+.cut strong{font-family:var(--f-display);font-weight:800;font-size:38px;letter-spacing:.02em;text-transform:uppercase;line-height:1.05}
 
-/* ---------- 3 · Segurança ---------- */
+/* ---------- 3 · Economia: problema e proposta ---------- */
+.s-eco1{display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) 0}
+.s-eco1 .h1{font-size:82px}
+.eco-cols{margin-top:42px;display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:56px}
+.eco-cols>div{min-width:0}
+.eco-cols .rule{margin-bottom:18px}
+.eco-cols p:not(.ls){font-size:var(--t-small);line-height:1.42}
+.eco-cols .muted{color:var(--mute)}
+.steps-wrap{margin:auto calc(var(--pad-x) * -1) 0;background:var(--graphite);padding:22px var(--pad-x) 30px;position:relative}
+.steps-wrap .ls{color:var(--mute)}
+.steps{display:grid;grid-template-columns:1fr 1fr 1fr;align-items:start;gap:0;margin-top:16px}
+.step{display:flex;align-items:flex-start;gap:0;min-width:0}
+.step b{font-family:var(--f-display);font-weight:800;font-size:44px;line-height:.95;text-transform:uppercase;letter-spacing:.01em}
+.step small{display:block;font-family:var(--f-body);font-size:var(--t-src);font-weight:700;letter-spacing:.14em;color:var(--yellow);margin-bottom:8px}
+.step:last-child b{color:var(--yellow)}
+.step+.step{position:relative;padding-left:96px}
+.step+.step::before{content:"";position:absolute;left:14px;top:34px;width:62px;height:24px;background:no-repeat center/contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 62 24'><path d='M0 12h56M46 3l11 9-11 9' fill='none' stroke='%23FFD000' stroke-width='3.5'/></svg>")}
+.s-eco1 .src{padding:12px 0;text-align:right}
+
+/* ---------- 4 · Economia: escolhas e impactos (amarelo) ---------- */
+.s-eco2{display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) 0}
+.s-eco2 .h1{font-size:82px}
+.eco2-areas{margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:64px}
+.area{min-width:0}
+.area h3{font-family:var(--f-display);font-weight:800;font-size:40px;line-height:.98;text-transform:uppercase;margin:16px 0 14px}
+.area dl{margin:0;display:grid;grid-template-columns:150px 1fr;gap:10px 20px}
+.area dt{font-weight:700;font-size:var(--t-src);letter-spacing:.14em;text-transform:uppercase;opacity:.72;padding-top:4px}
+.area dd{margin:0;font-size:var(--t-small);line-height:1.38;font-weight:500}
+.eco2-row{margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:end}
+.eco2-row p:not(.ls){font-size:var(--t-small);line-height:1.4;font-weight:500}
+.estimate strong{display:block;font-family:var(--f-display);font-weight:800;font-size:40px;line-height:1;text-transform:uppercase}
+.estimate .note{font-size:var(--t-src)!important;opacity:.8;margin-top:6px}
+.s-eco2 .src{margin-top:auto;padding:12px 0}
+.qband.ink{background:var(--ink);color:var(--yellow)}
+.qband.ink .ls{color:var(--paper);opacity:.8}
+
+/* ---------- Segurança ---------- */
 .s3{display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) 0}
 .s3 .h1{font-size:82px}
 .s3-grid{margin-top:46px;display:grid;grid-template-columns:330px 1fr;gap:64px}
 .lead{font-size:var(--t-body);line-height:1.38}
 .nodes{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:40px;padding-top:30px}
-.nodes::before{content:"";position:absolute;left:0;right:0;top:6px;height:2px;background:var(--line)}
+.nodes>.rule{position:absolute;left:0;right:0;top:6px}
 .node{position:relative}
 .node::before{content:"";position:absolute;top:-30px;left:0;width:14px;height:14px;background:var(--yellow)}
 .node h3{font-family:var(--f-display);font-weight:800;font-size:var(--t-h3);text-transform:uppercase;line-height:1;margin-bottom:10px}
@@ -131,7 +202,7 @@ b,strong{font-weight:700}
 .qband .ls{margin:0;color:var(--ink);opacity:.72}
 .qband p:not(.ls){font-family:var(--f-display);font-weight:800;font-size:46px;line-height:1;text-transform:uppercase}
 
-/* ---------- 4 · Saúde (amarelo) ---------- */
+/* ---------- Saúde (amarelo) ---------- */
 .s4{display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) 40px}
 .s4 .chap{justify-content:space-between}
 .s4 .chap>div{flex:1}
@@ -139,7 +210,8 @@ b,strong{font-weight:700}
 .props{margin-top:44px;display:grid;grid-template-columns:repeat(3,1fr);gap:48px}
 .props h3{font-family:var(--f-display);font-weight:800;font-size:58px;line-height:.9;text-transform:uppercase;letter-spacing:.01em;margin-bottom:10px}
 .props p{font-size:var(--t-small);line-height:1.38;font-weight:500}
-.flow{margin-top:40px;padding:22px 0 20px;border-top:3px solid var(--ink);border-bottom:1px solid var(--line-ink)}
+.flow{margin-top:40px;padding:0 0 20px;border-bottom:1px solid var(--line-ink)}
+.flow .rule{margin-bottom:20px}
 .flow ol{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .flow li{display:flex;align-items:center;gap:22px;font-family:var(--f-display);font-weight:800;font-size:60px;line-height:1;text-transform:uppercase;letter-spacing:.01em}
 .flow li+li::before{content:"";width:62px;height:24px;flex:none;background:no-repeat center/contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 62 24'><path d='M0 12h56M46 3l11 9-11 9' fill='none' stroke='%23090909' stroke-width='3.5'/></svg>")}
@@ -150,34 +222,34 @@ b,strong{font-weight:700}
 .qbox p:not(.ls){font-family:var(--f-display);font-weight:800;font-size:36px!important;line-height:1.02!important;text-transform:uppercase}
 .s4 .src{margin-top:18px}
 
-/* ---------- 5 · Educação ---------- */
+/* ---------- Educação ---------- */
 .s5{display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) 40px}
 .problem-line{margin-top:32px;font-size:var(--t-small);line-height:1.4;max-width:1180px;color:var(--paper)}
 .problem-line .ls{display:inline;margin-right:12px}
 .axes{margin-top:30px;display:grid;grid-template-columns:1.32fr 1fr;flex:1;min-height:0}
-.axis{padding-top:20px;border-top:2px solid var(--line);min-width:0}
-.axis.a2{padding-left:56px;border-left:3px solid var(--yellow);margin-left:56px;border-top-color:var(--yellow)}
+.axis{min-width:0;position:relative}
+.axis>.rule{margin-bottom:20px}
+.axis.a2{padding-left:56px;margin-left:56px}
+.axis.a2::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--yellow);transform-origin:top;transform:scaleY(var(--grow,0));transition:transform .8s var(--ease) calc(var(--base) + 3 * var(--step))}
+.is-active .axis.a2::before,.is-leaving .axis.a2::before{--grow:1}
 .axis-t{font-family:var(--f-display);font-weight:800;font-size:72px;line-height:.9;text-transform:uppercase;margin-bottom:22px;letter-spacing:.005em}
 .a2 .axis-t{color:var(--yellow)}
-.axis ul{display:flex;flex-direction:column;gap:14px}
-.axis li{font-size:var(--t-small);line-height:1.38;color:var(--mute);padding-left:26px;position:relative}
-.axis li::before{content:"";position:absolute;left:0;top:.55em;width:12px;height:2px;background:var(--yellow)}
+.axis li{color:var(--mute)}
 .axis li b{color:var(--paper);font-weight:600}
 .axis .benefit{margin-top:22px;font-size:var(--t-small);line-height:1.4}
 .swap{font-family:var(--f-display);font-weight:800;font-size:50px;line-height:1;text-transform:uppercase;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
-.swap s{font-size:.62em}
+.swap s{font-size:.62em;text-decoration-thickness:4px;text-decoration-color:var(--yellow);color:var(--mute)}
 .swap .to{color:var(--yellow);margin-right:14px}
-.swap s{text-decoration-thickness:4px;text-decoration-color:var(--yellow);color:var(--mute)}
 .swap-note{margin-top:8px;font-size:var(--t-src);color:var(--mute)}
 .a2 .q{margin-top:28px}
 .a2 .q p:not(.ls){font-family:var(--f-display);font-weight:600;font-size:40px;line-height:1.02;color:var(--paper)}
 .s5 .src{margin-top:16px}
 
-/* ---------- 6 · Sociologia ---------- */
+/* ---------- Sociologia ---------- */
 .s6{display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) 36px}
-.s6 header{display:flex;justify-content:space-between;align-items:flex-end;gap:40px}
 .s6 .h1{font-size:72px}
-.rel{margin-top:30px;display:flex;flex-direction:column;flex:1;border-top:2px solid var(--yellow)}
+.s6 .rule.yl{margin-top:28px}
+.rel{display:flex;flex-direction:column;flex:1}
 .rel>li{flex:1;display:grid;grid-template-columns:520px 1fr 360px;gap:40px;align-items:center;border-bottom:1px solid var(--line);padding:6px 0}
 .word{font-family:var(--f-display);font-weight:800;font-size:104px;line-height:.86;text-transform:uppercase;color:var(--yellow);letter-spacing:-.005em}
 .concept .ls{color:var(--paper);opacity:.9}
@@ -186,58 +258,71 @@ b,strong{font-weight:700}
 .ex b{display:block;color:var(--yellow);font-size:var(--t-src);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}
 .s6 .src{margin-top:16px}
 
-/* ---------- 7 · Análise crítica ---------- */
+/* ---------- Análise crítica ---------- */
 .s7 .ph-back{top:0;left:0;width:380px;height:900px}
 .s7 .ph-back img{object-position:37% 50%;filter:grayscale(1) contrast(1.05)}
 .s7 .ph-back::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(9,9,9,0) 70%,var(--ink) 100%)}
 .s7-body{position:absolute;inset:0 0 0 380px;display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) 0 76px}
-.s7 .h1{font-size:80px}
-.two{margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:56px}
-.two h3{font-family:var(--f-display);font-weight:800;font-size:38px;text-transform:uppercase;line-height:1;padding-bottom:14px;margin-bottom:16px;border-bottom:2px solid var(--line)}
-.two .open h3{border-bottom-color:var(--yellow);color:var(--yellow)}
-.two ul{display:flex;flex-direction:column;gap:14px}
-.two li{font-size:var(--t-small);line-height:1.38;padding-left:26px;position:relative}
-.two li::before{content:"";position:absolute;left:0;top:.6em;width:12px;height:2px;background:var(--paper)}
-.two .open li::before{background:var(--yellow)}
+.s7 .h1{font-size:76px}
+.two{margin-top:34px;display:grid;grid-template-columns:1fr 1fr;gap:56px}
+.two>div{min-width:0}
+.two h3{font-family:var(--f-display);font-weight:800;font-size:36px;text-transform:uppercase;line-height:1;padding-bottom:12px}
+.two .rule{margin-bottom:16px}
+.two .open h3{color:var(--yellow)}
+.two .bullets{gap:11px}
+.two .bullets li{font-size:20px}
+.two .bullets li::before{background:var(--paper)}
+.two .open .bullets li::before{background:var(--yellow)}
 .two li em{font-style:normal;color:var(--mute)}
-.s7 .src{margin-top:auto;padding:14px 0}
+.s7 .src{margin-top:auto;padding:12px 0}
 .s7 .qband{margin:0 calc(var(--pad-x) * -1) 0 -76px;padding-left:76px;grid-template-columns:1fr;gap:10px}
-.s7 .qband p:not(.ls){font-size:44px}
+.s7 .qband p:not(.ls){font-size:42px}
 
-/* ---------- 8 · Fontes e reflexão ---------- */
+/* ---------- Fontes e reflexão ---------- */
 .s8 .ph-arms{top:0;right:0;width:800px;height:466px;background:transparent}
 .s8 .ph-arms img{object-position:50% 40%}
 .s8 .ph-arms::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--ink) 0,rgba(9,9,9,0) 30%),linear-gradient(0deg,var(--ink) 0,rgba(9,9,9,0) 40%)}
 .s8-body{position:absolute;inset:0;padding:var(--pad-top) var(--pad-x) 40px;display:grid;grid-template-columns:690px 1fr;grid-template-rows:auto 1fr;column-gap:72px}
-.s8 .h1{font-size:132px;line-height:.84;grid-column:1;align-self:start}
-.reflect{grid-column:1;grid-row:2;align-self:start;margin-top:64px;display:flex;flex-direction:column;gap:22px}
+.s8 .h1{font-size:132px;line-height:.84}
+.reflect{grid-column:1;grid-row:2;align-self:start;margin-top:56px;display:flex;flex-direction:column;gap:22px}
 .reflect .q{font-family:var(--f-display);font-weight:600;font-size:42px;line-height:1.06}
 .reflect .a{font-size:var(--t-body);line-height:1.42;padding-left:24px;border-left:6px solid var(--yellow)}
-.sources{grid-column:2;grid-row:2;align-self:end;display:flex;flex-direction:column;gap:13px;min-width:0}
+.sources{grid-column:2;grid-row:2;align-self:end;display:flex;flex-direction:column;gap:11px;min-width:0}
 .sources>.ls{margin-bottom:2px}
-.sources li{font-size:18px;line-height:1.4;color:var(--mute);padding-top:12px;border-top:1px solid var(--line);overflow-wrap:anywhere}
+.sources li{font-size:17.5px;line-height:1.38;color:var(--mute);padding-top:10px;border-top:1px solid var(--line);overflow-wrap:anywhere}
 .sources li b{color:var(--paper);font-weight:600}
 .sources a{color:var(--yellow);text-decoration:underline;text-underline-offset:3px}
 
 /* ---------- Controles (fora do palco) ---------- */
 .controls{position:relative;flex:none;height:calc(var(--bar-h) + env(safe-area-inset-bottom,0px));padding:0 max(16px,env(safe-area-inset-right,0px)) env(safe-area-inset-bottom,0px) max(16px,env(safe-area-inset-left,0px));
   background:var(--ink);border-top:1px solid #222;display:flex;align-items:center;gap:12px;z-index:5}
-.progress{position:absolute;left:0;top:-1px;height:3px;background:var(--yellow);width:calc(var(--p,0.125) * 100%);transition:width .5s var(--ease)}
-.btn{font:600 14px/1 var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--paper);background:transparent;border:1px solid #333;height:38px;min-width:38px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
-.btn:hover{border-color:var(--mute)}
-.btn:disabled{opacity:.35;cursor:default}
-.btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2}
+.progress{position:absolute;left:0;right:0;top:-1px;height:3px;background:var(--yellow);transform-origin:left center;transform:scaleX(var(--p,.1));transition:transform .75s var(--ease)}
+.btn{font:600 14px/1 var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--paper);background:transparent;border:1px solid #333;height:38px;min-width:38px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;
+  transition:background-color .2s var(--ease-out),border-color .2s var(--ease-out),color .2s var(--ease-out),transform .2s var(--ease)}
+.btn:hover:not(:disabled){background:var(--paper);border-color:var(--paper);color:var(--ink);transform:translateY(-1px)}
+.btn:active:not(:disabled){transform:translateY(0) scale(.95);transition-duration:.06s}
+.btn[aria-expanded="true"]{background:var(--yellow);border-color:var(--yellow);color:var(--ink)}
+.btn:disabled{opacity:.3;cursor:default}
+.btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;transition:transform .25s var(--ease)}
+#prev:hover:not(:disabled) svg{transform:translateX(-2px)}
+#next:hover:not(:disabled) svg{transform:translateX(2px)}
 :focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
-.dots{display:flex;gap:4px;margin:0 auto;overflow-x:auto;scrollbar-width:none}
-.dot{font:700 13px/1 var(--f-body);font-variant-numeric:tabular-nums;color:var(--mute);background:transparent;border:0;border-bottom:2px solid transparent;height:38px;padding:0 8px;cursor:pointer}
-.dot[aria-current="true"]{color:var(--yellow);border-bottom-color:var(--yellow)}
-.dot:hover{color:var(--paper)}
+.dots{display:flex;gap:2px;margin:0 auto;overflow-x:auto;scrollbar-width:none}
+.dot{position:relative;font:700 13px/1 var(--f-body);font-variant-numeric:tabular-nums;color:var(--mute);background:transparent;border:0;height:38px;padding:0 8px;cursor:pointer;transition:color .2s var(--ease-out),transform .2s var(--ease)}
+.dot::after{content:"";position:absolute;left:8px;right:8px;bottom:2px;height:2px;background:var(--yellow);transform:scaleX(0);transition:transform .45s var(--ease)}
+.dot:hover{color:var(--paper);transform:translateY(-1px)}
+.dot:hover::after{transform:scaleX(.4)}
+.dot:active{transform:scale(.94)}
+.dot[aria-current="true"]{color:var(--yellow)}
+.dot[aria-current="true"]::after{transform:scaleX(1)}
 .count{font:600 14px/1 var(--f-body);font-variant-numeric:tabular-nums;color:var(--mute);min-width:62px;text-align:center}
 .count b{color:var(--paper)}
 .tools{display:flex;gap:8px}
 
 /* ---------- Notas do apresentador ---------- */
-.notes{position:absolute;top:0;right:0;bottom:calc(var(--bar-h) + env(safe-area-inset-bottom,0px));width:min(460px,100%);background:var(--graphite);border-left:1px solid #333;z-index:6;overflow-y:auto;padding:22px max(22px,env(safe-area-inset-right,0px)) 28px 24px}
+.notes{position:absolute;top:0;right:0;bottom:calc(var(--bar-h) + env(safe-area-inset-bottom,0px));width:min(460px,100%);background:var(--graphite);border-left:1px solid #333;z-index:6;overflow-y:auto;padding:22px max(22px,env(safe-area-inset-right,0px)) 28px 24px;
+  animation:notes-in .45s var(--ease)}
+@keyframes notes-in{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
 .notes .warn{background:var(--yellow);color:var(--ink);font-size:13px;font-weight:600;line-height:1.35;padding:10px 12px;margin-bottom:18px}
 .notes h2{font-family:var(--f-display);font-weight:800;font-size:28px;text-transform:uppercase;line-height:1;margin-bottom:4px}
 .notes .who{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--yellow);font-weight:700;margin-bottom:14px}
@@ -249,18 +334,19 @@ b,strong{font-weight:700}
 /* ---------- Modo leitura: celular / telas verticais ---------- */
 @media screen and (max-width:820px), screen and (max-aspect-ratio:1/1){
   body{overflow:hidden}
-  .viewport{overflow-y:auto;-webkit-overflow-scrolling:touch}
-  .deck{position:relative;left:auto;top:auto;width:100%;height:auto;transform:none!important;
+  .viewport{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+  .deck{position:relative;left:auto;top:auto;width:100%;height:auto;min-height:100%;transform:none!important;
     --t-mega:min(27vw,150px); --t-num:84px; --t-h1:clamp(38px,10.5vw,64px); --t-h3:30px; --t-lead:21px;
     --t-body:18px; --t-small:17px; --t-label:12px; --t-src:13px;
     --pad-x:max(20px,env(safe-area-inset-left,0px)); --pad-top:28px}
   .slide{position:relative;inset:auto;display:none;min-height:100%;overflow:visible;
     padding-left:max(20px,env(safe-area-inset-left,0px))!important;padding-right:max(20px,env(safe-area-inset-right,0px))!important}
   .slide.is-active{display:flex;flex-direction:column}
+  .slide.is-leaving{display:flex;flex-direction:column;position:absolute;top:0;left:0;right:0;overflow:hidden;max-height:100%}
   .ph{position:relative;inset:auto!important;width:auto!important;height:auto!important;margin:0 calc(max(20px,env(safe-area-inset-left,0px)) * -1)}
   .ph img{height:auto;aspect-ratio:auto}
   .cover,.s2-body,.s7-body,.s8-body{position:relative;inset:auto;width:auto;padding:0}
-  .h1,.s2 .h1,.s3 .h1,.s7 .h1,.s6 .h1{font-size:var(--t-h1)}
+  .h1,.s2 .h1,.s3 .h1,.s7 .h1,.s6 .h1,.s-eco1 .h1,.s-eco2 .h1{font-size:var(--t-h1)}
   .chap{gap:18px;flex-wrap:wrap}
   .chap>div{min-width:0;flex:1 1 220px}
   .cut strong,.qband p:not(.ls),.s7 .qband p:not(.ls){font-size:28px}
@@ -283,14 +369,23 @@ b,strong{font-weight:700}
   .cut{flex-direction:column;align-items:flex-start;gap:6px;padding:14px 16px}
   .cut .ls{max-width:none}
 
-  .s3,.s4,.s5,.s6{padding-top:28px;padding-bottom:28px}
-  .s3-grid,.s3-row,.props,.s4-foot,.two{grid-template-columns:1fr;gap:24px;margin-top:26px}
+  .s3,.s4,.s5,.s6,.s-eco1,.s-eco2{padding-top:28px;padding-bottom:28px}
+  .s3-grid,.s3-row,.props,.s4-foot,.two,.eco-cols,.eco2-areas,.eco2-row{grid-template-columns:1fr;gap:24px;margin-top:26px}
   .nodes{grid-template-columns:1fr;gap:22px;padding-top:0;padding-left:28px}
-  .nodes::before{top:0;bottom:0;left:6px;right:auto;width:2px;height:auto}
+  .nodes>.rule{top:0;bottom:0;left:6px;right:auto;width:2px;height:auto;transform-origin:top}
   .node::before{top:6px;left:-28px}
   .qband{grid-template-columns:1fr;gap:8px;margin:20px calc(max(20px,env(safe-area-inset-left,0px)) * -1) 0;padding:18px max(20px,env(safe-area-inset-left,0px))}
-  .s3 .src{text-align:left;margin-top:16px;padding:0}
-  .s3{padding-bottom:0}
+  .s3 .src,.s-eco1 .src,.s-eco2 .src{text-align:left;margin-top:16px;padding:0}
+  .s3,.s-eco2{padding-bottom:0}
+  .steps-wrap{margin:26px calc(max(20px,env(safe-area-inset-left,0px)) * -1) 0;padding:18px max(20px,env(safe-area-inset-left,0px)) 22px}
+  .steps{grid-template-columns:1fr;gap:18px}
+  .step+.step{padding-left:0;padding-top:30px}
+  .step+.step::before{left:0;top:0;margin-top:0;width:24px;transform:rotate(90deg);transform-origin:center}
+  .step b{font-size:30px}
+  .area h3{font-size:28px}
+  .area dl{grid-template-columns:1fr;gap:4px}
+  .area dd{margin-bottom:10px}
+  .estimate strong{font-size:28px}
   .side-problem{width:auto;flex-basis:100%}
   .props h3{font-size:40px}
   .flow ol{flex-direction:column;align-items:flex-start;gap:6px}
@@ -303,7 +398,6 @@ b,strong{font-weight:700}
   .axis-t{font-size:46px}
   .swap{font-size:34px}
   .a2 .q p:not(.ls){font-size:28px}
-  .s6 header{flex-direction:column;align-items:flex-start;gap:12px}
   .rel>li{grid-template-columns:1fr;gap:12px;padding:20px 0}
   .word{font-size:56px}
   .ex{font-size:15px}
@@ -314,24 +408,27 @@ b,strong{font-weight:700}
   .s7-body{padding:8px 0 0}
   .s7 .src{margin-top:20px;padding:0}
   .s7 .qband{margin:20px calc(max(20px,env(safe-area-inset-left,0px)) * -1) 0;padding:18px max(20px,env(safe-area-inset-left,0px))}
+  .two .bullets li{font-size:17px}
   .s8{padding-top:0;padding-bottom:28px}
   .s8 .ph-arms{height:auto!important}
   .s8-body{display:flex;flex-direction:column;gap:26px;padding-top:0;margin-top:-40px}
   .s8 .h1{font-size:var(--t-h1)}
-  .reflect .q{font-size:26px}
   .reflect{margin-top:0}
+  .reflect .q{font-size:26px}
   .sources li{font-size:15px}
   .controls{gap:6px}
   .btn{padding:0 9px}
   .btn .t{display:none}
   .count{display:none}
 }
-@media screen and (max-width:520px){ .dots{display:none} .count{display:block;margin:0 auto} }
+@media screen and (max-width:620px){ .dots{display:none} .count{display:block;margin:0 auto} }
 
-/* ---------- Movimento reduzido ---------- */
+/* ---------- Movimento reduzido: sem deslocamentos, só troca suave de opacidade ---------- */
 @media (prefers-reduced-motion:reduce){
-  .slide,.slide.is-active,.is-active .rv,.is-active .ph img,.is-active .wipe,.progress{transition:none!important}
-  .rv,.ph img,.wipe{opacity:1!important;transform:none!important}
+  .rv,.rv-t,.rv-band,.rv-band>*,.wipe,.rv-step,.ph img,.axis.a2::before{opacity:1!important;transform:none!important;clip-path:none!important;transition:none!important}
+  .progress,.btn,.btn svg,.dot,.dot::after{transition:none!important}
+  .btn:hover:not(:disabled),.dot:hover{transform:none}
+  .notes{animation:none}
 }
 
 /* ---------- Impressão / PDF: uma página 16:9 por slide ---------- */
@@ -341,77 +438,156 @@ b,strong{font-weight:700}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .controls,.notes{display:none!important}
   .app,.viewport{display:block;height:auto;overflow:visible}
-  .deck{position:static;transform:none!important;width:1600px;height:auto}
-  .slide{position:relative!important;inset:auto;width:1600px;height:900px;opacity:1!important;visibility:visible!important;display:block;break-after:page;page-break-after:always;transition:none!important}
-  .slide.s3,.slide.s4,.slide.s5,.slide.s6{display:flex!important}
+  .deck{position:static;transform:none!important;width:1600px;height:auto;overflow:visible}
+  .slide{position:relative!important;inset:auto;width:1600px;height:900px;opacity:1!important;visibility:visible!important;break-after:page;page-break-after:always;transform:none!important}
   .slide:last-child{break-after:auto;page-break-after:auto}
-  .rv,.ph img,.wipe{opacity:1!important;transform:none!important;transition:none!important}
+  .rv,.rv-t,.rv-band,.rv-band>*,.wipe,.rv-step,.ph img,.axis.a2::before{opacity:1!important;transform:none!important;clip-path:none!important;transition:none!important}
 }
 </style>
 <!--BODY-->
 <div class="app" id="app">
-  <main class="viewport" id="viewport" aria-label="Apresentação: análise do plano de governo">
-    <div class="deck" id="deck" aria-live="polite">
+  <main class="viewport" id="viewport" aria-label="Apresentação: análise do plano de governo" aria-roledescription="apresentação">
+    <div class="deck" id="deck">
 
       <!-- 1 · CAPA -->
-      <section class="slide s1" data-who="Gabriela" aria-roledescription="slide" aria-label="1 de 8: Capa">
+      <section class="slide s1" data-title="Capa">
         <figure class="ph ph-cover"><img src="../assets/img/retrato-capa.jpg" alt="Retrato em preto e branco fornecido pelo grupo: homem de terno e gravata, olhando para o lado."></figure>
         <div class="cover">
           <p class="label rv" style="--d:0"><span class="sq"></span>Sociologia — 2º ano</p>
           <div>
-            <h1 class="mega rv" style="--d:1"><span>Renan</span><span class="y">Santos</span></h1>
-            <p class="cover-q rv" style="--d:2">Que Brasil este plano propõe?</p>
+            <h1 class="mega"><span class="rv-t" style="--d:1">Renan</span><span class="y rv-t" style="--d:2">Santos</span></h1>
+            <p class="cover-q rv" style="--d:3">Que Brasil este plano propõe?</p>
           </div>
           <div>
-            <p class="idbar rv" style="--d:3"><span>Partido Missão</span><span>Presidência da República</span><span>Eleições 2026</span></p>
-            <p class="cover-desc rv" style="--d:4">Uma análise do <b>Livro Amarelo</b> pela Sociologia</p>
-            <p class="members rv" style="--d:5"><span class="ls">Integrantes</span><span>Gabriela • Heitor • Nicolas • Sabrina</span></p>
+            <span class="rule yl wipe" style="--d:4"></span>
+            <p class="idbar rv" style="--d:4"><span>Partido Missão</span><span>Presidência da República</span><span>Eleições 2026</span></p>
+            <p class="cover-desc rv" style="--d:5">Uma análise do <b>Livro Amarelo</b> pela Sociologia</p>
+            <p class="members rv" style="--d:6"><span class="ls">Integrantes</span><span>Gabriela • Heitor • Nicolas • Sabrina</span></p>
           </div>
         </div>
       </section>
 
       <!-- 2 · DIAGNÓSTICO -->
-      <section class="slide s2" data-who="Gabriela" aria-roledescription="slide" aria-label="2 de 8: Diagnóstico e áreas do plano">
+      <section class="slide s2" data-title="Diagnóstico e áreas do plano">
         <figure class="ph ph-stage"><img src="../assets/img/palco-amarelo.jpg" alt="Fotografia fornecida pelo grupo: silhueta de uma pessoa em um palco com luz amarela e fumaça, diante de um público."></figure>
         <div class="s2-body">
-          <div class="rv" style="--d:0">
-            <p class="label" style="margin-bottom:18px"><span class="sq"></span>Diagnóstico do documento</p>
-            <h2 class="h1">Os problemas que orientam o <span class="y">projeto</span></h2>
+          <div>
+            <p class="label rv" style="--d:0;margin-bottom:18px"><span class="sq"></span>Diagnóstico do documento</p>
+            <h2 class="h1"><span class="ln rv-t" style="--d:1">Os problemas que</span><span class="ln rv-t" style="--d:2">orientam o <span class="y">projeto</span></span></h2>
           </div>
-          <ol class="diag rv" style="--d:1">
-            <li><span class="pg">p. 9</span><span>Desequilíbrio fiscal e dificuldades de gestão</span></li>
-            <li><span class="pg">p. 11</span><span>Crime organizado e insegurança</span></li>
-            <li><span class="pg">p. 23</span><span>Gargalos de infraestrutura e desenvolvimento</span></li>
-            <li><span class="pg">p. 25</span><span>Barreiras de acesso à saúde</span></li>
-            <li><span class="pg">p. 30–31</span><span>Baixa aprendizagem e violência escolar</span></li>
-          </ol>
-          <p class="also rv" style="--d:2"><span class="ls">O plano também aborda</span>Pacto federativo · gestão pública · cultura · indústria e terras raras · agricultura · política externa · desfavelização</p>
-          <div class="cut rv" style="--d:3"><span class="ls">Recorte desta análise</span><strong>Segurança • Saúde • Educação</strong></div>
-          <p class="src rv" style="--d:4">Fonte: sumário (p. 2) e capítulos I, II, VI, VII e IX do PDF.</p>
+          <div>
+            <span class="rule wipe" style="--d:3"></span>
+            <ol class="diag">
+              <li class="rv-step" style="--d:3"><span class="pg">p. 9</span><span>Desequilíbrio fiscal e dificuldades de gestão</span></li>
+              <li class="rv-step" style="--d:4"><span class="pg">p. 11</span><span>Crime organizado e insegurança</span></li>
+              <li class="rv-step" style="--d:5"><span class="pg">p. 23</span><span>Gargalos de infraestrutura e desenvolvimento</span></li>
+              <li class="rv-step" style="--d:6"><span class="pg">p. 25</span><span>Barreiras de acesso à saúde</span></li>
+              <li class="rv-step" style="--d:7"><span class="pg">p. 30–31</span><span>Baixa aprendizagem e violência escolar</span></li>
+            </ol>
+          </div>
+          <p class="also rv" style="--d:8"><span class="ls">O plano também aborda</span>Pacto federativo · gestão pública · cultura · indústria e terras raras · agricultura · política externa · desfavelização</p>
+          <div class="cut rv-band" style="--d:9"><span class="ls">Recorte desta análise</span><strong>Economia • Segurança • Saúde • Educação</strong></div>
+          <p class="src rv" style="--d:10">Fonte: sumário (p. 2) e capítulos I, II, VI, VII e IX do PDF.</p>
         </div>
       </section>
 
-      <!-- 3 · SEGURANÇA -->
-      <section class="slide s3 tex" data-who="Heitor" aria-roledescription="slide" aria-label="3 de 8: Proposta 1, Segurança">
-        <header class="chap rv" style="--d:0">
-          <span class="num" aria-hidden="true">01</span>
+      <!-- 3 · ECONOMIA: PROBLEMA E PROPOSTA -->
+      <section class="slide s-eco1 tex" data-title="Proposta 1, Economia: problema e proposta">
+        <header class="chap">
+          <span class="num rv" style="--d:0" aria-hidden="true">01</span>
           <div>
-            <p class="label">Proposta 1 · Segurança pública</p>
-            <h2 class="h1">Recuperar o controle.<br><span class="y">Com quais limites?</span></h2>
+            <p class="label rv" style="--d:0">Proposta 1 · Economia</p>
+            <h2 class="h1"><span class="ln rv-t" style="--d:1">Equilibrar as contas.</span><span class="ln y rv-t" style="--d:2">Abrir espaço para investir.</span></h2>
+          </div>
+        </header>
+        <div class="eco-cols">
+          <div class="rv" style="--d:3">
+            <span class="rule wipe" style="--d:3"></span>
+            <p class="ls">Problema apontado pelo plano</p>
+            <p>Contas públicas em desequilíbrio e despesas obrigatórias que crescem acima do limite. Segundo o documento, isso reduz a capacidade de investimento do Estado.</p>
+          </div>
+          <div class="rv" style="--d:4">
+            <span class="rule wipe" style="--d:4"></span>
+            <p class="ls">O que propõe</p>
+            <ul class="bullets">
+              <li>Uma PEC de ajuste fiscal, a “PEC do Equilíbrio Fiscal”</li>
+              <li>Revisão de benefícios fiscais e do abono salarial</li>
+              <li>Fim dos supersalários e mudanças nas emendas parlamentares</li>
+            </ul>
+          </div>
+          <div class="rv" style="--d:5">
+            <span class="rule yl wipe" style="--d:5"></span>
+            <p class="ls">Benefício pretendido</p>
+            <p>Criar espaço no orçamento para investimentos e tornar as contas públicas mais sustentáveis.</p>
+          </div>
+        </div>
+        <p class="src rv" style="--d:6">Fonte: PDF, pp. 9–10</p>
+        <div class="steps-wrap rv-band" style="--d:6">
+          <div>
+            <p class="ls">Lógica proposta pelo plano · os efeitos dependem de aprovação e execução</p>
+            <ol class="steps" aria-label="Lógica proposta pelo plano">
+              <li class="step rv-step" style="--d:8"><b><small>1</small>Rever despesas</b></li>
+              <li class="step rv-step" style="--d:10"><b><small>2</small>Reorganizar o orçamento</b></li>
+              <li class="step rv-step" style="--d:12"><b><small>3</small>Ampliar a capacidade de investimento</b></li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 · ECONOMIA: ESCOLHAS E IMPACTOS -->
+      <section class="slide s-eco2 yellow" data-title="Proposta 1, Economia: escolhas e impactos">
+        <header>
+          <p class="label rv" style="--d:0;margin-bottom:16px"><span class="sq"></span>Proposta 1 · Economia · escolhas e impactos</p>
+          <h2 class="h1"><span class="ln rv-t" style="--d:1">O ajuste também envolve</span><span class="ln rv-t" style="--d:2">escolhas sociais</span></h2>
+        </header>
+        <div class="eco2-areas">
+          <div class="area rv" style="--d:3">
+            <span class="rule ink wipe" style="--d:3"></span>
+            <h3>Aposentadorias e benefícios assistenciais</h3>
+            <dl>
+              <dt>O plano propõe</dt><dd>Reajuste desvinculado do salário mínimo, corrigido pela inflação.</dd>
+              <dt>O que significa</dt><dd>Preserva o poder de compra, mas o benefício deixa de acompanhar aumentos reais do mínimo.</dd>
+            </dl>
+          </div>
+          <div class="area rv" style="--d:4">
+            <span class="rule ink wipe" style="--d:4"></span>
+            <h3>Pisos de saúde e educação</h3>
+            <dl>
+              <dt>O plano propõe</dt><dd>Desvincular os pisos da receita.</dd>
+              <dt>O que significa</dt><dd>Muda a regra do gasto mínimo. Não extingue automaticamente o SUS nem a escola pública, e não zera esses gastos.</dd>
+            </dl>
+          </div>
+        </div>
+        <div class="eco2-row">
+          <div class="rv" style="--d:5"><p class="ls">Argumento favorável</p><p>Mais flexibilidade para organizar o orçamento e controlar despesas.</p></div>
+          <div class="estimate rv" style="--d:6"><p class="ls">Estimativa citada pelo plano para a PEC</p><strong>R$ 1,1 trilhão até 2031</strong><p class="note">Projeção do documento, não economia já realizada nem cálculo independente.</p></div>
+        </div>
+        <p class="src rv" style="--d:7">Fonte: PDF, pp. 9–10</p>
+        <div class="qband ink rv-band" style="--d:8"><p class="ls">Questão crítica</p><p>Como equilibrar as contas sem prejudicar a proteção social e a qualidade dos serviços públicos?</p></div>
+      </section>
+
+      <!-- 5 · SEGURANÇA -->
+      <section class="slide s3 tex" data-title="Proposta 2, Segurança">
+        <header class="chap">
+          <span class="num rv" style="--d:0" aria-hidden="true">02</span>
+          <div>
+            <p class="label rv" style="--d:0">Proposta 2 · Segurança pública</p>
+            <h2 class="h1"><span class="ln rv-t" style="--d:1">Recuperar o controle.</span><span class="ln y rv-t" style="--d:2">Com quais limites?</span></h2>
           </div>
         </header>
         <div class="s3-grid">
-          <div class="rv" style="--d:1">
+          <div class="rv" style="--d:3">
             <p class="ls">Problema apontado</p>
             <p class="lead">Facções com poder territorial e financeiro; forças de segurança que pouco integram dados e ações.</p>
           </div>
-          <ul class="nodes rv" style="--d:2" aria-label="Propostas selecionadas">
-            <li class="node"><h3>Inteligência</h3><p>Dados integrados e monitoramento de portos, aeroportos e fronteiras</p></li>
-            <li class="node"><h3>Financiamento</h3><p>Asfixia financeira das organizações criminosas</p></li>
-            <li class="node"><h3>Território</h3><p>Retomada de áreas e líderes isolados em presídios de segurança máxima</p></li>
-          </ul>
+          <div class="nodes" role="list" aria-label="Propostas selecionadas">
+            <span class="rule wipe" style="--d:3" aria-hidden="true"></span>
+            <div role="listitem" class="node rv-step" style="--d:4"><h3>Inteligência</h3><p>Dados integrados e monitoramento de portos, aeroportos e fronteiras</p></div>
+            <div role="listitem" class="node rv-step" style="--d:5"><h3>Financiamento</h3><p>Asfixia financeira das organizações criminosas</p></div>
+            <div role="listitem" class="node rv-step" style="--d:6"><h3>Território</h3><p>Retomada de áreas e líderes isolados em presídios de segurança máxima</p></div>
+          </div>
         </div>
-        <div class="s3-row rv" style="--d:3">
+        <div class="s3-row rv" style="--d:7">
           <div class="warn">
             <p class="ls">Também no capítulo</p>
             <p>Direito Penal do Inimigo, Estado de Defesa e restrição de direitos de pessoas associadas a facções. <em>O plano afirma que as medidas são constitucionais; isso não substitui uma avaliação jurídica independente.</em></p>
@@ -421,142 +597,149 @@ b,strong{font-weight:700}
             <p>Reduzir a capacidade de atuação e de comando das facções.</p>
           </div>
         </div>
-        <p class="src">Fonte: PDF, pp. 11–13</p>
-        <div class="qband"><p class="ls">Questão de análise</p><p>Como garantir segurança, devido processo legal e proteção de inocentes?</p></div>
+        <p class="src rv" style="--d:8">Fonte: PDF, pp. 11–13</p>
+        <div class="qband rv-band" style="--d:8"><p class="ls">Questão de análise</p><p>Como garantir segurança, devido processo legal e proteção de inocentes?</p></div>
       </section>
 
-      <!-- 4 · SAÚDE -->
-      <section class="slide s4 yellow" data-who="Heitor" aria-roledescription="slide" aria-label="4 de 8: Proposta 2, Saúde">
-        <header class="chap rv" style="--d:0">
-          <span class="num" aria-hidden="true">02</span>
+      <!-- 6 · SAÚDE -->
+      <section class="slide s4 yellow" data-title="Proposta 3, Saúde">
+        <header class="chap">
+          <span class="num rv" style="--d:0" aria-hidden="true">03</span>
           <div>
-            <p class="label">Proposta 2 · Saúde</p>
-            <h2 class="h1">Prioridade para<br>quem mais precisa</h2>
+            <p class="label rv" style="--d:0">Proposta 3 · Saúde</p>
+            <h2 class="h1"><span class="ln rv-t" style="--d:1">Prioridade para</span><span class="ln rv-t" style="--d:2">quem mais precisa</span></h2>
           </div>
-          <p class="side-problem"><span class="ls">Problema apontado</span>Meses de espera e informações do paciente espalhadas entre os serviços.</p>
+          <p class="side-problem rv" style="--d:3"><span class="ls">Problema apontado</span>Meses de espera e informações do paciente espalhadas entre os serviços.</p>
         </header>
-        <div class="props rv" style="--d:1">
-          <div><h3>ENER</h3><p>Fila organizada por risco clínico, vulnerabilidade e tempo de espera</p></div>
-          <div><h3>PRONTO</h3><p>Prontuário eletrônico integrado entre os serviços de saúde</p></div>
-          <div><h3>Rede</h3><p>Mais telemedicina e coordenação por centros regionais</p></div>
+        <div class="props">
+          <div class="rv" style="--d:4"><h3>ENER</h3><p>Fila organizada por risco clínico, vulnerabilidade e tempo de espera</p></div>
+          <div class="rv" style="--d:5"><h3>PRONTO</h3><p>Prontuário eletrônico integrado entre os serviços de saúde</p></div>
+          <div class="rv" style="--d:6"><h3>Rede</h3><p>Mais telemedicina e coordenação por centros regionais</p></div>
         </div>
-        <div class="flow rv" style="--d:2">
-          <p class="ls">Ilustração conceitual do grupo · não é uma etapa descrita no plano</p>
-          <ol aria-label="Fluxo conceitual"><li>Avaliar</li><li>Priorizar</li><li>Encaminhar</li><li>Acompanhar</li></ol>
+        <div class="flow">
+          <span class="rule ink wipe" style="--d:7"></span>
+          <p class="ls rv" style="--d:7">Ilustração conceitual do grupo · não é uma etapa descrita no plano</p>
+          <ol aria-label="Fluxo conceitual">
+            <li class="rv-step" style="--d:8">Avaliar</li><li class="rv-step" style="--d:9">Priorizar</li><li class="rv-step" style="--d:10">Encaminhar</li><li class="rv-step" style="--d:11">Acompanhar</li>
+          </ol>
         </div>
-        <div class="s4-foot rv" style="--d:3">
-          <div><p class="ls">Benefício pretendido</p><p>Atendimento mais coordenado e prioridade adequada aos casos de maior risco.</p></div>
-          <div class="qbox"><p class="ls">Questão de execução</p><p>Como financiar a integração e atender quem tem pouco acesso digital?</p></div>
+        <div class="s4-foot">
+          <div class="rv" style="--d:11"><p class="ls">Benefício pretendido</p><p>Atendimento mais coordenado e prioridade adequada aos casos de maior risco.</p></div>
+          <div class="qbox rv-band" style="--d:12"><p class="ls">Questão de execução</p><p>Como financiar a integração e atender quem tem pouco acesso digital?</p></div>
         </div>
-        <p class="src">Fonte: PDF, pp. 25–26 · “SUS Fila Zero” é o nome do capítulo, não uma garantia de fim das filas.</p>
+        <p class="src rv" style="--d:12">Fonte: PDF, pp. 25–26 · “SUS Fila Zero” é o nome do capítulo, não uma garantia de fim das filas.</p>
       </section>
 
-      <!-- 5 · EDUCAÇÃO -->
-      <section class="slide s5 tex" data-who="Nicolas" aria-roledescription="slide" aria-label="5 de 8: Proposta 3, Educação">
-        <header class="chap rv" style="--d:0">
-          <span class="num" aria-hidden="true">03</span>
+      <!-- 7 · EDUCAÇÃO -->
+      <section class="slide s5 tex" data-title="Proposta 4, Educação">
+        <header class="chap">
+          <span class="num rv" style="--d:0" aria-hidden="true">04</span>
           <div>
-            <p class="label">Proposta 3 · Educação</p>
-            <h2 class="h1">Aprender mais.<br><span class="y">Ampliar oportunidades?</span></h2>
+            <p class="label rv" style="--d:0">Proposta 4 · Educação</p>
+            <h2 class="h1"><span class="ln rv-t" style="--d:1">Aprender mais.</span><span class="ln y rv-t" style="--d:2">Ampliar oportunidades?</span></h2>
           </div>
         </header>
-        <p class="problem-line rv" style="--d:1"><span class="ls">Problema apontado</span>Baixa aprendizagem (o plano cita cerca de 73% abaixo do mínimo em matemática no PISA 2022) e violência no ambiente escolar.</p>
+        <p class="problem-line rv" style="--d:3"><span class="ls">Problema apontado</span>Baixa aprendizagem (o plano cita cerca de 73% abaixo do mínimo em matemática no PISA 2022) e violência no ambiente escolar.</p>
         <div class="axes">
-          <div class="axis rv" style="--d:2">
+          <div class="axis rv" style="--d:4">
+            <span class="rule wipe" style="--d:4"></span>
             <h3 class="axis-t">Aprendizagem</h3>
-            <ul>
+            <ul class="bullets">
               <li><b>Português e matemática</b> como foco, com alfabetização pelo método fônico</li>
               <li><b>Práticas do Ceará</b> levadas para o país</li>
               <li><b>Código disciplinar</b> nacional e escolas civis-militares onde a situação é crítica</li>
             </ul>
             <p class="benefit"><span class="ls">Benefício pretendido</span>Melhorar a aprendizagem e as condições de ensino.</p>
           </div>
-          <div class="axis a2 rv" style="--d:3">
+          <div class="axis a2 rv" style="--d:5">
+            <span class="rule yl wipe" style="--d:5"></span>
             <h3 class="axis-t">Oportunidades</h3>
             <p class="swap"><s>Cotas</s><span><span class="to" aria-hidden="true">→</span>Bolsas de mérito</span></p>
             <p class="swap-note">Proposta para o ensino superior</p>
-            <div class="q"><p class="ls">Questão crítica</p><p>Como avaliar mérito sem ignorar desigualdades de origem?</p></div>
+            <div class="q rv" style="--d:7"><p class="ls">Questão crítica</p><p>Como avaliar mérito sem ignorar desigualdades de origem?</p></div>
           </div>
         </div>
-        <p class="src">Fonte: PDF, pp. 30–32</p>
+        <p class="src rv" style="--d:8">Fonte: PDF, pp. 30–32</p>
       </section>
 
-      <!-- 6 · SOCIOLOGIA -->
-      <section class="slide s6" data-who="Nicolas" aria-roledescription="slide" aria-label="6 de 8: Relação com a Sociologia">
-        <header class="rv" style="--d:0">
-          <div>
-            <p class="label" style="margin-bottom:14px"><span class="sq"></span>Relação com a Sociologia</p>
-            <h2 class="h1">Estado, direitos e desigualdade</h2>
-          </div>
+      <!-- 8 · SOCIOLOGIA -->
+      <section class="slide s6" data-title="Relação com a Sociologia">
+        <header>
+          <p class="label rv" style="--d:0;margin-bottom:14px"><span class="sq"></span>Relação com a Sociologia</p>
+          <h2 class="h1"><span class="ln rv-t" style="--d:1">Estado, direitos e desigualdade</span></h2>
         </header>
+        <span class="rule yl wipe" style="--d:2"></span>
         <ol class="rel">
-          <li class="rv" style="--d:1">
+          <li class="rv" style="--d:3">
             <span class="word">Estado</span>
-            <div class="concept"><p class="ls">Democracia e governabilidade</p><p>Governar depende do Congresso, dos estados, do Judiciário e da participação social. Capacidade de governar não é concentração de poder.</p></div>
-            <p class="ex"><b>No plano</b>PEC fiscal, Lei Antifacção e mais poder à União na educação dependem de aprovação.</p>
+            <div class="concept"><p class="ls">Democracia e governabilidade</p><p>Governar depende do Congresso, dos estados, do Judiciário e da sociedade. O orçamento expressa escolhas sobre direitos, prioridades e quem recebe recursos.</p></div>
+            <p class="ex"><b>No plano · slides 3–4</b>A PEC fiscal redistribui o orçamento e, como a Lei Antifacção, depende de aprovação no Congresso.</p>
           </li>
-          <li class="rv" style="--d:2">
+          <li class="rv" style="--d:4">
             <span class="word">Direitos</span>
             <div class="concept"><p class="ls">Contrato social</p><p>Hobbes, Locke e Rousseau explicam de formas diferentes o que torna o poder legítimo: proteção, direitos, vontade geral.</p></div>
-            <p class="ex"><b>No plano · slide 3</b>Combater facções preservando o devido processo legal.</p>
+            <p class="ex"><b>No plano · slide 5</b>Combater facções preservando o devido processo legal.</p>
           </li>
-          <li class="rv" style="--d:3">
+          <li class="rv" style="--d:5">
             <span class="word">Desigual&shy;dade</span>
             <div class="concept"><p class="ls">Pierre Bourdieu · capital cultural</p><p>Os alunos chegam à escola com conhecimentos e recursos culturais diferentes, e a escola valoriza mais os de alguns.</p></div>
-            <p class="ex"><b>Leitura do grupo · slide 5</b>Bolsas só por mérito podem premiar vantagens de origem.</p>
+            <p class="ex"><b>Leitura do grupo · slide 7</b>Bolsas só por mérito podem premiar vantagens de origem.</p>
           </li>
         </ol>
-        <p class="src">Referência: BOURDIEU, Pierre; PASSERON, Jean-Claude. <i>A reprodução</i>. As relações com o plano são interpretação do grupo.</p>
+        <p class="src rv" style="--d:6">Referência: BOURDIEU, Pierre; PASSERON, Jean-Claude. <i>A reprodução</i>. As relações com o plano são interpretação do grupo.</p>
       </section>
 
-      <!-- 7 · ANÁLISE CRÍTICA -->
-      <section class="slide s7" data-who="Sabrina" aria-roledescription="slide" aria-label="7 de 8: Análise crítica">
+      <!-- 9 · ANÁLISE CRÍTICA -->
+      <section class="slide s7" data-title="Análise crítica">
         <figure class="ph ph-back"><img src="../assets/img/bastidores.jpg" alt="Fotografia em preto e branco fornecida pelo grupo: homem de camisa e gravata sentado, olhando para baixo, em um camarim."></figure>
         <div class="s7-body">
-          <div class="rv" style="--d:0">
-            <p class="label" style="margin-bottom:18px"><span class="sq"></span>Análise crítica</p>
-            <h2 class="h1">Uma proposta também<br>precisa <span class="y">responder</span></h2>
+          <div>
+            <p class="label rv" style="--d:0;margin-bottom:18px"><span class="sq"></span>Análise crítica</p>
+            <h2 class="h1"><span class="ln rv-t" style="--d:1">Uma proposta também</span><span class="ln rv-t" style="--d:2">precisa <span class="y">responder</span></span></h2>
           </div>
           <div class="two">
-            <div class="rv" style="--d:1">
+            <div class="rv" style="--d:3">
               <h3>O que ficou claro</h3>
-              <ul>
-                <li>As prioridades: crime, saúde, educação e ajuste fiscal</li>
-                <li>Os instrumentos têm nome: Lei Antifacção, ENER, PRONTO, código disciplinar</li>
+              <span class="rule wipe" style="--d:3"></span>
+              <ul class="bullets">
+                <li>As prioridades: contas públicas, crime, saúde e educação</li>
+                <li>Os instrumentos têm nome: PEC do Equilíbrio Fiscal, Lei Antifacção, ENER, PRONTO, código disciplinar</li>
                 <li>A intenção de reorganizar o Estado e dar mais poder à União</li>
               </ul>
             </div>
-            <div class="open rv" style="--d:2">
+            <div class="open rv" style="--d:4">
               <h3>O que exige mais detalhe</h3>
-              <ul>
-                <li>Custo de cada proposta e fonte dos recursos <em>(o ajuste fiscal traz estimativas, p. 10)</em></li>
+              <span class="rule yl wipe" style="--d:4"></span>
+              <ul class="bullets">
+                <li>Custo de cada proposta e fonte dos recursos <em>(a PEC traz uma estimativa de economia, p. 10, sem ligá-la a cada gasto)</em></li>
+                <li>Impacto do ajuste sobre aposentados, beneficiários e serviços de saúde e educação</li>
                 <li>Cronograma e indicadores <em>(há metas pontuais, como 80% de resolução na atenção primária, p. 26)</em></li>
                 <li>Salvaguardas de direitos e efeitos sobre os mais pobres</li>
               </ul>
             </div>
           </div>
-          <p class="src">Base: resumo executivo. O Livro Amarelo completo tem mais de 500 páginas (PDF, p. 5).</p>
-          <div class="qband rv" style="--d:3"><p class="ls">Pergunta ao candidato</p><p>Como financiar essas mudanças e demonstrar resultados sem ampliar desigualdades nem enfraquecer direitos?</p></div>
+          <p class="src rv" style="--d:5">Base: resumo executivo. O Livro Amarelo completo tem mais de 500 páginas (PDF, p. 5).</p>
+          <div class="qband rv-band" style="--d:6"><p class="ls">Pergunta ao candidato</p><p>Como financiar essas mudanças e demonstrar resultados sem ampliar desigualdades nem enfraquecer direitos?</p></div>
         </div>
       </section>
 
-      <!-- 8 · FONTES E REFLEXÃO -->
-      <section class="slide s8" data-who="Sabrina" aria-roledescription="slide" aria-label="8 de 8: Fontes e reflexão final">
+      <!-- 10 · FONTES E REFLEXÃO -->
+      <section class="slide s8" data-title="Fontes e reflexão final">
         <figure class="ph ph-arms"><img src="../assets/img/bracos-abertos.jpg" alt="Fotografia fornecida pelo grupo: pessoa de costas, de braços abertos, diante de um público com fumaça amarela."></figure>
         <div class="s8-body">
-          <div class="rv" style="--d:0">
-            <p class="label" style="margin-bottom:22px"><span class="sq"></span>Reflexão final</p>
-            <h2 class="h1">Conhecer<br><span class="y">para avaliar</span></h2>
+          <div>
+            <p class="label rv" style="--d:0;margin-bottom:22px"><span class="sq"></span>Reflexão final</p>
+            <h2 class="h1"><span class="ln rv-t" style="--d:1">Conhecer</span><span class="ln y rv-t" style="--d:2">para avaliar</span></h2>
           </div>
-          <div class="reflect rv" style="--d:1">
-            <p class="q">Por que é importante conhecer diretamente as propostas de um candidato antes de formar uma opinião sobre elas?</p>
-            <p class="a">Porque a leitura direta permite comparar propostas, avaliar consequências e formar uma opinião fundamentada, além dos slogans e recortes das redes.</p>
+          <div class="reflect">
+            <p class="q rv" style="--d:3">Por que é importante conhecer diretamente as propostas de um candidato antes de formar uma opinião sobre elas?</p>
+            <p class="a rv" style="--d:4">Porque a leitura direta permite comparar propostas, avaliar consequências e formar uma opinião fundamentada, além dos slogans e recortes das redes.</p>
           </div>
-          <div class="sources rv" style="--d:2">
+          <div class="sources rv" style="--d:5">
             <p class="ls">Fontes</p>
             <ol>
               <li><b>TSE — DivulgaCandContas</b> (candidatura e plano registrado): <a href="https://divulgacandcontas.tse.jus.br/divulga/" target="_blank" rel="noopener">divulgacandcontas.tse.jus.br/divulga/</a></li>
-              <li><b>Plano consultado:</b> PARTIDO MISSÃO. <i>O Futuro é Glorioso — Resumo executivo do Livro Amarelo</i>. Brasil, 2026. Sumário, p. 2; segurança, pp. 11–13; saúde, pp. 25–26; educação, pp. 30–32.</li>
+              <li><b>Plano consultado:</b> PARTIDO MISSÃO. <i>O Futuro é Glorioso — Resumo executivo do Livro Amarelo</i>. Brasil, 2026. Sumário, p. 2; ajuste fiscal, pp. 9–10; segurança, pp. 11–13; saúde, pp. 25–26; educação, pp. 30–32.</li>
               <li><b>Sociologia:</b> BOURDIEU, Pierre; PASSERON, Jean-Claude. <i>A reprodução: elementos para uma teoria do sistema de ensino</i>.</li>
               <li><b>Imagens:</b> fornecidas pelo grupo; autoria não informada.</li>
             </ol>
@@ -577,7 +760,8 @@ b,strong{font-weight:700}
     <button class="btn" id="prev" type="button" aria-label="Slide anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
     <button class="btn" id="next" type="button" aria-label="Próximo slide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
     <div class="dots" id="dots" role="group" aria-label="Ir para o slide"></div>
-    <span class="count" id="count" aria-live="off"><b>01</b> / 08</span>
+    <span class="count" id="count"></span>
+    <p id="live" class="sr" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap"></p>
     <div class="tools">
       <button class="btn" id="notesBtn" type="button" aria-expanded="false" aria-controls="notes" title="Notas (N)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5zM8 9h8M8 13h8M8 17h5"/></svg><span class="t">Notas</span></button>
       <button class="btn" id="printBtn" type="button" title="Imprimir ou salvar em PDF"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V3h10v6M7 17H4v-7h16v7h-3M7 14h10v7H7z"/></svg><span class="t">PDF</span></button>
@@ -592,10 +776,11 @@ b,strong{font-weight:700}
   document.documentElement.lang = "pt-BR";
   var deck = document.getElementById("deck");
   var slides = Array.prototype.slice.call(deck.querySelectorAll(".slide"));
-  var N = slides.length, cur = 0;
+  var N = slides.length, cur = -1;
   var viewport = document.getElementById("viewport");
   var dots = document.getElementById("dots");
   var count = document.getElementById("count");
+  var live = document.getElementById("live");
   var progress = document.getElementById("progress");
   var prev = document.getElementById("prev"), next = document.getElementById("next");
   var notes = document.getElementById("notes"), notesBody = document.getElementById("notes-body"), notesBtn = document.getElementById("notesBtn");
@@ -603,11 +788,19 @@ b,strong{font-weight:700}
   try { notesData = JSON.parse(document.getElementById("notes-data").textContent); } catch(e) {}
   var pad = function(n){ return (n < 10 ? "0" : "") + n; };
   var flowMQ = window.matchMedia("screen and (max-width:820px), screen and (max-aspect-ratio:1/1)");
+  var reduceMQ = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
+  var running = [];     // animações de troca em curso
+  var leaving = null;   // slide que está saindo
 
   slides.forEach(function(s, i){
+    var t = s.getAttribute("data-title");
+    s.setAttribute("role", "group");
+    s.setAttribute("aria-roledescription", "slide");
+    s.setAttribute("aria-label", "Slide " + (i + 1) + " de " + N + ": " + t);
     var b = document.createElement("button");
     b.type = "button"; b.className = "dot"; b.textContent = pad(i + 1);
-    b.setAttribute("aria-label", "Ir para o slide " + (i + 1) + ": " + s.getAttribute("aria-label").replace(/^\d+ de \d+: /, ""));
+    b.setAttribute("aria-label", "Ir para o slide " + (i + 1) + ": " + t);
     b.addEventListener("click", function(){ go(i); });
     dots.appendChild(b);
     var img = s.querySelector(".ph img");
@@ -631,17 +824,60 @@ b,strong{font-weight:700}
     notesBody.innerHTML = html;
   }
 
+  function setHidden(s, hidden){
+    s.setAttribute("aria-hidden", hidden ? "true" : "false");
+    if ("inert" in s) s.inert = hidden;
+  }
+
+  // Interrompe qualquer troca em andamento e deixa o estado limpo (sem fila acumulada).
+  function settle(){
+    running.forEach(function(a){ try { a.cancel(); } catch(e) {} });
+    running = [];
+    if (leaving) { leaving.classList.remove("is-leaving"); leaving = null; }
+  }
+
   function go(i, fromHash){
     i = Math.max(0, Math.min(N - 1, i));
-    slides.forEach(function(s, k){
-      var on = k === i;
-      s.classList.toggle("is-active", on);
-      s.setAttribute("aria-hidden", on ? "false" : "true");
-      if ("inert" in s) s.inert = !on;
-    });
+    if (i === cur) return;
+    var from = cur, dir = i > from ? 1 : -1;
+    settle();
+
+    var inn = slides[i], out = from >= 0 ? slides[from] : null;
+    slides.forEach(function(s, k){ if (k !== i && k !== from) { s.classList.remove("is-active", "is-leaving"); setHidden(s, true); } });
+
+    if (out) {
+      out.classList.remove("is-active");
+      out.classList.add("is-leaving");
+      setHidden(out, true);
+      leaving = out;
+    }
+    // reinicia a coreografia do slide que entra
+    inn.classList.remove("is-active", "is-leaving");
+    void inn.offsetWidth;
+    inn.classList.add("is-active");
+    setHidden(inn, false);
+
+    var canAnimate = out && typeof inn.animate === "function";
+    if (canAnimate) {
+      var reduce = reduceMQ.matches;
+      var aIn = reduce
+        ? inn.animate([{opacity:0},{opacity:1}], {duration:220, easing:"linear"})
+        : inn.animate([{opacity:0, transform:"translate3d(" + (dir * 6) + "%,0,0)"},{opacity:1, transform:"translate3d(0,0,0)"}], {duration:760, easing:EASE});
+      var aOut = reduce ? null
+        : out.animate([{transform:"translate3d(0,0,0)"},{transform:"translate3d(" + (-dir * 3) + "%,0,0)"}], {duration:760, easing:EASE});
+      running = [aIn].concat(aOut ? [aOut] : []);
+      aIn.onfinish = function(){
+        if (leaving === out) { out.classList.remove("is-leaving"); leaving = null; }
+        running = [];
+      };
+    } else if (out) {
+      out.classList.remove("is-leaving"); leaving = null;
+    }
+
     Array.prototype.forEach.call(dots.children, function(b, k){ b.setAttribute("aria-current", k === i ? "true" : "false"); });
     cur = i;
     count.innerHTML = "<b>" + pad(i + 1) + "</b> / " + pad(N);
+    live.textContent = inn.getAttribute("aria-label");
     progress.style.setProperty("--p", (i + 1) / N);
     prev.disabled = i === 0; next.disabled = i === N - 1;
     viewport.scrollTop = 0;
@@ -678,6 +914,7 @@ b,strong{font-weight:700}
   var framed = false; try { framed = window.self !== window.top; } catch(e) { framed = true; }
   if (framed) printBtn.hidden = true;
   printBtn.addEventListener("click", function(){ window.print(); });
+  window.addEventListener("beforeprint", settle);
 
   document.addEventListener("keydown", function(e){
     if (e.altKey || e.ctrlKey || e.metaKey) return;
