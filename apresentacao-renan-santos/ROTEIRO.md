@@ -28,11 +28,12 @@ Como não dá para analisar tudo, escolhemos quatro áreas: economia, segurança
 
 - *Termos:* Diagnóstico: a leitura dos problemas que justifica as propostas. Desfavelização: nome que o plano dá ao seu projeto urbano para favelas (p. 48).
 - *Conferir no PDF:* Sumário, p. 2.
+- *Transição:* Gabriela: “Agora o Heitor começa pelas propostas, a partir da economia.”
 
 ## Slide 3 — Economia — problema e proposta
-**Gabriela**
+**Heitor**
 
-Começamos pela economia, porque o próprio plano diz que as outras propostas dependem das contas em ordem. O problema apontado é o desequilíbrio das contas públicas: as despesas obrigatórias crescem acima do limite do arcabouço fiscal e, segundo o documento, sobra pouco para investir (p. 9).
+Valeu, Gabi. Começamos pela economia, porque o próprio plano diz que as outras propostas dependem das contas em ordem. O problema apontado é o desequilíbrio das contas públicas: as despesas obrigatórias crescem acima do limite do arcabouço fiscal e, segundo o documento, sobra pouco para investir (p. 9).
 
 A proposta central é uma PEC de ajuste fiscal, que o plano chama de PEC do Equilíbrio Fiscal. Ela inclui revisar benefícios fiscais e o abono salarial. O plano também quer acabar com os supersalários e mudar as emendas parlamentares (p. 10).
 
@@ -40,12 +41,11 @@ O benefício pretendido é abrir espaço no orçamento para investimentos e deix
 
 - *Termos:* Ajuste fiscal: mudanças nas receitas e nas despesas para equilibrar as contas. PEC: Proposta de Emenda à Constituição; precisa de 3/5 dos votos na Câmara e no Senado, em dois turnos. Benefícios fiscais: isenções e reduções de impostos que diminuem a arrecadação (o plano fala em “renúncias fiscais” ou “gastos tributários”). Abono salarial: benefício anual pago a trabalhadores formais de baixa renda. Supersalários: salários de servidores acima do teto. Emendas parlamentares: parte do orçamento indicada por deputados e senadores.
 - *Conferir no PDF:* Problema e números do déficit e da dívida, p. 9; PEC do Equilíbrio Fiscal e medidas do CDPP, p. 10.
-- *Transição:* Gabriela: “O ajuste também tem consequências sociais. O Heitor explica quais.”
 
 ## Slide 4 — Economia — escolhas e impactos
 **Heitor**
 
-Valeu, Gabi. A PEC tem duas medidas que mexem diretamente com a vida das pessoas.
+O ajuste também tem consequências sociais. A PEC tem duas medidas que mexem diretamente com a vida das pessoas.
 
 A primeira: aposentadorias e benefícios assistenciais deixariam de ser reajustados pelo salário mínimo e passariam a ser corrigidos só pela inflação. A correção pela inflação preserva o poder de compra, mas, se o salário mínimo tiver aumento real, o benefício não acompanha.
 

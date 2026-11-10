@@ -43,6 +43,10 @@ Ao voltar, a direção se inverte. O texto fica pronto para leitura em cerca de 
 
 O texto fica em `src/deck.html` e as notas em `build.py`. Depois de editar, rode `python3 build.py` para gerar de novo `index.html` e `ROTEIRO.md`.
 
+## Fotos
+
+As fotos de menor resolução (capa, bastidores, braços abertos, retrato de rua, óculos e foto noturna) foram ampliadas 2× com Real-ESRGAN (`tools/ampliar_fotos.py`, modelo ONNX `real_esrgan_x2` do Hugging Face, SceneWorks/real-esrgan-onnx), misturado com Lanczos para manter a textura natural. O enquadramento não mudou.
+
 ## Fonte oficial
 
 Página do TSE “Renan Santos — Propostas de Governo”, consultada pelo grupo em 9 nov. 2026: https://www.tse.jus.br/eleicoes/eleicoes-2026-content/propostas-de-governo-dos-candidatos-ao-cargo-de-presidente-da-republica-eleicoes-2026/renan-santos-propostas-de-governo
