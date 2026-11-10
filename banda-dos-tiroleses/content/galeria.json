@@ -1,0 +1,302 @@
+{
+  "itens": [
+    {
+      "id": "hero-banda",
+      "titulo": "Retrato oficial da banda em traje tirolês",
+      "evento": "Retrato institucional",
+      "ano": "2026",
+      "colecao": "atuais",
+      "formato": "paisagem",
+      "arquivo": "",
+      "credito": "",
+      "fonte": "",
+      "autorizacao": "pendente"
+    },
+    {
+      "id": "atual-banda-formacao",
+      "titulo": "A banda em formação, hoje",
+      "evento": "Retrato institucional",
+      "ano": "2026",
+      "colecao": "atuais",
+      "formato": "paisagem",
+      "arquivo": "",
+      "credito": "",
+      "fonte": "",
+      "autorizacao": "pendente"
+    },
+    {
+      "id": "atual-sommerkonzert-2026",
+      "titulo": "2º Sommerkonzert na Concha Acústica",
+      "evento": "Sommerkonzert",
+      "ano": "2026",
+      "colecao": "atuais",
+      "formato": "paisagem",
+      "arquivo": "",
+      "credito": "",
+      "fonte": "Registros públicos: blog Angelina Wittmann; YouTube 9-wgagbmxDw",
+      "autorizacao": "pendente"
+    },
+    {
+      "id": "evt-caecilienkonzert",
+      "titulo": "Cäcilienkonzert na Igreja Matriz",
+      "evento": "Cäcilienkonzert",
+      "ano": "2026",
+      "colecao": "atuais",
+      "formato": "retrato",
+      "arquivo": "",
+      "credito": "",
+      "fonte": "",
+      "autorizacao": "pendente"
+    },
+    {
+      "id": "evt-tirolerfest",
+      "titulo": "Abertura da Tirolerfest",
+      "evento": "Tirolerfest",
+      "ano": "2026",
+      "colecao": "atuais",
+      "formato": "paisagem",
+      "arquivo": "",
+      "credito": "",
+      "fonte": "",
+      "autorizacao": "pendente"
+    },
+    {
+      "id": "evt-oktoberfest",
+      "titulo": "Palco da Oktoberfest de Blumenau",
+      "evento": "Oktoberfest Blumenau",
+      "ano": "2026",
+      "colecao": "atuais",
+      "formato": "paisagem",
+      "arquivo": "",
+      "credito": "",
+      "fonte": "",
+      "autorizacao": "pendente"
+    },
+    {
+      "id": "evt-maiblasen",
+      "titulo": "Maiblasen pelas ruas de Treze Tílias",
+      "evento": "Maiblasen",
+      "ano": "2025",
+      "colecao": "atuais",
+      "formato": "retrato",
+      "arquivo": "",
+      "credito": "",
+      "fonte": "",
+      "autorizacao": "pendente"
+    },
+    {
+      "id": "atual-instrumentos",
+      "titulo": "Detalhe de instrumentos e trajes",
+      "evento": "Retrato institucional",
+      "ano": "2026",
+      "colecao": "atuais",
+      "formato": "quadrado",
+      "arquivo": "",
+      "credito": "",
+      "fonte": "",
+      "autorizacao": "pendente"
+    },
+    {
+      "id": "atual-banda-jovem",
+      "titulo": "Banda jovem em ensaio",
+      "evento": "Formação",
+      "ano": "2026",
+      "colecao": "atuais",
+      "formato": "paisagem",
+      "arquivo": "",
+      "credito": "",
+      "fonte": "",
+      "autorizacao": "pendente"
+    },
+    {
+      "id": "retrato-regente",
+      "titulo": "Retrato de Roberto Luiz da Maia",
+      "evento": "Retrato institucional",
+      "ano": "2026",
+      "colecao": "atuais",
+      "formato": "retrato",
+      "arquivo": "",
+      "credito": "",
+      "fonte": "",
+      "autorizacao": "pendente"
+    },
+    {
+      "id": "retrato-banda-jovem",
+      "titulo": "Retrato de Vinícius Thaler",
+      "evento": "Retrato institucional",
+      "ano": "2026",
+      "colecao": "atuais",
+      "formato": "retrato",
+      "arquivo": "",
+      "credito": "",
+      "fonte": "",
+      "autorizacao": "pendente"
+    },
+    {
+      "id": "hist-1933-partida",
+      "titulo": "Emigrantes reunidos em Innsbruck",
+      "evento": "Emigração",
+      "ano": "1933",
+      "colecao": "historicas",
+      "formato": "paisagem",
+      "arquivo": "",
+      "credito": "",
+      "fonte": "Acervo da banda / site original (Wayback Machine) — a recuperar",
+      "autorizacao": "pendente"
+    },
+    {
+      "id": "hist-1933-navio",
+      "titulo": "A bordo do Principessa Maria",
+      "evento": "Emigração",
+      "ano": "1933",
+      "colecao": "historicas",
+      "formato": "paisagem",
+      "arquivo": "",
+      "credito": "",
+      "fonte": "Acervo da banda / site original — a recuperar",
+      "autorizacao": "pendente"
+    },
+    {
+      "id": "hist-1933-ilha-das-flores",
+      "titulo": "Primeira apresentação, Ilha das Flores",
+      "evento": "Emigração",
+      "ano": "1933",
+      "colecao": "historicas",
+      "formato": "paisagem",
+      "arquivo": "",
+      "credito": "",
+      "fonte": "",
+      "autorizacao": "pendente"
+    },
+    {
+      "id": "hist-1933-chegada",
+      "titulo": "Chegada a Dreizehnlinden",
+      "evento": "Fundação",
+      "ano": "1933",
+      "colecao": "historicas",
+      "formato": "paisagem",
+      "arquivo": "",
+      "credito": "",
+      "fonte": "",
+      "autorizacao": "pendente"
+    },
+    {
+      "id": "hist-1935-ensaio",
+      "titulo": "A banda nos primeiros anos da colônia",
+      "evento": "Primeiros anos",
+      "ano": "1935",
+      "colecao": "historicas",
+      "formato": "quadrado",
+      "arquivo": "",
+      "credito": "",
+      "fonte": "",
+      "autorizacao": "pendente"
+    },
+    {
+      "id": "hist-1950-hausberger",
+      "titulo": "Gabriel Hausberger à frente da banda",
+      "evento": "Regência",
+      "ano": "1950",
+      "colecao": "historicas",
+      "formato": "retrato",
+      "arquivo": "",
+      "credito": "",
+      "fonte": "",
+      "autorizacao": "pendente"
+    },
+    {
+      "id": "hist-1990-moser",
+      "titulo": "Bernardo Moser em concerto",
+      "evento": "Regência",
+      "ano": "1990",
+      "colecao": "historicas",
+      "formato": "paisagem",
+      "arquivo": "",
+      "credito": "",
+      "fonte": "",
+      "autorizacao": "pendente"
+    },
+    {
+      "id": "hist-2013-tirol",
+      "titulo": "Viagem ao Tirol — Z'ruck zu die Wurz'ln",
+      "evento": "Viagem ao Tirol",
+      "ano": "2013",
+      "colecao": "historicas",
+      "formato": "paisagem",
+      "arquivo": "",
+      "credito": "",
+      "fonte": "Registros públicos: Gemeindezeitung Wildschönau 09/2013",
+      "autorizacao": "pendente"
+    },
+    {
+      "id": "hist-2016-astner",
+      "titulo": "Markus Astner em regência",
+      "evento": "Regência",
+      "ano": "2016",
+      "colecao": "historicas",
+      "formato": "retrato",
+      "arquivo": "",
+      "credito": "",
+      "fonte": "",
+      "autorizacao": "pendente"
+    },
+    {
+      "id": "hist-2023-90-anos",
+      "titulo": "Festividades dos 90 anos",
+      "evento": "Jubileu de 90 anos",
+      "ano": "2023",
+      "colecao": "historicas",
+      "formato": "paisagem",
+      "arquivo": "",
+      "credito": "",
+      "fonte": "",
+      "autorizacao": "pendente"
+    },
+    {
+      "id": "doc-partitura",
+      "titulo": "Partitura manuscrita do acervo",
+      "evento": "Documentos",
+      "ano": "",
+      "colecao": "documentos",
+      "formato": "retrato",
+      "arquivo": "",
+      "credito": "",
+      "fonte": "",
+      "autorizacao": "pendente"
+    }
+  ],
+  "videos": [
+    {
+      "id": "vid-sommerkonzert-2026",
+      "titulo": "2º Sommerkonzert — Treze Tílias",
+      "ano": "2026",
+      "evento": "Sommerkonzert",
+      "url": "https://www.youtube.com/watch?v=9-wgagbmxDw",
+      "canalOficial": false
+    },
+    {
+      "id": "vid-tirolerfest-2024",
+      "titulo": "Banda dos Tiroleses na Tirolerfest 2024",
+      "ano": "2024",
+      "evento": "Tirolerfest",
+      "url": "https://www.youtube.com/watch?v=iANCTHAg_MM",
+      "canalOficial": false
+    },
+    {
+      "id": "vid-88-anos",
+      "titulo": "88 anos de tradição musical",
+      "ano": "2021",
+      "evento": "Documentário",
+      "url": "https://www.youtube.com/watch?v=pCgHlafF5Dg",
+      "canalOficial": false
+    },
+    {
+      "id": "vid-80-jahre",
+      "titulo": "80 Jahre Musikkapelle Dreizehnlinden",
+      "ano": "2013",
+      "evento": "Jubileu de 80 anos",
+      "url": "https://www.youtube.com/watch?v=sRgmBC9hZKU",
+      "canalOficial": false
+    }
+  ]
+}

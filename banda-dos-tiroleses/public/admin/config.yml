@@ -1,0 +1,157 @@
+# Painel de conteúdo (Decap CMS). Ver docs/CMS.md para ativar a autenticação.
+backend:
+  name: github
+  repo: PREENCHER/usuario-ou-organizacao/repositorio   # pendente
+  branch: main
+  # base_url: https://SEU-PROVEDOR-OAUTH                # pendente: proxy OAuth do GitHub
+
+# Para testar localmente sem login: `npx decap-server` + `npm run dev`
+local_backend: true
+
+locale: pt
+media_folder: banda-dos-tiroleses/public/media/fotos/atuais
+public_folder: /media/fotos/atuais
+site_url: https://www.bandadostiroleses.com
+
+collections:
+  - name: noticias
+    label: Notícias
+    label_singular: Notícia
+    folder: banda-dos-tiroleses/content/noticias
+    create: true
+    slug: "{{year}}-{{month}}-{{slug}}"
+    fields:
+      - { name: titulo, label: Título }
+      - { name: data, label: Data, widget: datetime, format: "YYYY-MM-DD", time_format: false }
+      - { name: categoria, label: Categoria, widget: select, options: [Concertos, Festas, Tradição, Intercâmbio, Institucional] }
+      - { name: resumo, label: Resumo, widget: text }
+      - { name: midia, label: "ID da fotografia (inventário da galeria)", required: false }
+      - { name: arquivo, label: "Arquivo histórico?", widget: boolean, default: false }
+      - { name: fontes, label: Fontes (URLs), widget: list, required: false }
+      - { name: body, label: Texto, widget: markdown }
+
+  - name: dados
+    label: Conteúdo do site
+    files:
+      - name: eventos
+        label: Eventos
+        file: banda-dos-tiroleses/content/eventos.json
+        fields:
+          - name: itens
+            label: Eventos
+            label_singular: Evento
+            widget: list
+            summary: "{{data}} — {{titulo}}"
+            fields:
+              - { name: id, label: Identificador (sem espaços) }
+              - { name: titulo, label: Título }
+              - { name: subtitulo, label: Subtítulo, required: false }
+              - { name: data, label: Data de início, widget: datetime, format: "YYYY-MM-DD", time_format: false }
+              - { name: dataFim, label: Data de término, widget: datetime, format: "YYYY-MM-DD", time_format: false, required: false, default: "" }
+              - { name: dataAproximada, label: "Data aproximada (ex.: Setembro de 2027)", required: false }
+              - { name: hora, label: Horário, required: false }
+              - { name: local, label: Local }
+              - { name: categoria, label: Categoria, widget: select, options: [Concerto, Festa, Tradição, Liturgia, Viagem] }
+              - { name: descricao, label: Descrição, widget: text }
+              - { name: confirmacao, label: Aviso de confirmação, required: false }
+              - { name: link, label: Link externo, required: false }
+              - { name: midia, label: ID da fotografia ou cartaz, required: false }
+              - { name: fonte, label: Fonte da informação }
+      - name: musicos
+        label: Músicos e regência
+        file: banda-dos-tiroleses/content/musicos.json
+        fields:
+          - { name: aviso, label: Aviso exibido enquanto a lista não estiver completa, widget: text, required: false }
+          - name: regencia
+            label: Regência
+            widget: list
+            summary: "{{nome}}"
+            fields:
+              - { name: nome, label: Nome }
+              - { name: funcao, label: Função }
+              - { name: desde, label: Desde (ano), required: false }
+              - { name: bio, label: Biografia, widget: text }
+              - { name: midia, label: ID do retrato, required: false }
+          - name: naipes
+            label: Naipes
+            widget: list
+            summary: "{{nome}}"
+            fields:
+              - { name: nome, label: Nome }
+              - { name: nome_de, label: Nome em alemão }
+              - name: musicos
+                label: Músicos
+                widget: list
+                summary: "{{nome}}"
+                fields:
+                  - { name: nome, label: Nome }
+                  - { name: instrumento, label: Instrumento, required: false }
+                  - { name: midia, label: ID do retrato, required: false }
+      - name: galeria
+        label: Galeria e inventário de mídia
+        file: banda-dos-tiroleses/content/galeria.json
+        fields:
+          - name: itens
+            label: Fotografias
+            widget: list
+            summary: "{{ano}} — {{titulo}} ({{autorizacao}})"
+            fields:
+              - { name: id, label: Identificador }
+              - { name: titulo, label: Título / descrição }
+              - { name: evento, label: Evento }
+              - { name: ano, label: Ano, required: false }
+              - { name: colecao, label: Coleção, widget: select, options: [atuais, historicas, documentos] }
+              - { name: formato, label: Formato, widget: select, options: [paisagem, retrato, quadrado] }
+              - { name: arquivo, label: Arquivo, widget: image, required: false }
+              - { name: credito, label: Crédito (fotógrafo), required: false }
+              - { name: fonte, label: Fonte / origem, required: false }
+              - { name: autorizacao, label: Autorização, widget: select, options: [pendente, autorizada, negada] }
+          - name: videos
+            label: Vídeos
+            widget: list
+            summary: "{{ano}} — {{titulo}}"
+            fields:
+              - { name: id, label: Identificador }
+              - { name: titulo, label: Título }
+              - { name: ano, label: Ano }
+              - { name: evento, label: Evento }
+              - { name: url, label: URL do vídeo }
+              - { name: canalOficial, label: "Publicado no canal oficial?", widget: boolean, default: false }
+      - name: parceiros
+        label: Colaboradores
+        file: banda-dos-tiroleses/content/parceiros.json
+        fields:
+          - name: itens
+            label: Colaboradores
+            widget: list
+            summary: "{{nome}}"
+            fields:
+              - { name: nome, label: Nome }
+              - { name: tipo, label: Tipo de apoio }
+              - { name: contexto, label: Descrição, required: false }
+              - { name: url, label: Site, required: false }
+              - { name: logo, label: Logotipo, widget: image, required: false, media_folder: /banda-dos-tiroleses/public/media/logos/parceiros, public_folder: /media/logos/parceiros }
+              - { name: autorizado, label: "Uso do logotipo autorizado?", widget: boolean, default: false }
+      - name: site
+        label: Dados institucionais
+        file: banda-dos-tiroleses/content/site.json
+        fields:
+          - { name: nome, label: Nome }
+          - { name: nomeAlemao, label: Nome em alemão }
+          - { name: entidade, label: Entidade }
+          - { name: cnpj, label: CNPJ }
+          - { name: cidade, label: Cidade }
+          - { name: estado, label: Estado }
+          - { name: pais, label: País }
+          - { name: fundacao, label: Data de fundação }
+          - { name: email, label: E-mail }
+          - { name: endereco, label: Endereço, required: false }
+          - { name: telefone, label: Telefone, required: false }
+          - { name: regente, label: Regente atual }
+          - { name: regenteDesde, label: Regente desde (ano), widget: number, value_type: int }
+          - name: redes
+            label: Redes sociais verificadas
+            widget: list
+            fields:
+              - { name: nome, label: Nome (ex.: Instagram) }
+              - { name: url, label: URL }

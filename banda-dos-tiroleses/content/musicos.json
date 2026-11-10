@@ -1,0 +1,18 @@
+{
+  "aviso": "A lista de músicos publicada no site anterior (2024) não foi reproduzida: precisa ser atualizada e confirmada pela banda antes de ser publicada.",
+  "naipes": [
+    { "nome": "Flautas", "nome_de": "Flöten", "musicos": [] },
+    { "nome": "Clarinetes", "nome_de": "Klarinetten", "musicos": [] },
+    { "nome": "Flügelhorns", "nome_de": "Flügelhörner", "musicos": [] },
+    { "nome": "Trompetes", "nome_de": "Trompeten", "musicos": [] },
+    { "nome": "Trompas", "nome_de": "Hörner", "musicos": [] },
+    { "nome": "Tenorhorns e barítonos", "nome_de": "Tenorhörner & Baritone", "musicos": [] },
+    { "nome": "Trombones", "nome_de": "Posaunen", "musicos": [] },
+    { "nome": "Tubas", "nome_de": "Tuben", "musicos": [] },
+    { "nome": "Percussão", "nome_de": "Schlagwerk", "musicos": [] }
+  ],
+  "regencia": [
+    { "nome": "Roberto Luiz da Maia", "funcao": "Regente — Kapellmeister", "desde": "2023", "bio": "Músico da banda antes de assumir a regência em 2023. Concluiu curso de regência no Instituto Grillhof, no Tirol, formação reconhecida por moção da Assembleia Legislativa de Santa Catarina.", "midia": "retrato-regente" },
+    { "nome": "Vinícius Thaler", "funcao": "Regente da banda jovem e dos grupos de acesso", "desde": "", "bio": "Conduz a formação das novas gerações de músicos.", "midia": "retrato-banda-jovem" }
+  ]
+}

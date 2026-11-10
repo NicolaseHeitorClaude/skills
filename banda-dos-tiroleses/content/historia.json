@@ -1,0 +1,123 @@
+{
+  "linhaDoTempo": [
+    {
+      "ano": "1933",
+      "data": "Setembro de 1933",
+      "titulo": "A partida de Innsbruck",
+      "titulo_de": "Der Abschied",
+      "texto": "Os primeiros emigrantes reúnem-se em Innsbruck e seguem para Gênova, onde embarcam no navio Principessa Maria rumo ao Brasil. Na bagagem, além do necessário para recomeçar, viajam os instrumentos musicais. A colonização é conduzida por Andreas Thaler, ex-ministro da Agricultura da Áustria.",
+      "midia": "hist-1933-partida",
+      "fontes": ["bandadostiroleses-historia", "wittmann-2024"]
+    },
+    {
+      "ano": "1933",
+      "data": "Travessia do Atlântico, 1933",
+      "titulo": "Uma banda nasce a bordo",
+      "titulo_de": "Gründung an Bord",
+      "texto": "Fazer música era costume nas aldeias da Áustria, e muitos emigrantes tocavam nas bandas de suas localidades. Ainda durante a viagem, alguns deles formam a Musikkapelle Dreizehnlinden e ensaiam no próprio navio.",
+      "midia": "hist-1933-navio",
+      "fontes": ["bandadostiroleses-historia", "trezetilias-grupos"]
+    },
+    {
+      "ano": "1933",
+      "data": "Rio de Janeiro, 1933",
+      "titulo": "A primeira apresentação",
+      "titulo_de": "Das erste Konzert",
+      "texto": "Antes mesmo de chegar ao destino, a banda faz sua primeira apresentação na Ilha das Flores, no Rio de Janeiro, para o embaixador da Áustria no Brasil, Dr. Anton Retschek.",
+      "midia": "hist-1933-ilha-das-flores",
+      "fontes": ["bandadostiroleses-historia"]
+    },
+    {
+      "ano": "1933",
+      "data": "13 de outubro de 1933",
+      "titulo": "Dreizehnlinden",
+      "titulo_de": "Ankunft",
+      "texto": "O primeiro grupo chega às terras do meio-oeste catarinense. A data marca a fundação de Treze Tílias — e, desde então, a banda acompanha a vida da comunidade sem interrupção. Seu primeiro regente é Johann Mitterer.",
+      "midia": "hist-1933-chegada",
+      "fontes": ["trezetilias-historia", "trezetilias-grupos"]
+    },
+    {
+      "ano": "1935",
+      "data": "1935 – 1938",
+      "titulo": "Formação e método",
+      "titulo_de": "Lehrjahre",
+      "texto": "A banda cresce com a chegada de novos grupos de austríacos. O engenheiro e regente Johann (Hans) Völgefy dá aulas de regência na colônia e prepara o clarinetista Gabriel Hausberger para sucedê-lo antes de retornar à Áustria.",
+      "midia": "hist-1935-ensaio",
+      "fontes": ["bandadostiroleses-historia", "mk13linden-geschichte"]
+    },
+    {
+      "ano": "1938",
+      "data": "1938 – 1981",
+      "titulo": "A era Hausberger",
+      "titulo_de": "Vier Jahrzehnte",
+      "texto": "Gabriel Hausberger rege a banda por mais de quatro décadas. Compõe e arranja muitas das peças do repertório e garante a continuidade da tradição em tempos em que a língua e os costumes dos imigrantes foram postos à prova.",
+      "midia": "hist-1950-hausberger",
+      "fontes": ["trezetilias-grupos", "mk13linden-geschichte"]
+    },
+    {
+      "ano": "1981",
+      "data": "1981 – 2016",
+      "titulo": "Bernardo Moser assume a regência",
+      "titulo_de": "Eine neue Generation",
+      "texto": "Sob a regência de Bernardo Moser, a banda consolida o repertório tirolês e a presença nos grandes palcos do Sul do Brasil. A partir de 1999, o austríaco Adi Rinner, de Terfens (Tirol), passa a ministrar cursos de aperfeiçoamento e torna-se regente honorário.",
+      "midia": "hist-1990-moser",
+      "fontes": ["trezetilias-grupos", "mk13linden-geschichte"]
+    },
+    {
+      "ano": "2013",
+      "data": "2013",
+      "titulo": "Z'ruck zu die Wurz'ln",
+      "titulo_de": "Zurück zu den Wurzeln",
+      "texto": "Oitenta anos depois da emigração, a banda viaja pela primeira vez ao Tirol. Sob o lema \"De volta às raízes\", cerca de 45 músicos se apresentam em diversas localidades, entre elas a Wildschönau, terra de origem de muitos dos pioneiros.",
+      "midia": "hist-2013-tirol",
+      "fontes": ["wildschoenau-2013"]
+    },
+    {
+      "ano": "2016",
+      "data": "2016 – 2023",
+      "titulo": "Markus Astner",
+      "titulo_de": "Brücke nach Tirol",
+      "texto": "O tirolês Markus Astner, formado no Conservatório de Innsbruck e professor da banda desde 2012, assume a regência e reforça a ponte musical entre Treze Tílias e o Tirol.",
+      "midia": "hist-2016-astner",
+      "fontes": ["trezetilias-grupos", "mk13linden-geschichte"]
+    },
+    {
+      "ano": "2023",
+      "data": "Outubro de 2023",
+      "titulo": "Noventa anos",
+      "titulo_de": "90 Jahre",
+      "texto": "Treze Tílias celebra 90 anos de imigração. A Bürgermeistermusikkapelle do distrito de Schwaz viaja do Tirol para as festividades e toca ao lado da banda aniversariante, que conta então com quase 50 músicos. No mesmo ano, Roberto Luiz da Maia — músico da casa — assume a regência.",
+      "midia": "hist-2023-90-anos",
+      "fontes": ["zillertaler-2023", "trezetilias-grupos"]
+    },
+    {
+      "ano": "Hoje",
+      "data": "2024 – 2026",
+      "titulo": "A música permanece viva",
+      "titulo_de": "Heute",
+      "texto": "Sommerkonzerte na Concha Acústica, Maiblasen pelas ruas no 1º de maio, Tirolerfest, Cäcilienkonzert na Igreja Matriz e os palcos da Oktoberfest de Blumenau: o calendário de hoje repete, ano após ano, o gesto dos fundadores.",
+      "midia": "atual-sommerkonzert-2026",
+      "fontes": ["tropical-sommer-2025", "wittmann-2026", "tirolerfest-2026"]
+    }
+  ],
+  "maestros": [
+    { "nome": "Johann Mitterer", "inicio": 1933, "fim": 1935, "nota": "Primeiro regente." },
+    { "nome": "Johann (Hans) Völgefy", "inicio": 1935, "fim": 1938, "nota": "Engenheiro e regente; formou seu sucessor. Grafia varia nas fontes: Völgefy / Völgyvy." },
+    { "nome": "Gabriel Hausberger", "inicio": 1938, "fim": 1981, "nota": "Clarinetista, compositor e arranjador." },
+    { "nome": "Bernardo Moser", "inicio": 1981, "fim": 2016, "nota": "Trinta e cinco anos de regência." },
+    { "nome": "Markus Astner", "inicio": 2016, "fim": 2023, "nota": "Tirolês, formado no Conservatório de Innsbruck." },
+    { "nome": "Roberto Luiz da Maia", "inicio": 2023, "fim": null, "nota": "Regente atual; concluiu curso de regência no Tirol." }
+  ],
+  "fontes": {
+    "bandadostiroleses-historia": { "titulo": "Banda dos Tiroleses — História (site original)", "url": "https://www.bandadostiroleses.com/historia" },
+    "mk13linden-geschichte": { "titulo": "Musikkapelle Dreizehnlinden — Geschichte", "url": "https://www.mk13linden.com/historia" },
+    "trezetilias-grupos": { "titulo": "Treze Tílias — Grupos Culturais", "url": "https://www.trezetilias.com.br/gruposculturais" },
+    "trezetilias-historia": { "titulo": "Treze Tílias — História", "url": "https://www.trezetilias.com.br/historia" },
+    "wittmann-2024": { "titulo": "Angelina Wittmann — Banda dos Tiroleses na Oktoberfest Blumenau 2024", "url": "https://angelinawittmann.blogspot.com/2024/11/banda-dos-tiroleses-de-treze-tilias-com.html" },
+    "wittmann-2026": { "titulo": "Angelina Wittmann — 2º Sommerkonzert, janeiro de 2026", "url": "https://angelinawittmann.blogspot.com/2026/02/2-sommerkonzert-banda-dos-tiroleses.html" },
+    "wildschoenau-2013": { "titulo": "Gemeindezeitung Wildschönau, 09/2013 — Besuch der Musikkapelle aus Dreizehnlinden", "url": "https://www.wildschoenau.gv.at/fileadmin/daten-gde/gemeindeamt/gemeindezeitung/2013/Gde-ztg-2013-09.pdf" },
+    "zillertaler-2023": { "titulo": "Zillertaler Zeitung, 15.11.2023 — Konzertreise der Bürgermeistermusikkapelle Bezirk Schwaz nach Brasilien", "url": "https://www.zillertalerzeitung.at/2023/11/15/erfolgreiche-konzertreise-der-buergermeistermusikkapelle-bezirk-schwaz-nach-brasilien/" },
+    "tropical-sommer-2025": { "titulo": "Rádio Tropical FM — Sommerkonzert 2025", "url": "https://tropicalfm99.com.br/noticia/banda-dos-tiroleses-de-treze-tilias-anuncia-datas-do-tradicional-sommerkonzert-2025" },
+    "tirolerfest-2026": { "titulo": "Tirolerfest — site oficial", "url": "https://tirolerfest.com.br/" }
+  }
+}
