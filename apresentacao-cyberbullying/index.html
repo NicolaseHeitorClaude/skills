@@ -1,0 +1,1035 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Cyberbullying em Filosofia</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;800&family=Instrument+Sans:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: palco 16:9 fixo (1600×900) escalado para a tela; composições assimétricas em posição absoluta,
+   telas claras de papel com duas telas grafite (desinformação e lei) como momentos de virada. */
+:root {
+  --paper: #F5F3F0;      /* branco suave */
+  --mist: #E5E3E0;       /* cinza claro */
+  --ink: #292930;        /* grafite */
+  --red: #E83B42;        /* ênfase */
+  --slate: #66666F;      /* cinza secundário */
+  --ink-soft: #3A3A42;
+  --on-ink-2: #B4B3BA;   /* texto secundário sobre grafite */
+  --line: rgba(41, 41, 48, .16);
+  --line-on-ink: rgba(245, 243, 240, .18);
+  --bubble: #FFFFFF;
+
+  --f-display: "Sora", "Manrope", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Instrument Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-ui: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --ease: cubic-bezier(.2, .8, .2, 1);
+  --ease-pop: cubic-bezier(.34, 1.4, .5, 1);
+  color-scheme: light;
+}
+/* A apresentação tem um visual único e deliberado (papel + grafite), igual em qualquer tema do sistema. */
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: #1E1E24;
+  color: var(--ink);
+  font-family: var(--f-body);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  padding-left: max(0px, env(safe-area-inset-left, 0px));
+  padding-right: max(0px, env(safe-area-inset-right, 0px));
+}
+
+/* ---------- Palco ---------- */
+.viewport {
+  position: fixed; inset: 0;
+  display: grid; place-items: center;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 16px 64px;
+}
+.stage {
+  position: relative;
+  width: 1600px; height: 900px;
+  flex: none;
+  transform-origin: center center;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,.35);
+  background: var(--paper);
+}
+.is-full .viewport { padding: 0; }
+.is-full .stage { border-radius: 0; box-shadow: none; }
+
+.slide {
+  position: absolute; inset: 0;
+  background: var(--paper);
+  color: var(--ink);
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity .55s var(--ease), visibility 0s linear .55s;
+}
+.slide.is-active { visibility: visible; opacity: 1; transition: opacity .55s var(--ease); z-index: 2; }
+.slide.dark { background: var(--ink); color: var(--paper); }
+.slide.mist { background: var(--mist); }
+.abs { position: absolute; }
+
+/* ---------- Tipografia ---------- */
+.h1 {
+  font-family: var(--f-display); font-weight: 800;
+  font-size: 68px; line-height: 1.02; letter-spacing: -.025em;
+  margin: 0; text-wrap: balance;
+}
+.h1 em { font-style: normal; color: var(--red); }
+.q {
+  font-family: var(--f-display); font-weight: 600;
+  font-size: 40px; line-height: 1.14; letter-spacing: -.015em;
+  margin: 0; text-wrap: balance;
+}
+.lead { font-size: 27px; line-height: 1.42; margin: 0; text-wrap: pretty; }
+.body { font-size: 23px; line-height: 1.45; margin: 0; text-wrap: pretty; }
+.small { font-size: 19px; line-height: 1.45; margin: 0; color: var(--slate); }
+.dark .small { color: var(--on-ink-2); }
+.label {
+  font-family: var(--f-ui); font-size: 15px; font-weight: 500;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--slate); margin: 0;
+}
+.dark .label { color: var(--on-ink-2); }
+.label.red { color: var(--red); }
+strong { font-weight: 600; }
+
+/* ---------- Cromo de cada tela ---------- */
+.chrome {
+  position: absolute; left: 120px; right: 120px; top: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: var(--f-ui); font-size: 15px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--slate);
+  z-index: 3;
+}
+.dark .chrome { color: var(--on-ink-2); }
+.chrome .who { display: flex; align-items: center; gap: 14px; }
+.chrome .who b { font-weight: 500; color: var(--ink); }
+.dark .chrome .who b { color: var(--paper); }
+.chrome .pip { width: 8px; height: 8px; border-radius: 50%; background: var(--red); }
+.chrome .num { font-family: var(--f-display); font-weight: 800; font-size: 30px; letter-spacing: -.02em; color: var(--red); }
+
+/* fundo: formas de conversa muito sutis, herdadas das nuvens do PDF */
+.ghost { position: absolute; pointer-events: none; z-index: 0; }
+.ghost path { fill: none; stroke: var(--ink); stroke-width: 2; opacity: .06; }
+.dark .ghost path { stroke: var(--paper); opacity: .07; }
+.ghost .fill { fill: var(--mist); stroke: none; opacity: .5; }
+.dark .ghost .fill { fill: #303038; opacity: 1; }
+
+/* ---------- Balões ---------- */
+.bubble {
+  display: inline-block;
+  background: var(--bubble); color: var(--ink);
+  font-size: 22px; line-height: 1.35;
+  padding: 14px 20px 15px;
+  border-radius: 24px 24px 24px 6px;
+  box-shadow: 0 1px 0 rgba(41,41,48,.06), 0 10px 24px -14px rgba(41,41,48,.35);
+  max-width: 100%;
+}
+.bubble.out { background: var(--ink); color: var(--paper); border-radius: 24px 24px 6px 24px; }
+.bubble.red { background: var(--red); color: #fff; }
+.bubble .meta { display: block; font-family: var(--f-ui); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; opacity: .6; margin-bottom: 6px; }
+.dark .bubble { box-shadow: none; }
+.sys {
+  font-family: var(--f-ui); font-size: 13px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--slate); display: inline-flex; align-items: center; gap: 8px;
+}
+.redact { display: inline-block; height: .8em; vertical-align: -1px; border-radius: 3px; background: currentColor; opacity: .22; }
+
+.typing { display: inline-flex; gap: 6px; padding: 18px 20px; }
+.typing i { width: 9px; height: 9px; border-radius: 50%; background: currentColor; opacity: .5; animation: blink 1.2s infinite; }
+.typing i:nth-child(2) { animation-delay: .15s; }
+.typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes blink { 0%, 60%, 100% { transform: translateY(0); opacity: .35 } 30% { transform: translateY(-5px); opacity: .9 } }
+
+/* ---------- Ilustrações ---------- */
+.illo { position: absolute; display: block; user-select: none; -webkit-user-drag: none; }
+
+/* ---------- Animações de entrada ---------- */
+.slide .a, .slide .pop, .slide .wipe, .slide .draw, .slide .grow { will-change: transform, opacity; }
+.slide.is-active .a     { animation: rise .9s var(--ease) both; animation-delay: calc(var(--d, 0) * 110ms + 120ms); }
+.slide.is-active .fade  { animation: fade 1.1s var(--ease) both; animation-delay: calc(var(--d, 0) * 110ms + 120ms); }
+.slide.is-active .pop   { animation: pop .7s var(--ease-pop) both; animation-delay: calc(var(--d, 0) * 110ms + 120ms); }
+.slide.is-active .wipe  { animation: wipe 1s var(--ease) both; animation-delay: calc(var(--d, 0) * 110ms + 120ms); }
+.slide.is-active .grow  { animation: grow 1.3s var(--ease) both; animation-delay: calc(var(--d, 0) * 110ms + 120ms); }
+.slide.is-active .draw  { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.4s var(--ease) forwards; animation-delay: calc(var(--d, 0) * 110ms + 120ms); }
+.slide.is-active .float { animation: float 7s ease-in-out infinite; animation-delay: calc(var(--d, 0) * -1s); }
+.pop.from-r { transform-origin: 100% 100%; }
+.pop { transform-origin: 0% 100%; }
+@keyframes rise { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop  { from { opacity: 0; transform: scale(.6) translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes grow { from { opacity: 0; transform: scale(.94) translateY(20px); } to { opacity: 1; transform: none; } }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+/* digitando → mensagem (troca dentro do mesmo lugar) */
+.swap { position: relative; display: inline-block; }
+.swap > .typing-b { position: absolute; left: 0; bottom: 0; }
+.slide.is-active .swap > .typing-b { animation: typingOut 1.6s var(--ease) both; animation-delay: calc(var(--d, 0) * 110ms + 120ms); }
+.slide.is-active .swap > .msg { animation: msgIn .6s var(--ease-pop) both; animation-delay: calc(var(--d, 0) * 110ms + 1.25s); transform-origin: 0 100%; }
+.swap.r > .typing-b { left: auto; right: 0; }
+.swap.r > .msg { transform-origin: 100% 100%; }
+@keyframes typingOut { 0% { opacity: 0; transform: scale(.6); } 15% { opacity: 1; transform: none; } 75% { opacity: 1; } 100% { opacity: 0; transform: scale(.9); } }
+@keyframes msgIn { from { opacity: 0; transform: scale(.7); } to { opacity: 1; transform: none; } }
+
+/* =========================================================
+   TELA 1 — CAPA
+   ========================================================= */
+.s1 .title {
+  left: 112px; top: 196px; margin: 0;
+  font-family: var(--f-display); font-weight: 800;
+  font-size: 196px; line-height: .86; letter-spacing: -.055em;
+}
+.s1 .title .l1 { position: relative; display: inline-block; color: #fff; padding: 2px 44px 22px 36px; }
+.s1 .title .l1::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: var(--red); border-radius: 34px 34px 34px 8px;
+}
+.s1 .title .l1-wrap { position: relative; z-index: 0; display: inline-block; }
+.s1 .title .l1-tail { position: absolute; left: 30px; bottom: -26px; width: 46px; height: 30px; z-index: -1; }
+.s1 .title .l2 { display: block; margin-top: 30px; padding-left: 36px; }
+.s1 .sub { left: 150px; top: 640px; width: 640px; font-size: 30px; line-height: 1.35; color: var(--ink-soft); margin: 0; text-wrap: balance; }
+.s1 .team { left: 150px; bottom: 78px; display: grid; gap: 8px; }
+.s1 .team .names { font-family: var(--f-display); font-weight: 600; font-size: 28px; letter-spacing: -.01em; }
+.s1 .net { right: 0; top: 0; width: 760px; height: 900px; }
+.s1 .net .ln { fill: none; stroke: var(--ink); stroke-width: 2; opacity: .35; stroke-linecap: round; }
+.s1 .net .ln.r { stroke: var(--red); opacity: .9; }
+.s1 .node { fill: var(--paper); stroke: var(--ink); stroke-width: 2.5; }
+.s1 .node.r { stroke: var(--red); }
+.s1 .avatar circle.h { fill: var(--ink); }
+.s1 .chat1 { left: 1010px; top: 196px; }
+.s1 .chat2 { left: 1220px; top: 410px; }
+.s1 .chat3 { left: 960px; top: 560px; }
+.s1 .chat4 { left: 1180px; top: 708px; }
+.s1 .burst { left: 1500px; top: 330px; width: 60px; }
+
+/* =========================================================
+   TELA 2 — ÉTICA NAS REDES
+   ========================================================= */
+.s2 .text { left: 120px; top: 150px; width: 640px; display: grid; gap: 26px; }
+.s2 .def { font-size: 25px; line-height: 1.45; margin: 0; color: var(--ink-soft); }
+.s2 .types { display: grid; gap: 0; margin-top: 18px; }
+.s2 .types .row { display: grid; grid-template-columns: 52px 1fr; align-items: center; gap: 20px; padding: 13px 0; border-top: 1px solid var(--line); font-size: 24px; }
+.s2 .types .row:last-child { border-bottom: 1px solid var(--line); }
+.glyph { width: 44px; height: 44px; }
+.glyph * { fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.glyph .r { stroke: var(--red); }
+.glyph .f { fill: var(--red); stroke: none; }
+.dark .glyph * { stroke: var(--paper); }
+.dark .glyph .r { stroke: var(--red); }
+.s2 .illo { left: 880px; top: 268px; width: 620px; }
+.s2 .ask { left: 822px; top: 128px; width: 470px; }
+.s2 .ask .bubble { font-family: var(--f-display); font-weight: 600; font-size: 26px; line-height: 1.25; letter-spacing: -.01em; padding: 20px 26px 22px; }
+
+/* =========================================================
+   TELA 3 — CONSEQUÊNCIAS
+   ========================================================= */
+.s3 .illo { left: 150px; top: 230px; width: 520px; }
+.s3 .text { left: 780px; top: 150px; width: 700px; display: grid; gap: 30px; }
+.s3 .rows { display: grid; }
+.s3 .rows .row { display: grid; grid-template-columns: 170px 1fr; gap: 24px; padding: 20px 0; border-top: 1px solid var(--line); align-items: baseline; }
+.s3 .rows .row:last-child { border-bottom: 1px solid var(--line); }
+.s3 .rows .label { padding-top: 4px; }
+.s3 .care { display: flex; gap: 18px; align-items: flex-start; margin-top: 8px; }
+.s3 .care .bubble { font-size: 25px; }
+
+/* =========================================================
+   TELA 4 — LIBERDADE E RESPEITO
+   ========================================================= */
+.s4 .text { left: 120px; top: 150px; width: 560px; display: grid; gap: 30px; }
+.s4 .limits { display: grid; gap: 10px; margin-top: 6px; }
+.s4 .limits li { list-style: none; display: grid; grid-template-columns: 22px 1fr; gap: 12px; font-size: 22px; align-items: baseline; }
+.s4 .limits li::before { content: ""; width: 10px; height: 10px; border: 2px solid var(--ink); border-radius: 50%; transform: translateY(-1px); }
+.s4 .limits ul { margin: 0; padding: 0; display: grid; gap: 10px; }
+.s4 .closing { font-family: var(--f-display); font-weight: 600; font-size: 26px; line-height: 1.25; margin: 8px 0 0; }
+.s4 .closing span { box-shadow: inset 0 -10px 0 rgba(232, 59, 66, .28); }
+.s4 .compare-head { left: 740px; top: 150px; width: 740px; }
+.s4 .thread { top: 250px; width: 360px; display: grid; gap: 14px; align-content: start; }
+.s4 .thread.t1 { left: 740px; }
+.s4 .thread.t2 { left: 1130px; }
+.s4 .thread .tag { display: flex; align-items: center; gap: 10px; font-family: var(--f-display); font-weight: 800; font-size: 30px; letter-spacing: -.02em; margin-bottom: 6px; }
+.s4 .thread .tag i { width: 12px; height: 12px; border-radius: 50%; background: var(--ink); }
+.s4 .thread.t2 .tag i { background: var(--red); }
+.s4 .thread .bubble { font-size: 20px; padding: 12px 18px 13px; }
+.s4 .thread .who { font-family: var(--f-ui); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--slate); margin: 4px 0 -8px 6px; }
+.s4 .thread .who.r { text-align: right; margin-right: 6px; }
+.s4 .thread .end { justify-self: end; }
+.s4 .thread .verdict { margin-top: 14px; padding-top: 14px; border-top: 2px solid var(--ink); font-size: 21px; font-weight: 600; }
+.s4 .thread.t2 .verdict { border-top-color: var(--red); }
+.s4 .fic { left: 740px; bottom: 60px; }
+.s4 .divider { left: 1110px; top: 250px; width: 1px; height: 560px; background: var(--line); }
+
+/* =========================================================
+   TELA 5 — DESINFORMAÇÃO (grafite)
+   ========================================================= */
+.s5 .text { left: 120px; top: 150px; width: 560px; display: grid; gap: 24px; }
+.s5 .defs { display: grid; gap: 14px; }
+.s5 .defs p { margin: 0; font-size: 22px; line-height: 1.42; color: var(--on-ink-2); }
+.s5 .defs b { color: var(--paper); font-weight: 600; }
+.s5 .checks { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 28px; margin-top: 6px; }
+.s5 .check { display: grid; grid-template-columns: 36px 1fr; gap: 12px; align-items: start; }
+.s5 .check svg { width: 32px; height: 32px; }
+.s5 .check svg circle { fill: none; stroke: var(--red); stroke-width: 2.5; }
+.s5 .check svg path { fill: none; stroke: var(--paper); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.s5 .check b { display: block; font-family: var(--f-display); font-weight: 600; font-size: 24px; letter-spacing: -.01em; }
+.s5 .check span { font-size: 18px; color: var(--on-ink-2); }
+.s5 .net { left: 700px; top: 110px; width: 860px; height: 740px; }
+.s5 .net line { stroke: var(--paper); stroke-width: 1.5; opacity: .32; }
+.s5 .net circle.n { fill: var(--ink); stroke: var(--paper); stroke-width: 2; }
+.s5 .net circle.n.hit { fill: var(--red); stroke: var(--red); }
+.s5 .net circle.ring { fill: none; stroke: var(--paper); stroke-dasharray: 2 8; opacity: .18; }
+.s5 .post { left: 990px; top: 386px; width: 280px; background: var(--paper); color: var(--ink); border-radius: 18px; padding: 16px 18px 18px; box-shadow: 0 0 0 10px rgba(232,59,66,.18), 0 0 0 22px rgba(232,59,66,.08); }
+.s5 .post .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.s5 .post .top .sys { color: var(--red); font-size: 12px; }
+.s5 .post .av { width: 30px; height: 30px; border-radius: 50%; background: var(--mist); display: inline-block; vertical-align: middle; margin-right: 8px; }
+.s5 .post .bar { height: 12px; border-radius: 6px; background: var(--mist); margin: 8px 0; }
+.s5 .post .alert { display: inline-block; font-family: var(--f-ui); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; background: var(--ink); color: var(--paper); padding: 4px 8px; border-radius: 4px; margin-bottom: 4px; }
+.s5 .post .foot { display: flex; gap: 14px; margin-top: 12px; font-family: var(--f-ui); font-size: 12px; color: var(--slate); letter-spacing: .06em; text-transform: uppercase; }
+.s5 .caption { left: 120px; bottom: 64px; width: 540px; }
+.s5.is-active .net .wave { animation: fade .6s var(--ease) both; }
+.s5.is-active .net .pulse { animation: pulse 2.8s ease-out infinite; }
+@keyframes pulse { 0% { r: 0; opacity: .5; } 100% { r: 360; opacity: 0; } }
+
+/* =========================================================
+   TELA 6 — PRIVACIDADE
+   ========================================================= */
+.s6 .text { left: 120px; top: 140px; width: 620px; display: grid; gap: 24px; }
+.s6 .recs { display: grid; margin-top: 4px; }
+.s6 .recs .row { display: grid; grid-template-columns: 52px 1fr; align-items: center; gap: 18px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 22px; line-height: 1.3; }
+.s6 .recs .row:last-child { border-bottom: 1px solid var(--line); }
+.s6 .note { display: grid; grid-template-columns: 4px 1fr; gap: 16px; font-size: 19px; line-height: 1.42; color: var(--ink-soft); }
+.s6 .note::before { content: ""; background: var(--ink); border-radius: 2px; }
+.s6 .illo { left: 850px; top: 230px; width: 640px; }
+.s6 .ask { left: 860px; top: 120px; width: 470px; }
+.s6 .ask .bubble { font-family: var(--f-display); font-weight: 600; font-size: 26px; line-height: 1.25; letter-spacing: -.01em; padding: 20px 26px 22px; }
+
+/* =========================================================
+   TELA 7 — COMO AGIR
+   ========================================================= */
+.s7 .illo { left: 1020px; top: 300px; width: 610px; }
+.s7 .head { left: 120px; top: 150px; width: 820px; display: grid; gap: 22px; }
+.s7 .steps { left: 120px; top: 420px; width: 920px; height: 220px; }
+.s7 .steps svg.track { position: absolute; left: 0; top: 0; width: 920px; height: 60px; overflow: visible; }
+.s7 .steps svg.track path { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; }
+.s7 .steps svg.track .head-arrow { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.s7 .step { position: absolute; top: 0; width: 270px; }
+.s7 .step .dot {
+  width: 56px; height: 56px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-family: var(--f-display); font-weight: 800; font-size: 24px;
+  background: var(--paper); border: 2.5px solid var(--ink); color: var(--ink);
+}
+.s7 .step.last .dot { background: var(--red); border-color: var(--red); color: #fff; }
+.s7 .step h3 { font-family: var(--f-display); font-weight: 800; font-size: 30px; letter-spacing: -.02em; line-height: 1.08; margin: 22px 0 10px; }
+.s7 .step p { font-size: 20px; line-height: 1.4; margin: 0; color: var(--ink-soft); }
+.s7 .tips { left: 120px; top: 700px; width: 860px; display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
+.s7 .tips p { margin: 0; font-size: 19px; line-height: 1.42; color: var(--ink-soft); padding-top: 14px; border-top: 1px solid var(--line); }
+.s7 .tips b { color: var(--ink); }
+
+/* =========================================================
+   TELA 8 — CONSEQUÊNCIAS LEGAIS (grafite, tipográfica)
+   ========================================================= */
+.s8 .bigno {
+  left: 108px; top: 190px; margin: 0;
+  font-family: var(--f-display); font-weight: 800; font-size: 150px; line-height: .9; letter-spacing: -.05em;
+}
+.s8 .bigno small { display: block; font-size: 32px; letter-spacing: -.01em; font-weight: 600; color: var(--on-ink-2); margin-bottom: 18px; padding-left: 8px; }
+.s8 .bigno .yr { color: var(--red); }
+.s8 .art { right: 60px; top: 60px; font-family: var(--f-display); font-weight: 800; font-size: 240px; line-height: 1; letter-spacing: -.06em; color: transparent; -webkit-text-stroke: 1.5px rgba(245,243,240,.08); pointer-events: none; }
+.s8 .cols { left: 120px; top: 450px; width: 1360px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+.s8 .cols p { margin: 0; font-size: 25px; line-height: 1.45; text-wrap: pretty; }
+.s8 .cols .label { margin-bottom: 14px; }
+.s8 .rule { left: 120px; top: 690px; width: 1360px; height: 1px; background: var(--line-on-ink); transform-origin: left; }
+.s8 .foot { left: 120px; top: 716px; width: 1360px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+.s8 .foot p { margin: 0; font-size: 20px; line-height: 1.45; color: var(--on-ink-2); }
+.s8 .foot b { color: var(--paper); font-weight: 600; }
+
+/* =========================================================
+   TELA 9 — ONDE BUSCAR AJUDA (acolhimento)
+   ========================================================= */
+.s9 { background: var(--paper); }
+.s9 .warm { left: 400px; top: 160px; width: 800px; height: 800px; border-radius: 50%; background: radial-gradient(circle at 50% 50%, rgba(232,59,66,.09), rgba(232,59,66,0) 62%); }
+.s9 .p1 { left: 40px; top: 360px; width: 430px; }
+.s9 .p2 { left: 1200px; top: 350px; width: 390px; }
+.s9 .head { left: 400px; top: 120px; width: 800px; text-align: center; display: grid; gap: 18px; justify-items: center; }
+.s9 .head .q { font-size: 34px; color: var(--ink); }
+.s9 .head .h1 { font-size: 80px; }
+.s9 .links { left: 470px; top: 410px; width: 680px; height: 420px; }
+.s9 .links path { fill: none; stroke: var(--ink); stroke-width: 2; opacity: .28; stroke-linecap: round; }
+.s9 .b { font-size: 24px; padding: 16px 22px 17px; }
+.s9 .b strong { display: block; font-family: var(--f-display); font-weight: 600; font-size: 25px; letter-spacing: -.01em; }
+.s9 .b span { font-size: 18px; color: var(--slate); }
+.s9 .bb1 { left: 470px; top: 410px; }
+.s9 .bb2 { left: 750px; top: 520px; }
+.s9 .bb3 { left: 500px; top: 640px; }
+.s9 .bb4 { left: 730px; top: 748px; }
+
+/* =========================================================
+   TELA 10 — ENCERRAMENTO
+   ========================================================= */
+.s10 .thanks { left: 300px; top: 340px; margin: 0; }
+.s10 .thanks .bub {
+  position: relative; display: inline-block; z-index: 0;
+  font-family: var(--f-display); font-weight: 800; font-size: 190px; line-height: .9; letter-spacing: -.055em;
+  color: #fff; padding: 30px 70px 56px 60px;
+}
+.s10 .thanks .bub::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--red); border-radius: 46px 46px 46px 10px; }
+.s10 .thanks .tail { position: absolute; left: 44px; bottom: -34px; width: 64px; height: 40px; z-index: -1; }
+.s10 .names { left: 360px; top: 660px; display: grid; gap: 8px; }
+.s10 .names .n { font-family: var(--f-display); font-weight: 600; font-size: 30px; letter-spacing: -.01em; }
+.s10 .think { left: 980px; top: 110px; width: 500px; }
+.s10 .think .bubble { font-family: var(--f-display); font-weight: 600; font-size: 28px; line-height: 1.24; letter-spacing: -.01em; padding: 22px 28px 24px; }
+.s10 .think .label { margin: 0 0 12px 4px; }
+.s10 .burst { width: 70px; }
+.s10 .net { left: 0; top: 0; width: 1600px; height: 900px; }
+.s10 .net path { fill: none; stroke: var(--ink); stroke-width: 2; opacity: .22; stroke-linecap: round; }
+.s10 .net circle { fill: var(--paper); stroke: var(--ink); stroke-width: 2.5; }
+
+/* ---------- Controles ---------- */
+.dock {
+  position: fixed; left: 50%; bottom: max(12px, env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(41,41,48,.92); color: var(--paper);
+  border-radius: 999px; padding: 6px 8px;
+  font-family: var(--f-ui); font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+  z-index: 20;
+  transition: opacity .4s var(--ease), transform .4s var(--ease);
+  max-width: calc(100vw - 32px);
+}
+.idle .dock { opacity: 0; transform: translate(-50%, 8px); pointer-events: none; }
+.dock button {
+  appearance: none; border: 0; background: transparent; color: inherit; cursor: pointer;
+  font: inherit; letter-spacing: inherit; text-transform: inherit;
+  height: 34px; min-width: 34px; padding: 0 12px; border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.dock button:hover { background: rgba(245,243,240,.1); }
+.dock button:focus-visible, .notes button:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+.dock button[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
+.dock .count { padding: 0 10px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dock .speakers { display: flex; gap: 3px; padding: 0 6px; }
+.dock .speakers i { width: 22px; height: 4px; border-radius: 2px; background: rgba(245,243,240,.22); transition: background .3s; }
+.dock .speakers i.done { background: rgba(245,243,240,.6); }
+.dock .speakers i.now { background: var(--red); }
+.dock .who-now { white-space: nowrap; padding-right: 8px; color: #fff; }
+.dock svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.progress { position: fixed; left: 0; right: 0; top: 0; height: 3px; z-index: 21; background: rgba(245,243,240,.08); }
+.progress i { display: block; height: 100%; background: var(--red); width: 10%; transition: width .6s var(--ease); }
+
+.notes {
+  position: fixed; left: 50%; bottom: 64px; transform: translate(-50%, 16px);
+  width: min(880px, calc(100vw - 32px)); max-height: 46vh; overflow: auto;
+  background: #fff; color: var(--ink); border-radius: 16px;
+  padding: 24px 28px 26px; z-index: 19;
+  box-shadow: 0 30px 70px rgba(0,0,0,.4);
+  opacity: 0; pointer-events: none; transition: opacity .35s var(--ease), transform .35s var(--ease);
+}
+.notes.open { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.notes .nh { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; margin-bottom: 14px; }
+.notes .nh .label b { color: var(--red); font-weight: 500; }
+.notes h4 { font-family: var(--f-display); font-weight: 800; font-size: 22px; margin: 4px 0 0; letter-spacing: -.01em; }
+.notes .nb { font-size: 17px; line-height: 1.55; display: grid; gap: 10px; }
+.notes .nb p { margin: 0; }
+.notes .nb .handoff { font-weight: 600; color: var(--ink); border-left: 3px solid var(--red); padding-left: 12px; }
+.notes .nb .src { font-size: 14px; color: var(--slate); }
+.notes button.close { appearance: none; border: 0; background: var(--mist); border-radius: 999px; padding: 6px 12px; font-family: var(--f-ui); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; color: var(--ink); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  .slide, .slide.is-active { transition: none; }
+  .slide.is-active *, .slide.is-active { animation: none !important; }
+  .slide.is-active .draw { stroke-dashoffset: 0; }
+  .swap > .typing-b { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress" aria-hidden="true"><i id="bar"></i></div>
+
+<main class="viewport" id="viewport">
+<div class="stage" id="stage" role="region" aria-roledescription="apresentação" aria-label="Cyberbullying: respeito, liberdade e responsabilidade no mundo digital">
+
+<!-- ===================== 1 · CAPA ===================== -->
+<section class="slide s1" data-speaker="Heitor" aria-label="Capa">
+  <svg class="ghost" style="left:-160px;top:520px;width:640px;height:460px" viewBox="0 0 640 460" aria-hidden="true">
+    <path class="fill" d="M90 40h420a70 70 0 0 1 70 70v170a70 70 0 0 1-70 70H230l-90 80 10-80h-60a70 70 0 0 1-70-70V110a70 70 0 0 1 70-70z"/>
+  </svg>
+  <div class="chrome">
+    <span class="who"><span class="pip"></span>Filosofia</span>
+    <span class="who">Abertura · <b>Heitor</b></span>
+  </div>
+
+  <h1 class="title abs" aria-label="Cyberbullying">
+    <span class="l1-wrap wipe" style="--d:1">
+      <span class="l1">Cyber</span>
+      <svg class="l1-tail" viewBox="0 0 46 30" aria-hidden="true"><path d="M0 0h46L8 30z" fill="#E83B42"/></svg>
+    </span>
+    <span class="l2 a" style="--d:3">bullying</span>
+  </h1>
+  <p class="sub abs a" style="--d:5">Respeito, liberdade e responsabilidade no mundo digital.</p>
+  <div class="team abs a" style="--d:6">
+    <p class="label">Integrantes</p>
+    <span class="names">Gabriela, Heitor e Miguel</span>
+  </div>
+
+  <!-- rede de conversas: conexões e compartilhamentos -->
+  <svg class="net abs" viewBox="840 0 760 900" aria-hidden="true">
+    <path class="ln draw" pathLength="1" style="--d:4" d="M1000 300 C 1080 360, 1150 360, 1214 452"/>
+    <path class="ln draw" pathLength="1" style="--d:6" d="M1214 452 C 1150 520, 1060 540, 1000 600"/>
+    <path class="ln r draw" pathLength="1" style="--d:8" d="M1000 600 C 1080 700, 1140 720, 1172 748"/>
+    <path class="ln draw" pathLength="1" style="--d:7" d="M1214 452 C 1320 470, 1400 560, 1470 600"/>
+    <path class="ln draw" pathLength="1" style="--d:9" d="M1470 600 C 1500 700, 1480 780, 1520 860"/>
+    <path class="ln draw" pathLength="1" style="--d:5" d="M1000 300 C 1100 200, 1300 180, 1420 160"/>
+    <g class="pop" style="--d:3"><circle class="node" cx="1000" cy="300" r="13"/></g>
+    <g class="pop" style="--d:5"><circle class="node" cx="1214" cy="452" r="13"/></g>
+    <g class="pop" style="--d:7"><circle class="node" cx="1000" cy="600" r="13"/></g>
+    <g class="pop" style="--d:9"><circle class="node r" cx="1172" cy="748" r="13"/></g>
+    <g class="pop" style="--d:8"><circle class="node" cx="1470" cy="600" r="9"/></g>
+    <g class="pop" style="--d:6"><circle class="node" cx="1420" cy="160" r="9"/></g>
+  </svg>
+  <div class="chat1 abs pop" style="--d:4"><span class="bubble float" style="--d:1"><span class="meta">mensagem</span>viu o que postaram sobre ela?</span></div>
+  <div class="chat2 abs" style="--d:6"><span class="swap"><span class="bubble typing typing-b"><i></i><i></i><i></i></span><span class="bubble msg"><span class="meta">encaminhada</span>todo mundo já compartilhou</span></span></div>
+  <div class="chat3 abs pop" style="--d:9"><span class="bubble out float" style="--d:3">não vou repassar.</span></div>
+  <div class="chat4 abs pop" style="--d:11"><span class="bubble red">vamos falar com alguém?</span></div>
+  <svg class="burst abs pop" style="--d:10" viewBox="0 0 100 100" aria-hidden="true"><path fill="#292930" d="M50 0l7 33 26-21-16 30 33 8-33 8 16 30-26-21-7 33-7-33-26 21 16-30L0 50l33-8L17 12l26 21z"/></svg>
+</section>
+
+<!-- ===================== 2 · ÉTICA NAS REDES ===================== -->
+<section class="slide s2" data-speaker="Gabriela" aria-label="Ética nas redes sociais e tipos de cyberbullying">
+  <svg class="ghost" style="left:1080px;top:-120px;width:620px;height:420px" viewBox="0 0 620 420" aria-hidden="true">
+    <path class="fill" d="M80 30h460a60 60 0 0 1 60 60v170a60 60 0 0 1-60 60H260l-80 70 8-70h-108a60 60 0 0 1-60-60V90a60 60 0 0 1 60-60z"/>
+  </svg>
+  <div class="chrome">
+    <span class="who"><span class="pip"></span>Filosofia</span>
+    <span class="who">Fala · <b>Gabriela</b> <span class="num">01</span></span>
+  </div>
+  <div class="text abs">
+    <h2 class="h1 a" style="--d:1">Ética nas redes sociais</h2>
+    <p class="def a" style="--d:2">Cyberbullying é a violência praticada pela internet, com mensagens, comentários e publicações que <strong>humilham, ameaçam ou perseguem</strong> alguém.</p>
+    <div class="types">
+      <p class="label a" style="--d:3">Tipos de cyberbullying</p>
+      <div class="row a" style="--d:4">
+        <svg class="glyph" viewBox="0 0 44 44" aria-hidden="true"><path d="M8 9h28a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4H19l-8 7v-7H8a4 4 0 0 1-4-4V13a4 4 0 0 1 4-4z"/><path class="r" d="M22 14v8M22 26.5v.5"/></svg>
+        <span>Assédio e ameaças</span>
+      </div>
+      <div class="row a" style="--d:5">
+        <svg class="glyph" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="16" r="7" stroke-dasharray="3 3"/><path d="M9 37c2-7 7-10 13-10s11 3 13 10" stroke-dasharray="3 3"/><path class="r" d="M30 6l8 8M38 6l-8 8"/></svg>
+        <span>Perfis falsos usados para humilhar</span>
+      </div>
+      <div class="row a" style="--d:6">
+        <svg class="glyph" viewBox="0 0 44 44" aria-hidden="true"><rect x="8" y="20" width="24" height="18" rx="3"/><path d="M14 20v-6a8 8 0 0 1 15-4"/><circle class="f" cx="20" cy="29" r="2.6"/><path class="r" d="M34 10l6-3M35 16h6"/></svg>
+        <span>Exposição de informações privadas</span>
+      </div>
+      <div class="row a" style="--d:7">
+        <svg class="glyph" viewBox="0 0 44 44" aria-hidden="true"><path d="M6 30c0-9 7-15 18-15h6"/><path d="M25 8l9 7-9 7"/><path class="r" d="M30 28l6 6M36 28l-6 6"/><path d="M6 37h12"/></svg>
+        <span>Boatos e mentiras</span>
+      </div>
+    </div>
+  </div>
+  <img class="illo grow" style="--d:2" src="assets/etica.svg" alt="Ilustração: pessoa encolhida ao lado de uma tela de tablet, de onde saem mãos apontando e um polegar para baixo." width="620" height="585">
+  <div class="ask abs pop" style="--d:9"><span class="bubble out">O que muda quando deixamos de enxergar a pessoa por trás da tela?</span></div>
+</section>
+
+<!-- ===================== 3 · CONSEQUÊNCIAS ===================== -->
+<section class="slide s3" data-speaker="Gabriela" aria-label="Consequências do cyberbullying">
+  <svg class="ghost" style="left:70px;top:610px;width:700px;height:300px" viewBox="0 0 700 300" aria-hidden="true">
+    <ellipse class="fill" cx="350" cy="170" rx="330" ry="110"/>
+  </svg>
+  <div class="chrome">
+    <span class="who"><span class="pip"></span>Filosofia</span>
+    <span class="who">Fala · <b>Gabriela</b> <span class="num">02</span></span>
+  </div>
+  <img class="illo fade" style="--d:1" src="assets/consequencias.svg" alt="Ilustração: jovem sentado no chão abraçando os joelhos, com um grande rosto triste ao fundo." width="520" height="614">
+  <div class="text abs">
+    <h2 class="h1 a" style="--d:2">Consequências do cyberbullying</h2>
+    <p class="body a" style="--d:3" >As agressões podem afetar cada pessoa de um jeito. Alguns impactos possíveis:</p>
+    <div class="rows">
+      <div class="row a" style="--d:4"><p class="label">Emocionais</p><p class="body">Ansiedade, tristeza, medo e baixa autoestima.</p></div>
+      <div class="row a" style="--d:5"><p class="label">Sociais</p><p class="body">Isolamento, afastamento das redes e dificuldade de confiar nas pessoas.</p></div>
+      <div class="row a" style="--d:6"><p class="label">Escolares</p><p class="body">O bem-estar abalado pode prejudicar o desempenho na escola.</p></div>
+    </div>
+    <div class="care">
+      <span class="pop" style="--d:8"><span class="bubble red">Acolher, ouvir e apoiar faz diferença.</span></span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 4 · LIBERDADE E RESPEITO ===================== -->
+<section class="slide s4" data-speaker="Miguel" aria-label="Liberdade de expressão e respeito">
+  <div class="chrome">
+    <span class="who"><span class="pip"></span>Filosofia</span>
+    <span class="who">Fala · <b>Miguel</b> <span class="num">03</span></span>
+  </div>
+  <div class="text abs">
+    <h2 class="h1 a" style="--d:1">Liberdade de expressão e respeito</h2>
+    <p class="q a" style="--d:2">Ter liberdade significa poder agir sem considerar os outros?</p>
+    <div class="limits a" style="--d:4">
+      <p class="label">Respeitando os limites</p>
+      <ul>
+        <li>Discordar sem ofender.</li>
+        <li>Respeitar opiniões diferentes.</li>
+        <li>Evitar comentários discriminatórios.</li>
+        <li>Não incentivar violência ou ódio.</li>
+      </ul>
+    </div>
+    <p class="closing a" style="--d:12"><span>Liberdade vem junto com responsabilidade.</span></p>
+  </div>
+
+  <p class="compare-head abs q a" style="--d:3; font-size:32px">Qual é a diferença entre discordar e humilhar?</p>
+  <div class="divider abs fade" style="--d:5"></div>
+
+  <div class="thread t1 abs">
+    <div class="tag a" style="--d:4"><i></i>Discordar</div>
+    <span class="who">Ana</span>
+    <span class="pop" style="--d:5"><span class="bubble">Achei ruim a proposta do grêmio para o intervalo.</span></span>
+    <span class="who r">Bia</span>
+    <span class="end pop from-r" style="--d:6"><span class="bubble out">Discordo. Acho que ela diminui a fila da cantina.</span></span>
+    <span class="who">Ana</span>
+    <span class="pop" style="--d:7"><span class="bubble">Pode ser. Vamos levar os dois argumentos para a votação?</span></span>
+    <p class="verdict a" style="--d:9">Critica a ideia. A conversa continua.</p>
+  </div>
+
+  <div class="thread t2 abs">
+    <div class="tag a" style="--d:4"><i></i>Humilhar</div>
+    <span class="who">Ana</span>
+    <span class="pop" style="--d:6"><span class="bubble">Achei ruim a proposta do grêmio para o intervalo.</span></span>
+    <span class="who r">perfil anônimo</span>
+    <span class="end pop from-r" style="--d:8"><span class="bubble red">Ninguém liga pro que você pensa. <span class="redact" style="width:90px"></span></span></span>
+    <span class="sys pop" style="--d:9">↳ print encaminhado ao grupo da turma</span>
+    <p class="verdict a" style="--d:10">Ataca a pessoa. A conversa acaba.</p>
+  </div>
+  <p class="fic abs small fade" style="--d:11">Conversas fictícias, criadas para este trabalho.</p>
+</section>
+
+<!-- ===================== 5 · DESINFORMAÇÃO ===================== -->
+<section class="slide s5 dark" data-speaker="Miguel" aria-label="Notícias falsas e desinformação">
+  <div class="chrome">
+    <span class="who"><span class="pip"></span>Filosofia</span>
+    <span class="who">Fala · <b>Miguel</b> <span class="num">04</span></span>
+  </div>
+  <svg class="net abs" id="spread" viewBox="0 0 860 740" aria-hidden="true"></svg>
+  <div class="post abs grow" style="--d:1" aria-label="Exemplo fictício de publicação com boato">
+    <div class="top"><span><span class="av"></span><span class="sys" style="color:var(--slate)">perfil · agora</span></span><span class="sys">fictício</span></div>
+    <span class="alert">Urgente!!</span>
+    <div class="bar" style="width:92%"></div>
+    <div class="bar" style="width:74%"></div>
+    <div class="bar" style="width:48%"></div>
+    <div class="foot"><span>sem fonte</span><span>sem data</span><span>↗ compartilhar</span></div>
+  </div>
+
+  <div class="text abs">
+    <h2 class="h1 a" style="--d:1">Notícias falsas e desinformação</h2>
+    <div class="defs">
+      <p class="a" style="--d:2"><b>O que são:</b> informações falsas ou manipuladas que enganam e se espalham.</p>
+      <p class="a" style="--d:3"><b>Perigos:</b> prejudicam reputações, causam medo e influenciam decisões importantes.</p>
+    </div>
+    <p class="label red a" style="--d:12">Antes de compartilhar, confira</p>
+    <div class="checks">
+      <div class="check a" style="--d:13"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14"/><path class="draw" pathLength="1" style="--d:15" d="M10 16.5l4 4 8-9"/></svg><div><b>Fonte</b><span>Quem publicou?</span></div></div>
+      <div class="check a" style="--d:14"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14"/><path class="draw" pathLength="1" style="--d:16" d="M10 16.5l4 4 8-9"/></svg><div><b>Data</b><span>É atual ou antiga?</span></div></div>
+      <div class="check a" style="--d:15"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14"/><path class="draw" pathLength="1" style="--d:17" d="M10 16.5l4 4 8-9"/></svg><div><b>Contexto</b><span>O que ficou de fora?</span></div></div>
+      <div class="check a" style="--d:16"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14"/><path class="draw" pathLength="1" style="--d:18" d="M10 16.5l4 4 8-9"/></svg><div><b>Evidências</b><span>Há provas em fontes confiáveis?</span></div></div>
+    </div>
+  </div>
+  <p class="caption abs small fade" style="--d:10">Cada compartilhamento leva o boato mais longe, e ele atinge pessoas reais.</p>
+</section>
+
+<!-- ===================== 6 · PRIVACIDADE ===================== -->
+<section class="slide s6" data-speaker="Miguel" aria-label="Privacidade e responsabilidade digital">
+  <div class="chrome">
+    <span class="who"><span class="pip"></span>Filosofia</span>
+    <span class="who">Fala · <b>Miguel</b> <span class="num">05</span></span>
+  </div>
+  <div class="text abs">
+    <h2 class="h1 a" style="--d:1; font-size:62px">Privacidade e responsabilidade digital</h2>
+    <p class="body a" style="--d:2; font-size:25px">Proteger os meus dados e respeitar os dados dos outros fazem parte da mesma atitude.</p>
+    <div class="recs">
+      <div class="row a" style="--d:3">
+        <svg class="glyph" viewBox="0 0 44 44" aria-hidden="true"><circle cx="14" cy="22" r="8"/><path d="M22 22h18M34 22v6M28 22v4"/><circle class="f" cx="14" cy="22" r="2.5"/></svg>
+        <span>Senhas fortes e diferentes</span>
+      </div>
+      <div class="row a" style="--d:4">
+        <svg class="glyph" viewBox="0 0 44 44" aria-hidden="true"><rect x="12" y="4" width="20" height="36" rx="4"/><path class="r" d="M17 20l4 4 7-8"/><path d="M19 34h6"/></svg>
+        <span>Verificação em duas etapas</span>
+      </div>
+      <div class="row a" style="--d:5">
+        <svg class="glyph" viewBox="0 0 44 44" aria-hidden="true"><rect x="5" y="10" width="34" height="24" rx="3"/><circle cx="15" cy="21" r="4"/><path d="M10 30c1-3 3-4 5-4s4 1 5 4M25 18h9M25 24h6"/><path class="r" d="M4 40L40 4"/></svg>
+        <span>Cuidado com informações pessoais</span>
+      </div>
+      <div class="row a" style="--d:6">
+        <svg class="glyph" viewBox="0 0 44 44" aria-hidden="true"><rect x="5" y="8" width="26" height="22" rx="3"/><path d="M5 25l8-7 7 6 4-3 7 6"/><circle class="r" cx="33" cy="31" r="8"/><path class="r" d="M29.5 31l2.5 2.5 4.5-5"/></svg>
+        <span>Consentimento antes de divulgar imagens e conversas de outras pessoas</span>
+      </div>
+    </div>
+    <p class="note a" style="--d:8"><span>Entregar prints como prova a responsáveis, à escola ou às autoridades é diferente de expor alguém nas redes.</span></p>
+  </div>
+  <img class="illo grow" style="--d:2" src="assets/privacidade.svg" alt="Ilustração: pessoa diante do computador, com uma foto de perfil e uma publicação flutuando acima da tela." width="640" height="629">
+  <div class="ask abs pop" style="--d:10"><span class="bubble out">Compartilhar uma agressão também envolve responsabilidade?</span></div>
+</section>
+
+<!-- ===================== 7 · COMO AGIR ===================== -->
+<section class="slide s7" data-speaker="Heitor" aria-label="Como agir diante do cyberbullying">
+  <div class="chrome">
+    <span class="who"><span class="pip"></span>Filosofia</span>
+    <span class="who">Fala · <b>Heitor</b> <span class="num">06</span></span>
+  </div>
+  <img class="illo grow" style="--d:1" src="assets/pensativo.svg" alt="Ilustração: pessoa de óculos com a mão no queixo, pensando, com pontos de interrogação." width="610" height="600">
+  <div class="head abs">
+    <h2 class="h1 a" style="--d:1">Como agir diante do cyberbullying?</h2>
+    <p class="body a" style="--d:2; max-width:720px">Quem sofre ou presencia pode agir. E ninguém precisa fazer isso sozinho.</p>
+  </div>
+  <div class="steps abs">
+    <svg class="track" viewBox="0 0 920 60" aria-hidden="true">
+      <path class="draw" pathLength="1" style="--d:4" d="M60 28 H 300"/>
+      <path class="draw" pathLength="1" style="--d:7" d="M370 28 H 610"/>
+      <path class="head-arrow fade" style="--d:6" d="M290 20l10 8-10 8"/>
+      <path class="head-arrow fade" style="--d:9" d="M600 20l10 8-10 8"/>
+    </svg>
+    <div class="step" style="left:0">
+      <div class="dot pop" style="--d:3">1</div>
+      <h3 class="a" style="--d:4">Preservar provas</h3>
+      <p class="a" style="--d:5">Prints com data, link e nome do perfil.</p>
+    </div>
+    <div class="step" style="left:310px">
+      <div class="dot pop" style="--d:6">2</div>
+      <h3 class="a" style="--d:7">Bloquear e denunciar</h3>
+      <p class="a" style="--d:8">Usando as ferramentas da própria plataforma.</p>
+    </div>
+    <div class="step last" style="left:620px">
+      <div class="dot pop" style="--d:9">3</div>
+      <h3 class="a" style="--d:10">Buscar apoio</h3>
+      <p class="a" style="--d:11">Conversar com alguém de confiança.</p>
+    </div>
+  </div>
+  <div class="tips abs">
+    <p class="a" style="--d:12"><b>Não alimentar provocações</b> não significa ficar em silêncio: significa levar o caso a quem pode ajudar.</p>
+    <p class="a" style="--d:13"><b>Se não deu para interromper,</b> a culpa não é de quem sofreu. Quem presencia também pode não curtir, não repassar e apoiar.</p>
+  </div>
+</section>
+
+<!-- ===================== 8 · CONSEQUÊNCIAS LEGAIS ===================== -->
+<section class="slide s8 dark" data-speaker="Heitor" aria-label="Consequências legais">
+  <div class="chrome">
+    <span class="who"><span class="pip"></span>Filosofia</span>
+    <span class="who">Fala · <b>Heitor</b> <span class="num">07</span></span>
+  </div>
+  <span class="art abs fade" style="--d:2" aria-hidden="true">146-A</span>
+  <h2 class="bigno abs">
+    <small class="a" style="--d:1">Consequências legais</small>
+    <span class="wipe" style="--d:2; display:inline-block">Lei nº 14.811/<span class="yr">2024</span></span>
+  </h2>
+  <div class="cols abs">
+    <div class="a" style="--d:4">
+      <p class="label red">O que mudou</p>
+      <p>Incluiu no Código Penal o crime de <strong>intimidação sistemática</strong> (bullying) e a sua forma virtual, o <strong>cyberbullying</strong> (art. 146-A).</p>
+    </div>
+    <div class="a" style="--d:5">
+      <p class="label red">Responsabilidade digital</p>
+      <p>A internet não é um espaço sem regras. Ameaças, discriminação e divulgação indevida de conteúdos podem gerar consequências legais.</p>
+    </div>
+  </div>
+  <div class="rule abs grow" style="--d:7"></div>
+  <div class="foot abs">
+    <p class="a" style="--d:8"><b>Menores de idade</b> não seguem o mesmo regime penal dos adultos: adolescentes respondem conforme o Estatuto da Criança e do Adolescente (ECA).</p>
+    <p class="a" style="--d:9"><b>Cada caso é único.</b> O resultado depende da análise das autoridades e da Justiça.</p>
+  </div>
+</section>
+
+<!-- ===================== 9 · ONDE BUSCAR AJUDA ===================== -->
+<section class="slide s9" data-speaker="Heitor" aria-label="Onde buscar ajuda">
+  <div class="warm abs fade" style="--d:1" aria-hidden="true"></div>
+  <div class="chrome">
+    <span class="who"><span class="pip"></span>Filosofia</span>
+    <span class="who">Fala · <b>Heitor</b> <span class="num">08</span></span>
+  </div>
+  <img class="illo p1 grow" style="--d:2" src="assets/ajuda-a.svg" alt="Ilustração: jovem ao telefone, com expressão preocupada." width="430" height="544">
+  <img class="illo p2 grow" style="--d:3" src="assets/ajuda-b.svg" alt="Ilustração: pessoa sorrindo ao telefone, segurando uma prancheta." width="390" height="554">
+  <div class="head abs">
+    <p class="q a" style="--d:1">Onde buscar ajuda?</p>
+    <h2 class="h1 a" style="--d:2">Você não está <em>sozinho.</em></h2>
+  </div>
+  <svg class="links abs" viewBox="470 410 680 420" aria-hidden="true">
+    <path class="draw" pathLength="1" style="--d:6" d="M640 470 C 700 500, 740 520, 800 548"/>
+    <path class="draw" pathLength="1" style="--d:8" d="M840 590 C 800 620, 740 640, 680 668"/>
+    <path class="draw" pathLength="1" style="--d:10" d="M640 710 C 690 740, 730 760, 780 778"/>
+  </svg>
+  <div class="bb1 abs pop" style="--d:5"><span class="bubble b"><strong>Família e pessoas de confiança</strong></span></div>
+  <div class="bb2 abs pop from-r" style="--d:7"><span class="bubble b out" style="border-radius:24px 24px 6px 24px"><strong>Professores e orientação escolar</strong></span></div>
+  <div class="bb3 abs pop" style="--d:9"><span class="bubble b"><strong>Profissionais de saúde</strong><span>Apoio psicológico</span></span></div>
+  <div class="bb4 abs pop from-r" style="--d:11"><span class="bubble b red" style="border-radius:24px 24px 6px 24px"><strong>Canais de denúncia das plataformas</strong></span></div>
+</section>
+
+<!-- ===================== 10 · ENCERRAMENTO ===================== -->
+<section class="slide s10" data-speaker="Heitor" aria-label="Encerramento">
+  <svg class="net abs" viewBox="0 0 1600 900" aria-hidden="true">
+    <path class="draw" pathLength="1" style="--d:6" d="M560 600 C 600 760, 820 820, 1060 760 S 1400 640, 1520 820"/>
+    <path class="draw" pathLength="1" style="--d:5" d="M980 260 C 900 250, 860 280, 820 330"/>
+    <path class="draw" pathLength="1" style="--d:7" d="M120 200 C 200 260, 260 300, 340 330"/>
+    <circle class="pop" style="--d:7" cx="1060" cy="760" r="10"/>
+    <circle class="pop" style="--d:8" cx="1520" cy="820" r="8"/>
+    <circle class="pop" style="--d:8" cx="120" cy="200" r="8"/>
+  </svg>
+  <div class="chrome">
+    <span class="who"><span class="pip"></span>Filosofia</span>
+    <span class="who">Encerramento · <b>Heitor</b></span>
+  </div>
+  <div class="think abs">
+    <p class="label a" style="--d:8">Para pensar</p>
+    <span class="pop from-r" style="--d:9; display:block"><span class="bubble out" style="border-radius:24px 24px 6px 24px">Como respeitar a dignidade de alguém mesmo quando discordamos?</span></span>
+  </div>
+  <h2 class="thanks abs">
+    <span class="bub wipe" style="--d:1">Obrigado<svg class="tail" viewBox="0 0 64 40" aria-hidden="true"><path d="M0 0h64L10 40z" fill="#E83B42"/></svg></span>
+  </h2>
+  <svg class="burst abs pop" style="--d:4; left:220px; top:300px" viewBox="0 0 100 100" aria-hidden="true"><path fill="#292930" d="M50 0l7 33 26-21-16 30 33 8-33 8 16 30-26-21-7 33-7-33-26 21 16-30L0 50l33-8L17 12l26 21z"/></svg>
+  <div class="names abs a" style="--d:4">
+    <p class="label">Integrantes</p>
+    <span class="n">Gabriela, Heitor e Miguel</span>
+  </div>
+</section>
+
+</div>
+</main>
+
+<nav class="dock" id="dock" aria-label="Controles da apresentação">
+  <button id="prev" type="button" aria-label="Tela anterior"><svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5"/></svg></button>
+  <span class="count" id="count" aria-live="polite">01 / 10</span>
+  <button id="next" type="button" aria-label="Próxima tela"><svg viewBox="0 0 16 16"><path d="M6 3l5 5-5 5"/></svg></button>
+  <span class="speakers" id="speakers" aria-hidden="true"></span>
+  <span class="who-now" id="whoNow">Heitor</span>
+  <button id="notesBtn" type="button" aria-pressed="false" aria-controls="notes" title="Roteiro (N)">Roteiro</button>
+  <button id="fsBtn" type="button" aria-label="Tela cheia" title="Tela cheia (F)"><svg viewBox="0 0 16 16"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/></svg></button>
+</nav>
+
+<aside class="notes" id="notes" aria-label="Roteiro da fala">
+  <div class="nh">
+    <div><p class="label">Roteiro · <b id="nWho">Heitor</b></p><h4 id="nTitle">Capa</h4></div>
+    <button class="close" id="notesClose" type="button">Fechar</button>
+  </div>
+  <div class="nb" id="nBody"></div>
+</aside>
+
+<script>
+(() => {
+  const NOTES = [
+    { t: "Capa", html: `
+      <p>Bom dia. Somos Gabriela, Heitor e Miguel, e o nosso trabalho de Filosofia é sobre cyberbullying: respeito, liberdade e responsabilidade no mundo digital.</p>
+      <p>A ideia não é só dar dicas de uso da internet. Queremos pensar no que muda, eticamente, quando a convivência acontece por mensagens, comentários e compartilhamentos.</p>
+      <p>Repare nas conversas da capa: uma mensagem circula, alguém repassa, alguém decide não repassar. Cada ponto dessa rede é uma escolha.</p>
+      <p class="handoff">Para começar, a Gabriela vai falar sobre ética nas redes sociais e os tipos de cyberbullying.</p>` },
+    { t: "Ética nas redes sociais", html: `
+      <p>Cyberbullying é uma forma de violência praticada pela internet, por meio de mensagens, comentários e publicações. Pode envolver humilhações, ameaças e perseguições, e prejudica a saúde emocional de quem sofre.</p>
+      <p>Os tipos mais comuns: assédio e ameaças virtuais; perfis falsos criados para humilhar alguém; divulgação de informações privadas; e espalhar mentiras e boatos.</p>
+      <p>Quando falamos em cyberbullying, falamos de algo <strong>sistemático</strong>: agressões que se repetem ou que seguem um padrão contra a mesma pessoa. Na internet isso ganha força, porque o conteúdo pode ser visto por muita gente, compartilhado rapidamente e continuar disponível. Isso não quer dizer que uma agressão isolada seja aceitável ou sem importância: ela também é errada e também pode ferir.</p>
+      <p>A pergunta do slide: o que muda quando deixamos de enxergar a pessoa por trás da tela? Sem ver o rosto e a reação do outro, fica mais fácil esquecer que existe alguém real recebendo aquela mensagem.</p>` },
+    { t: "Consequências do cyberbullying", html: `
+      <p>O cyberbullying pode provocar ansiedade, tristeza, medo e baixa autoestima. Agressões constantes prejudicam o bem-estar emocional e podem afetar o desempenho escolar.</p>
+      <p>Muitas pessoas se isolam, evitam as redes sociais e passam a ter dificuldade de confiar nos outros.</p>
+      <p>Cada pessoa reage de um jeito: esses são impactos <strong>possíveis</strong>, não uma lista de sintomas que toda vítima terá.</p>
+      <p>Por isso, é importante oferecer apoio, ouvir sem julgar e combater esse comportamento.</p>
+      <p class="handoff">Agora o Miguel vai falar sobre liberdade de expressão e respeito.</p>` },
+    { t: "Liberdade de expressão e respeito", html: `
+      <p>Todos têm o direito de expressar opiniões e ideias na internet. Mas a liberdade de expressão não permite ameaças, discriminação ou ataques contra outras pessoas.</p>
+      <p>Primeira pergunta: ter liberdade significa poder agir sem considerar os outros? Se a minha liberdade ignora completamente o outro, ela deixa de ser convivência e vira imposição. Ser livre também é responder pelo que eu faço.</p>
+      <p>Compare as duas conversas, que são fictícias. Na primeira, a Bia discorda da ideia da Ana e dá um argumento. A conversa continua. Na segunda, a resposta não fala da proposta: fala da Ana, para diminuí-la, e ainda é repassada para o grupo. Criticar uma ideia é diferente de humilhar uma pessoa.</p>
+      <p>Respeitando os limites: discordar sem ofender, respeitar opiniões diferentes, evitar comentários discriminatórios e não incentivar violência ou ódio.</p>
+      <p>Essa é uma reflexão ética. Os limites jurídicos da liberdade de expressão são mais complexos e dependem de cada caso; não estamos resolvendo essa discussão aqui.</p>` },
+    { t: "Notícias falsas e desinformação", html: `
+      <p>Notícias falsas são informações falsas ou manipuladas que podem enganar as pessoas e espalhar dados incorretos. Elas podem prejudicar reputações, causar medo e influenciar decisões importantes.</p>
+      <p>O desenho mostra como uma publicação se espalha: cada pessoa que compartilha leva o conteúdo para outras. A publicação do centro é um exemplo fictício, sem fonte e sem data.</p>
+      <p>Vale diferenciar: um <strong>erro de informação</strong> acontece quando alguém repassa algo falso acreditando que é verdade. A <strong>desinformação intencional</strong> é quando alguém cria ou espalha algo sabendo que é falso, para enganar ou prejudicar. Nos dois casos o dano pode acontecer, mas a responsabilidade de quem sabe que é falso é maior.</p>
+      <p>Antes de compartilhar, confira a fonte, a data, o contexto e as evidências. Pesquise em sites confiáveis.</p>` },
+    { t: "Privacidade e responsabilidade digital", html: `
+      <p>A privacidade digital envolve a proteção de dados pessoais, fotos e conversas. Compartilhar informações sem cuidado pode expor pessoas a golpes e outros riscos.</p>
+      <p>Proteger os meus dados e respeitar os dados dos outros são parte da mesma atitude. Use senhas fortes e diferentes, ative a verificação em duas etapas e evite divulgar informações pessoais.</p>
+      <p>Não publique fotos ou conversas de outras pessoas sem autorização. Há contextos legítimos: entregar prints como prova para responsáveis, para a escola ou para as autoridades não é o mesmo que expor alguém nas redes.</p>
+      <p>A pergunta: compartilhar uma agressão também envolve responsabilidade? Quem repassa um vídeo ou um print humilhante amplia o alcance da agressão, mesmo sem ter criado o conteúdo.</p>
+      <p class="handoff">Agora o Heitor vai falar sobre como agir diante do cyberbullying.</p>` },
+    { t: "Como agir diante do cyberbullying", html: `
+      <p>Ao sofrer ou presenciar cyberbullying, é importante não incentivar as agressões. Denunciar e procurar apoio são atitudes fundamentais para interromper a violência.</p>
+      <p>Uma sequência simples: primeiro, preservar provas, com prints que mostrem data, link e nome do perfil. Depois, bloquear e denunciar usando as ferramentas da própria plataforma. E buscar apoio, conversando com alguém de confiança.</p>
+      <p>Não responder às provocações serve para não alimentar a agressão. Isso não é ficar calado: é escolher falar com quem pode ajudar.</p>
+      <p>E se a pessoa não conseguiu interromper a situação, a culpa não é dela. A responsabilidade é de quem agride. Quem presencia também pode ajudar: não curtir, não repassar e oferecer apoio.</p>` },
+    { t: "Consequências legais", html: `
+      <p>No Brasil, a Lei nº 14.811, de 12 de janeiro de 2024, incluiu no Código Penal o art. 146-A, que trata da intimidação sistemática (bullying) e da intimidação sistemática virtual (cyberbullying). A intimidação sistemática virtual pode resultar em responsabilização criminal.</p>
+      <p>A internet não é um espaço sem regras. Ameaças, discriminação e divulgação indevida de conteúdos podem gerar consequências legais.</p>
+      <p>Quando quem pratica é menor de idade, não se aplica automaticamente o regime penal dos adultos: adolescentes respondem conforme o Estatuto da Criança e do Adolescente.</p>
+      <p>Não vamos prometer um resultado: cada caso depende da análise das autoridades e da Justiça.</p>
+      <p class="src">Fonte para conferir antes de apresentar: texto da Lei nº 14.811/2024 no site do Planalto (planalto.gov.br).</p>` },
+    { t: "Onde buscar ajuda", html: `
+      <p>Você não está sozinho. Procure familiares e pessoas de confiança; professores e a orientação da escola; profissionais de saúde, para apoio psicológico; e os canais de denúncia das próprias plataformas.</p>
+      <p>Pedir ajuda não é sinal de fraqueza. É uma forma de interromper a violência e de cuidar de si.</p>
+      <p>Se houver ameaça ou risco imediato, avise um adulto de confiança na hora.</p>` },
+    { t: "Encerramento", html: `
+      <p>Para fechar, deixamos uma pergunta: como respeitar a dignidade de alguém mesmo quando discordamos?</p>
+      <p>Na internet, a liberdade de falar vem junto com a responsabilidade pelo que falamos e pelo que compartilhamos. Discordar faz parte da convivência; humilhar, não.</p>
+      <p>Obrigado. Somos Gabriela, Heitor e Miguel.</p>` }
+  ];
+
+  const stage = document.getElementById('stage');
+  const slides = [...stage.querySelectorAll('.slide')];
+  const total = slides.length;
+  const $ = id => document.getElementById(id);
+  const speakersEl = $('speakers');
+  slides.forEach(() => speakersEl.appendChild(document.createElement('i')));
+  const pips = [...speakersEl.children];
+  let cur = -1;
+
+  /* escala do palco */
+  function fit() {
+    const full = document.body.classList.contains('is-full');
+    const vw = window.innerWidth - (full ? 0 : 32);
+    const vh = window.innerHeight - (full ? 0 : 80);
+    const s = Math.min(vw / 1600, vh / 900);
+    stage.style.transform = `scale(${s})`;
+    stage.parentElement.style.setProperty('--s', s);
+    // reserva o espaço real ocupado pelo palco escalado
+    stage.style.margin = `${(900 * s - 900) / 2}px ${(1600 * s - 1600) / 2}px`;
+  }
+  window.addEventListener('resize', fit);
+  fit();
+
+  function go(n, fromHash) {
+    n = Math.max(0, Math.min(total - 1, n));
+    if (n === cur) return;
+    const prev = slides[cur];
+    if (prev) prev.classList.remove('is-active');
+    const el = slides[n];
+    el.classList.remove('is-active'); void el.offsetWidth; el.classList.add('is-active');
+    cur = n;
+    $('count').textContent = String(n + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+    $('bar').style.width = ((n + 1) / total * 100) + '%';
+    const who = el.dataset.speaker;
+    $('whoNow').textContent = 'Fala: ' + who;
+    pips.forEach((p, i) => { p.className = i < n ? 'done' : i === n ? 'now' : ''; });
+    $('nWho').textContent = who;
+    $('nTitle').textContent = NOTES[n].t;
+    $('nBody').innerHTML = NOTES[n].html;
+    $('prev').disabled = n === 0; $('next').disabled = n === total - 1;
+    if (!fromHash) { try { history.replaceState(null, '', '#tela-' + (n + 1)); } catch (e) { location.hash = 'tela-' + (n + 1); } }
+    if (n === 4) runSpread();
+  }
+  const fromHash = () => { const m = /tela-(\d+)/.exec(location.hash); return m ? +m[1] - 1 : 0; };
+  window.addEventListener('hashchange', () => go(fromHash(), true));
+
+  $('prev').onclick = () => go(cur - 1);
+  $('next').onclick = () => go(cur + 1);
+  const notes = $('notes');
+  function toggleNotes(force) {
+    const open = typeof force === 'boolean' ? force : !notes.classList.contains('open');
+    notes.classList.toggle('open', open);
+    $('notesBtn').setAttribute('aria-pressed', String(open));
+  }
+  $('notesBtn').onclick = () => toggleNotes();
+  $('notesClose').onclick = () => toggleNotes(false);
+  function toggleFull() {
+    const d = document;
+    if (!d.fullscreenElement) {
+      const p = d.documentElement.requestFullscreen && d.documentElement.requestFullscreen();
+      if (p && p.catch) p.catch(() => {});
+    } else if (d.exitFullscreen) d.exitFullscreen();
+  }
+  $('fsBtn').onclick = toggleFull;
+  document.addEventListener('fullscreenchange', () => { document.body.classList.toggle('is-full', !!document.fullscreenElement); fit(); });
+
+  document.addEventListener('keydown', e => {
+    if (e.target.closest && e.target.closest('button') && (e.key === ' ' || e.key === 'Enter')) return;
+    const k = e.key;
+    if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(k)) { e.preventDefault(); go(cur + 1); }
+    else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(k)) { e.preventDefault(); go(cur - 1); }
+    else if (k === 'Home') go(0);
+    else if (k === 'End') go(total - 1);
+    else if (k === 'n' || k === 'N') toggleNotes();
+    else if (k === 'f' || k === 'F') toggleFull();
+    else if (k === 'Escape') toggleNotes(false);
+    else if (/^[0-9]$/.test(k)) go(k === '0' ? 9 : +k - 1);
+  });
+
+  /* toque: deslizar */
+  let tx = null;
+  stage.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+  stage.addEventListener('touchend', e => {
+    if (tx === null) return;
+    const dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 40) go(cur + (dx < 0 ? 1 : -1));
+    tx = null;
+  });
+
+  /* controles somem com o mouse parado (bom para o projetor) */
+  let idleT;
+  const wake = () => { document.body.classList.remove('idle'); clearTimeout(idleT); idleT = setTimeout(() => { if (!notes.classList.contains('open')) document.body.classList.add('idle'); }, 2600); };
+  ['mousemove', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, wake, { passive: true }));
+  wake();
+
+  /* rede de compartilhamento (tela 5) */
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const spread = $('spread');
+  const C = { x: 430, y: 380 };
+  const rings = [ { r: 190, n: 5, off: .3 }, { r: 300, n: 9, off: .1 }, { r: 400, n: 15, off: .25 } ];
+  function rnd(i) { const x = Math.sin(i * 999.7) * 10000; return x - Math.floor(x); }
+  function buildSpread() {
+    const mk = (tag, attrs) => { const e = document.createElementNS(svgNS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+    const gRings = mk('g', {}), gLines = mk('g', {}), gNodes = mk('g', {});
+    spread.append(gRings, gLines, gNodes);
+    const pulse = mk('circle', { cx: C.x, cy: C.y, r: 0, class: 'pulse', fill: 'none', stroke: '#E83B42', 'stroke-width': 2 });
+    gRings.appendChild(pulse);
+    rings.forEach(rg => gRings.appendChild(mk('circle', { cx: C.x, cy: C.y, r: rg.r, class: 'ring' })));
+    let prevPts = [C], idx = 0;
+    rings.forEach((rg, ri) => {
+      const pts = [];
+      for (let i = 0; i < rg.n; i++) {
+        const a = (i / rg.n + rg.off) * Math.PI * 2 + (rnd(idx) - .5) * .25;
+        const rr = rg.r + (rnd(idx + 50) - .5) * 40;
+        const p = { x: C.x + Math.cos(a) * rr, y: C.y + Math.sin(a) * rr * .86 };
+        idx++;
+        if (p.x < 10 || p.x > 850 || p.y < 10 || p.y > 730) continue;
+        let best = prevPts[0], bd = 1e9;
+        prevPts.forEach(q => { const d = (q.x - p.x) ** 2 + (q.y - p.y) ** 2; if (d < bd) { bd = d; best = q; } });
+        const delay = 500 + ri * 650 + i * 45;
+        const ln = mk('line', { x1: best.x, y1: best.y, x2: p.x, y2: p.y, pathLength: 1 });
+        ln.dataset.delay = delay;
+        gLines.appendChild(ln);
+        const hit = rnd(idx + 90) > .55;
+        const nd = mk('circle', { cx: p.x, cy: p.y, r: ri === 2 ? 7 : 9, class: 'n' + (hit ? ' hit' : '') });
+        nd.dataset.delay = delay + 380;
+        gNodes.appendChild(nd);
+        pts.push(p);
+      }
+      prevPts = pts.concat(prevPts.slice(0, 2));
+    });
+  }
+  function runSpread() {
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    spread.querySelectorAll('line, circle.n').forEach(el => {
+      el.getAnimations && el.getAnimations().forEach(a => a.cancel());
+      if (reduce || !el.animate) return;
+      const d = +el.dataset.delay;
+      if (el.tagName === 'line') {
+        el.style.strokeDasharray = 1;
+        el.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: 700, delay: d, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'both' });
+      } else {
+        el.animate([{ transform: 'scale(0)', opacity: 0 }, { transform: 'scale(1)', opacity: 1 }], { duration: 500, delay: d, easing: 'cubic-bezier(.34,1.4,.5,1)', fill: 'both' });
+        el.style.transformOrigin = el.getAttribute('cx') + 'px ' + el.getAttribute('cy') + 'px';
+      }
+    });
+  }
+  buildSpread();
+
+  go(fromHash(), true);
+})();
+</script>
+</body>
+</html>
