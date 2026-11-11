@@ -7,6 +7,12 @@
       "skillPath": "SKILL.md",
       "computedHash": "bdf7ebe3c47e7512f7a07cee7ea4c9eebf153ad9425f90c0a9f6cb0c859247ca"
     },
+    "oil-ui": {
+      "source": "oil-oil/oil-ui",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "3c05428efd5b421b89950d8fc63e10ac11fa6deada0e72dfc4f46514c72391be"
+    },
     "stageshow": {
       "source": "benjitaylor/skills",
       "sourceType": "github",
