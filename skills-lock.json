@@ -73,6 +73,60 @@
       "skillPath": "skills/find-animation-opportunities/SKILL.md",
       "computedHash": "6912a27a684feba9dd220349940d8a44e0d7b720cab71042f268a7ed93bf4bab"
     },
+    "game-asset-pipeline": {
+      "source": "Xyloforge/claude-game-skills",
+      "sourceType": "github",
+      "skillPath": "skills/game-asset-pipeline/SKILL.md",
+      "computedHash": "b14ceefe533e76cb818458262df6698d6d2e099afe55a8e77a37434794a36954"
+    },
+    "game-detail-bar": {
+      "source": "Xyloforge/claude-game-skills",
+      "sourceType": "github",
+      "skillPath": "skills/game-detail-bar/SKILL.md",
+      "computedHash": "437a3b5ada4b82e8714b9bdf18c9bf57c8b801be85b15df688cca049d4534273"
+    },
+    "gamedev-meta-progression-designer": {
+      "source": "bindaksu/gamedev-skills",
+      "sourceType": "github",
+      "skillPath": "skills/gamedev-meta-progression-designer/SKILL.md",
+      "computedHash": "e4e920f2938ce984bc058aa5cef57e41a75d6ae11d18bdc5ff79861581c0ee30"
+    },
+    "gamedev-narrative-designer": {
+      "source": "bindaksu/gamedev-skills",
+      "sourceType": "github",
+      "skillPath": "skills/gamedev-narrative-designer/SKILL.md",
+      "computedHash": "eceed4c55d05540ac7b4440c6738e9bccaa0fe98800c7634c80ac3253af6c5e9"
+    },
+    "gamedev-qa-verifier": {
+      "source": "bindaksu/gamedev-skills",
+      "sourceType": "github",
+      "skillPath": "skills/gamedev-qa-verifier/SKILL.md",
+      "computedHash": "4c35792bb67f7414280095c20aefec32723869ee73a50826a3f22c8e7de68d35"
+    },
+    "gamedev-reviewer": {
+      "source": "bindaksu/gamedev-skills",
+      "sourceType": "github",
+      "skillPath": "skills/gamedev-reviewer/SKILL.md",
+      "computedHash": "22bb26163646568fb2b73c9ae23954ccf154f27c0dc94ec48f6c8b1d903e1a25"
+    },
+    "gamedev-script-writer": {
+      "source": "bindaksu/gamedev-skills",
+      "sourceType": "github",
+      "skillPath": "skills/gamedev-script-writer/SKILL.md",
+      "computedHash": "f88dd00e35ba27ceadbc0907af6724e37b782dc3ce42a70ab719bb27eb91ba04"
+    },
+    "gamedev-simulation-designer": {
+      "source": "bindaksu/gamedev-skills",
+      "sourceType": "github",
+      "skillPath": "skills/gamedev-simulation-designer/SKILL.md",
+      "computedHash": "f691c044f1e6558edf495126c1d53fdfdde546f61425580db2974273ad744f18"
+    },
+    "gamedev-ui-designer": {
+      "source": "bindaksu/gamedev-skills",
+      "sourceType": "github",
+      "skillPath": "skills/gamedev-ui-designer/SKILL.md",
+      "computedHash": "dbcb5c7d75d2a6dd9a88398da4c63b9ae59ff6373e7ea5d5c51e16ff7bdce0e5"
+    },
     "gestures": {
       "source": "emilkowalski/skills",
       "sourceType": "github",
