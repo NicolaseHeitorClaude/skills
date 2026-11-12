@@ -57,7 +57,7 @@ export default function Historia() {
       </section>
 
       {/* Gerações de regentes */}
-      <section className="section on-dark grain grain-dark bg-forest text-ivory">
+      <section className="section on-dark grain grain-dark bg-verde text-ivory">
         <div className="wrap">
           <Titulo kicker="Kapellmeister · Os regentes" size="t-1" linhas={["Seis batutas,", <>uma <em className="text-gold">só banda.</em></>]} />
           <p className="mt-8 max-w-[52ch] text-ivory/75" data-reveal>Cada barra representa o tempo de regência, na mesma escala — de 1933 a {agora}.</p>

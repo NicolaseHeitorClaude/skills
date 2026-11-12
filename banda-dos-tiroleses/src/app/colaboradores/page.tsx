@@ -61,7 +61,7 @@ export default function Colaboradores() {
         </div>
       </section>
 
-      <section className="section on-dark grain grain-dark bg-forest text-ivory">
+      <section className="section on-dark grain grain-dark bg-verde text-ivory">
         <div className="wrap grid gap-12 lg:grid-cols-12">
           <Titulo className="lg:col-span-5" kicker="Unterstützen · Como apoiar" linhas={["O que o seu apoio", <em key="e" className="text-gold">faz soar.</em>]} />
           <ol className="lg:col-span-6 lg:col-start-7" data-stagger>

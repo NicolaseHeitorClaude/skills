@@ -19,12 +19,11 @@ npm run typecheck
 ## Páginas
 `/` · `/historia` · `/banda` · `/eventos` · `/galeria` · `/noticias` · `/noticias/[slug]` · `/colaboradores` · `/contato` · `/admin` · `sitemap.xml` · `robots.txt`
 
-## Direção de arte — "Alpine Heritage"
-- **Paleta**: bordô `#751F2B`, verde floresta `#192D26` (+ `#10201A`), marfim `#F4EFE6` (+ papel `#E9E1D2`), dourado `#C7A46A`, carvão `#212321`. Seções claras e escuras alternadas; o bordô é reservado à agenda e a destaques.
-- **Tipografia**: Fraunces (variável, eixos `opsz` e `SOFT`) para títulos, numerais e itálicos; Instrument Sans para texto e rótulos em versalete espaçado. Títulos em português, sobretítulos bilíngues (alemão · português).
-- **Ornamentos**: a folha de tília (Treze Tílias = *Dreizehnlinden*, "treze tílias") como única marca recorrente — treze folhas em fila no rodapé; a pauta de cinco linhas como divisor; losango dourado. Nada de edelweiss, bandeiras ou xadrez.
-- **Textura**: grão de papel em SVG sobre todas as superfícies.
-- **Marca**: tipográfica e **provisória**, até a chegada do logotipo oficial.
+## Direção de arte
+- **Paleta** (extraída da logo oficial e dos trajes, harmonizada para tela): vermelho-bordô `#8F1A22` como destaque principal; dourado da lira `#E2B33C` (e `#86610F` para texto sobre claro); marfim `#FAF6EC` e papel `#F1E9D8` como base; preto quente `#1B1512` para textos e seções escuras; verde dos trajes `#1E3B2C` como cor complementar, em poucas seções.
+- **Tipografia**: UnifrakturMaguntia nos títulos principais e de seção (peso único, sem itálico nem negrito sintetizados); Fraunces para numerais, datas e subtítulos; Instrument Sans para parágrafos, menus, formulários e informações de eventos.
+- **Marca**: logotipo oficial (`public/media/logos/banda/banda-dos-tiroleses.webp`) no cabeçalho, rodapé e favicon, sobre placa branca porque a arte tem fundo branco e letras pretas. Uma versão vetorial com fundo transparente dispensaria a placa.
+- **Acabamento**: botões de canto reto (3 px), moldura fina dourada nas fotografias, pauta de cinco linhas como divisor, folha de tília como ornamento, grão de papel.
 
 ## Animação
 Uma única camada (`src/components/Motion.tsx`) lê atributos declarados nas páginas: linhas de título que sobem por máscara, revelação de fotografias por `clip-path`, parallax discreto (só ≥ 768 px), contadores, linha do tempo desenhada pelo scroll e barras das gerações de regentes. Menu, lightbox e microinterações usam apenas CSS. Com `prefers-reduced-motion`, nada é ocultado nem animado. Não há áudio nem vídeo com reprodução automática.

@@ -58,7 +58,7 @@ export default function Galeria({ itens, videos }: { itens: Midia[]; videos: Vid
         <div role="tablist" aria-label="Coleções" className="flex flex-wrap gap-x-7 gap-y-2">
           {colecoes.map((c) => (
             <button key={c.id} role="tab" aria-selected={colecao === c.id} onClick={() => setColecao(c.id)}
-              className={`link display text-[clamp(1.3rem,2.4vw,2rem)] transition-colors ${colecao === c.id ? "italic text-bordo" : "text-forest/55 hover:text-forest"}`}>
+              className={`link display text-[clamp(1.3rem,2.4vw,2rem)] transition-colors ${colecao === c.id ? "text-bordo" : "text-forest/55 hover:text-forest"}`}>
               {c.t}
             </button>
           ))}

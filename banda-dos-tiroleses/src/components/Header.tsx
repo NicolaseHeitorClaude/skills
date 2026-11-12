@@ -80,7 +80,7 @@ export default function Header() {
             {nav.map((n, i) => (
               <li key={n.href} style={{ "--i": i } as React.CSSProperties} className="border-b border-ivory/15">
                 <Link href={n.href} tabIndex={open ? 0 : -1} className="group flex items-baseline justify-between py-[clamp(0.7rem,2.2vh,1.15rem)]" aria-current={active(n.href) ? "page" : undefined}>
-                  <span className="display text-[clamp(2.1rem,9vw,3.6rem)] transition-[letter-spacing,color] duration-500 group-hover:text-gold group-aria-[current=page]:italic group-aria-[current=page]:text-gold">{n.pt}</span>
+                  <span className="display text-[clamp(2.1rem,9vw,3.6rem)] transition-[letter-spacing,color] duration-500 group-hover:text-gold group-aria-[current=page]:text-gold">{n.pt}</span>
                   <span className="kicker text-gold/80">{n.de}</span>
                 </Link>
               </li>

@@ -16,7 +16,7 @@ export default function Footer() {
         <p className="kicker mt-5 text-ivory/60" data-reveal>A música une — desde 1933</p>
         <div className="mt-[clamp(3rem,7vw,6rem)] grid gap-12 border-t border-ivory/15 pt-12 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
           <div>
-            <Marca />
+            <Marca tamanho={112} className="max-sm:flex-col max-sm:items-start" />
             <p className="mt-6 max-w-[34ch] text-[0.95rem] text-ivory/70">{s.entidade}. Fundada pelos imigrantes austríacos de {s.cidade}, {s.estado}.</p>
           </div>
           {cols.map((c) => (

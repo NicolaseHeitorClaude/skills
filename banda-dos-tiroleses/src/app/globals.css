@@ -1,15 +1,19 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bordo: #751f2b;
-  --color-bordo-deep: #571620;
-  --color-forest: #192d26;
-  --color-forest-deep: #10201a;
-  --color-ivory: #f4efe6;
-  --color-paper: #e9e1d2;
-  --color-gold: #c7a46a;
-  --color-gold-deep: #9a7a43;
-  --color-charcoal: #212321;
+  /* Paleta extraída da logo oficial (vermelho #CF0200, amarelo #FECD03, preto, branco)
+     e dos trajes (bordô, verde), harmonizada para tela. */
+  --color-bordo: #8f1a22;        /* vermelho-bordô: cor principal de destaque */
+  --color-bordo-deep: #5f0f16;
+  --color-forest: #1b1512;       /* preto quente: textos e seções escuras */
+  --color-forest-deep: #110d0b;
+  --color-verde: #1e3b2c;        /* verde dos trajes e brasões: cor complementar */
+  --color-ivory: #faf6ec;
+  --color-paper: #f1e9d8;
+  --color-gold: #e2b33c;         /* dourado da lira */
+  --color-gold-deep: #86610f;    /* dourado para texto sobre fundo claro */
+  --color-charcoal: #1b1512;
+  --font-title: var(--font-fraktur), "Fraunces", Georgia, serif;
   --font-display: var(--font-fraunces), "Iowan Old Style", Georgia, serif;
   --font-sans: var(--font-instrument), system-ui, sans-serif;
   --ease-alpine: cubic-bezier(0.22, 1, 0.36, 1);
@@ -25,9 +29,11 @@
 }
 
 /* ——— Tipografia ——— */
-.display { font-family: var(--font-display); font-variation-settings: "opsz" 144, "SOFT" 40; font-weight: 340; letter-spacing: -0.035em; line-height: 0.92; }
-.display em, .serif-it { font-style: italic; font-variation-settings: "opsz" 144, "SOFT" 100; font-weight: 300; }
-.t-hero { font-size: clamp(3.4rem, 11.5vw, 11.5rem); }
+/* Títulos em UnifrakturMaguntia: peso único, sem itálico nem negrito sintetizados. */
+.display { font-family: var(--font-title); font-weight: 400; font-style: normal; font-synthesis: none; letter-spacing: 0; line-height: 1.04; font-variation-settings: normal; }
+.display em { font-style: normal; }
+.serif-it { font-style: italic; font-variation-settings: "opsz" 144, "SOFT" 100; font-weight: 300; }
+.t-hero { font-size: clamp(3.3rem, 11vw, 10.5rem); line-height: 0.98; }
 .t-1 { font-size: clamp(2.6rem, 7vw, 6.5rem); }
 .t-2 { font-size: clamp(2rem, 4.6vw, 4rem); }
 .t-3 { font-size: clamp(1.5rem, 2.4vw, 2.1rem); line-height: 1.12; }
@@ -58,7 +64,7 @@
 .link::after { content: ""; position: absolute; left: 0; right: 0; bottom: -0.15em; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform 0.5s var(--ease-alpine); }
 .link:hover::after, .link:focus-visible::after, .link[aria-current="page"]::after { transform: scaleX(1); transform-origin: left; }
 
-.btn { display: inline-flex; align-items: center; gap: 0.9rem; padding: 1rem 1.6rem 1rem 1.7rem; border: 1px solid currentColor; border-radius: 999px; font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500; position: relative; overflow: hidden; isolation: isolate; transition: color 0.45s var(--ease-alpine), border-color 0.45s; }
+.btn { display: inline-flex; align-items: center; gap: 0.9rem; padding: 1rem 1.6rem 1rem 1.7rem; border: 1px solid currentColor; border-radius: 3px; font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500; position: relative; overflow: hidden; isolation: isolate; transition: color 0.45s var(--ease-alpine), border-color 0.45s; }
 .btn::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--btn-fill, var(--color-gold)); transform: translateY(101%); transition: transform 0.55s var(--ease-alpine); border-radius: inherit; }
 .btn:hover, .btn:focus-visible { color: var(--btn-ink, var(--color-forest-deep)); border-color: var(--btn-fill, var(--color-gold)); }
 .btn:hover::before, .btn:focus-visible::before { transform: translateY(0); }
@@ -67,13 +73,17 @@
 
 /* ——— Fotografia ——— */
 .foto { position: relative; overflow: hidden; }
+/* moldura fina dourada, como passe-partout */
+.foto::after { content: ""; position: absolute; inset: clamp(6px, 0.8vw, 10px); border: 1px solid color-mix(in srgb, var(--color-gold) 45%, transparent); pointer-events: none; }
 .foto > .foto-in { position: absolute; inset: 0; will-change: transform; }
 .foto img { width: 100%; height: 100%; object-fit: cover; }
+.foto.sem-moldura::after { display: none; }
 .foto-hover .foto-in { transition: transform 1.2s var(--ease-alpine); }
 .foto-hover:hover .foto-in { transform: scale(1.045); }
 
 /* ——— Linhas de título (entrada progressiva) ——— */
-.line { display: block; overflow: hidden; padding-bottom: 0.12em; margin-bottom: -0.12em; }
+/* folga para acentos, cedilhas e hastes da Fraktur dentro da máscara */
+.line { display: block; overflow: hidden; padding: 0.16em 0.06em 0.24em; margin: -0.16em -0.06em -0.24em; }
 .line-in { display: block; will-change: transform; }
 
 /* ——— Estados iniciais apenas quando há animação (html.motion) ——— */

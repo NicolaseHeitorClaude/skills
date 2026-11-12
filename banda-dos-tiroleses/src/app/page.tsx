@@ -26,7 +26,7 @@ export default function Home() {
     <>
       {/* 1 — Hero */}
       <section className="relative flex min-h-[100svh] flex-col justify-end overflow-hidden bg-forest-deep text-ivory">
-        <Foto m={midia("hero-banda")} formato="livre" tom="forest" className="!absolute inset-0" legendaTopo parallax={0.12} priority sizes="100vw" />
+        <Foto m={midia("hero-banda")} formato="livre" tom="forest" className="sem-moldura !absolute inset-0" legendaTopo parallax={0.12} priority sizes="100vw" />
         <div className="absolute inset-0 bg-gradient-to-t from-forest-deep via-forest-deep/55 to-forest-deep/20" aria-hidden="true" />
         <div className="wrap relative pb-[clamp(2rem,5vw,4rem)] pt-40">
           <p className="kicker text-gold" data-reveal>Musikkapelle Dreizehnlinden · Treze Tílias, Brasil</p>
@@ -56,7 +56,7 @@ export default function Home() {
         <div className="wrap grid gap-y-14 lg:grid-cols-12 lg:gap-x-10">
           <div className="lg:col-span-7">
             <p className="kicker mb-8 text-gold-deep" data-reveal>A instituição</p>
-            <p className="display t-2 !leading-[1.06]" data-lines>
+            <p className="display !text-[clamp(1.75rem,3.3vw,3rem)] !leading-[1.14]" data-lines>
               {["Fundada a bordo de um navio,", "a caminho do Brasil, a Banda", "dos Tiroleses é a memória", <>sonora de <em className="text-bordo">Treze Tílias.</em></>].map((l, i) => (
                 <span className="line" key={i}><span className="line-in">{l}</span></span>
               ))}
@@ -79,7 +79,7 @@ export default function Home() {
       </section>
 
       {/* 3 — Desde 1933 */}
-      <section className="section on-dark grain grain-dark overflow-hidden bg-forest text-ivory">
+      <section className="section on-dark grain grain-dark overflow-hidden bg-verde text-ivory">
         <p className="numeral outline-num pointer-events-none absolute -right-[4vw] top-[6%] select-none text-[38vw] text-gold/25" data-parallax="0.25" aria-hidden="true">1933</p>
         <div className="wrap relative">
           <Titulo kicker="Seit 1933 · Desde 1933" size="t-1" linhas={["Uma banda que", <>nasceu <em className="text-gold">no mar.</em></>]} />

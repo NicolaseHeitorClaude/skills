@@ -45,7 +45,7 @@ export default function Banda() {
         </div>
       </section>
 
-      <section className="section on-dark grain grain-dark bg-forest text-ivory">
+      <section className="section on-dark grain grain-dark bg-verde text-ivory">
         <div className="wrap">
           <Titulo kicker="Register · Naipes" size="t-1" linhas={["Os instrumentos", <>da <em className="text-gold">Kapelle.</em></>]} />
           <p className="mt-8 max-w-[60ch] border-l border-gold pl-5 text-[0.95rem] text-ivory/75" data-reveal>{aviso} Os naipes abaixo seguem a instrumentação habitual de uma Musikkapelle tirolesa e também aguardam conferência.</p>

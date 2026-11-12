@@ -59,6 +59,6 @@ Convenção de nomes: `AAAA-evento-NN.ext` (ex.: `1933-principessa-maria-01.jpg`
 ## Logotipos
 | Item | Situação |
 |---|---|
-| Logotipo oficial da banda | **Pendente** — o site usa marca tipográfica provisória (`src/components/Ornamentos.tsx`, componente `Marca`) |
+| Logotipo oficial da banda | **Em uso** — `public/media/logos/banda/banda-dos-tiroleses.webp` (1254×1254, fundo branco), enviado pela banda em 12.11.2026. Falta versão vetorial / fundo transparente |
 | Prefeitura de Treze Tílias | Pendente de autorização — exibido só o nome |
 | Asturtílias | Pendente de autorização — exibido só o nome |

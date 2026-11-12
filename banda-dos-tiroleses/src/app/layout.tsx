@@ -1,11 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Instrument_Sans } from "next/font/google";
+import { Fraunces, Instrument_Sans, UnifrakturMaguntia } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Motion from "@/components/Motion";
 import "./globals.css";
 
 const fraunces = Fraunces({ subsets: ["latin"], style: ["normal", "italic"], axes: ["opsz", "SOFT"], variable: "--font-fraunces", display: "swap" });
+const fraktur = UnifrakturMaguntia({ subsets: ["latin"], weight: "400", variable: "--font-fraktur", display: "swap" });
 const instrument = Instrument_Sans({ subsets: ["latin"], variable: "--font-instrument", display: "swap" });
 
 const url = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.bandadostiroleses.com";
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
   openGraph: { type: "website", locale: "pt_BR", siteName: "Banda dos Tiroleses", url },
   alternates: { canonical: "/" },
 };
-export const viewport: Viewport = { themeColor: "#192D26" };
+export const viewport: Viewport = { themeColor: "#1B1512" };
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -28,11 +29,12 @@ const jsonLd = {
   foundingLocation: "Treze Tílias, Santa Catarina, Brasil",
   genre: ["Blasmusik", "Música tirolesa"],
   url,
+  logo: `${url}/media/logos/banda/banda-dos-tiroleses.webp`,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" className={`${fraunces.variable} ${instrument.variable}`} suppressHydrationWarning>
+    <html lang="pt-BR" className={`${fraunces.variable} ${instrument.variable} ${fraktur.variable}`} suppressHydrationWarning>
       <head>
         {/* Ativa os estados iniciais de animação só com JS e sem prefers-reduced-motion. */}
         <script dangerouslySetInnerHTML={{ __html: "try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('motion')}catch(e){}" }} />

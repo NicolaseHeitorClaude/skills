@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 /** Folha de tília — referência discreta a "Treze Tílias" (Dreizehnlinden). */
 export function Tilia({ className = "" }: { className?: string }) {
   return (
@@ -37,14 +39,16 @@ export function Losango({ className = "" }: { className?: string }) {
   );
 }
 
-/** Marca provisória — substituir pelo logotipo oficial em public/media/logos/banda/. */
-export function Marca({ className = "" }: { className?: string }) {
+/** Marca oficial: logotipo da banda sobre placa branca (a arte tem fundo branco e letras pretas). */
+export function Marca({ className = "", tamanho = 54 }: { className?: string; tamanho?: number }) {
   return (
     <span className={`inline-flex items-center gap-3 ${className}`}>
-      <Tilia className="w-5 shrink-0 text-gold" />
+      <span className="grid shrink-0 place-items-center overflow-hidden rounded-[6px] bg-white shadow-[0_0_0_1px_rgba(226,179,60,.8)]" style={{ width: tamanho, height: tamanho }}>
+        <Image src="/media/logos/banda/banda-dos-tiroleses.webp" alt="" width={Math.round(tamanho * 0.9)} height={Math.round(tamanho * 0.9)} sizes={`${tamanho}px`} priority={tamanho < 60} />
+      </span>
       <span className="leading-none">
-        <span className="block font-display text-[1.28rem] tracking-[-0.02em]">Banda dos Tiroleses</span>
-        <span className="mt-1 block text-[0.56rem] uppercase tracking-[0.3em] opacity-70">Musikkapelle Dreizehnlinden<span className="max-sm:hidden"> · 1933</span></span>
+        <span className="block whitespace-nowrap text-[1.2rem] leading-none sm:text-[1.5rem]" style={{ fontFamily: "var(--font-title)" }}>Banda dos Tiroleses</span>
+        <span className="mt-1.5 block text-[0.56rem] uppercase tracking-[0.3em] opacity-70">Musikkapelle Dreizehnlinden<span className="max-sm:hidden"> · 1933</span></span>
       </span>
     </span>
   );

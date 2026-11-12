@@ -84,7 +84,7 @@ export default function ContatoForm({ email }: { email: string }) {
           {assuntos.map(([v, t]) => (
             <label key={v} className="cursor-pointer">
               <input type="radio" name="assunto" value={v} checked={assunto === v} onChange={() => setAssunto(v)} className="peer sr-only" />
-              <span className="block rounded-full border border-forest/30 px-4 py-2 text-[0.85rem] transition-colors duration-300 peer-checked:border-forest peer-checked:bg-forest peer-checked:text-ivory peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-gold hover:border-forest">{t}</span>
+              <span className="block rounded-[3px] border border-forest/30 px-4 py-2 text-[0.85rem] transition-colors duration-300 peer-checked:border-forest peer-checked:bg-forest peer-checked:text-ivory peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-gold hover:border-forest">{t}</span>
             </label>
           ))}
         </div>
@@ -95,7 +95,7 @@ export default function ContatoForm({ email }: { email: string }) {
       {/* Campo isca contra robôs: invisível para pessoas e leitores de tela. */}
       <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden"><label>Site<input name="site" tabIndex={-1} autoComplete="off" /></label></div>
       <label className="flex items-start gap-3 text-[0.9rem] text-forest/75">
-        <input type="checkbox" name="consentimento" className="mt-1 h-4 w-4 accent-[#751F2B]" aria-invalid={!!err.consentimento} aria-describedby={err.consentimento ? "erro-consentimento" : undefined} />
+        <input type="checkbox" name="consentimento" className="mt-1 h-4 w-4 accent-[#8F1A22]" aria-invalid={!!err.consentimento} aria-describedby={err.consentimento ? "erro-consentimento" : undefined} />
         <span>Autorizo o uso destes dados apenas para responder a esta mensagem.<Erro k="consentimento" /></span>
       </label>
       <div className="flex flex-wrap items-center gap-6">

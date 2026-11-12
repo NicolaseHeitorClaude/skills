@@ -3,7 +3,7 @@ import type { Midia } from "@/lib/content";
 
 const ratios = { paisagem: "aspect-[3/2]", retrato: "aspect-[4/5]", quadrado: "aspect-square" } as const;
 const tons = {
-  forest: "bg-forest text-ivory",
+  forest: "bg-verde text-ivory",
   bordo: "bg-bordo text-ivory",
   paper: "bg-paper text-forest",
   charcoal: "bg-charcoal text-ivory",
