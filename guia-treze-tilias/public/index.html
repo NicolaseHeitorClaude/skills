@@ -27,8 +27,8 @@
     </a>
     <nav class="mainnav" aria-label="Caminhos do guia">
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu">
-        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-        <span>Menu</span>
+        <span class="burger" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="menu-label">Menu</span>
       </button>
       <ul id="menu" class="menu"></ul>
     </nav>
@@ -44,16 +44,15 @@
         </div>
         <div class="pane-map" id="paneMap">
           <div class="map" id="map" role="region" aria-label="Mapa dos lugares listados"></div>
+          <div class="map-loading" id="mapLoading" hidden><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>Carregando o mapa…</span></div>
           <div class="map-fallback" id="mapFallback" hidden></div>
-          <div class="map-peek" id="mapPeek" hidden></div>
         </div>
       </div>
-      <button class="view-toggle" id="viewToggle" type="button" hidden></button>
     </section>
   </main>
 
   <div class="sheet-backdrop" id="sheetBackdrop" hidden></div>
-  <article class="sheet" id="sheet" role="dialog" aria-modal="false" aria-labelledby="sheetTitle" hidden></article>
+  <article class="sheet" id="sheet" role="dialog" aria-modal="false" aria-labelledby="sheetTitle" data-mode="full" hidden></article>
 
   <footer class="site-footer">
     <img class="footer-logo" src="/assets/brand/asturtilias-logo-240.png" width="146" height="120" alt="Asturtílias – Associação de Turismo de Treze Tílias" loading="lazy">

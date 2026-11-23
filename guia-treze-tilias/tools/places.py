@@ -211,7 +211,6 @@ add(id="stube", name="Stube Bistrô & Cervejaria", cats=[3], photo="313f8c_7b56b
     instagram="https://www.instagram.com/stubetrezetilias/", facebook="https://www.facebook.com/stuberestaurant",
     map="https://goo.gl/maps/p2yJLpok3ppVqeX47", coords=(-27.0011725, -51.4102445))
 add(id="cafe-haus", name="Café Haus", **G, photo="58bdae_74ed0e21ddca4d889f82170ddfcd13b1~mv2.jpg",
-    summary="Café ao lado da Prefeitura Municipal.",
     address="Av. Afonso Dresch, 13", ref="Ao lado da Prefeitura Municipal", phones=["(49) 3537 0017"],
     instagram="https://www.instagram.com/cafehaustrezetilias/", facebook="https://www.facebook.com/AlpinDelikatessen",
     map="https://maps.app.goo.gl/NQEZKLah8y8un8KM7", coords=(-26.9989801, -51.4076257), legacy=[131],

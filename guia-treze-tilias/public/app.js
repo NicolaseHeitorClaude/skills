@@ -1,12 +1,18 @@
 // Guia turístico de Treze Tílias — aplicação sem framework.
-// Rotas: /  ·  /explorar?grupo=&cat=&q=&vista=mapa  ·  /local/:id  ·  /categoria/:id/:nome (endereços do guia atual)
-//        /telefones-uteis (atalho)
+// Rotas: /  ·  /explorar?grupo=&cat=&q=&vista=mapa  ·  /local/:id[?ficha=resumo]  ·  /categoria/:id/:nome
+//        /local/45/… e /local/131/… (IDs do guia atual)  ·  /telefones-uteis
+//
+// Movimento: três momentos visíveis, ligados pelo vermelho da Asturtílias
+//   1. troca de categoria (sublinhado desliza)  2. seleção do ponto (anel se expande)  3. ficha (sobe da base / abre ao lado)
+// O resto responde rápido e discreto. Com prefers-reduced-motion tudo vai direto ao estado final.
 
 const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fold = (s) => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 const reduceMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const isDesktop = () => matchMedia('(min-width: 900px)').matches;
+const ms = (name) => parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name)) || 0;
 
 const ICON = {
   route: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/></svg>',
@@ -21,17 +27,23 @@ const ICON = {
   tour: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12c4 2 13 2 17 0"/></svg>',
   close: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>',
   link: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>',
+  up: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 14 6-6 6 6"/></svg>',
+  arrow: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>',
 };
+const icon = (name, size = 18) => ICON[name].replace('<svg', `<svg width="${size}" height="${size}" class="i"`);
 
 const DISTANCES = [['Videira', '32 km'], ['Joaçaba', '37 km'], ['Caçador', '76 km'], ['Chapecó', '176 km'], ['Lages', '200 km'],
   ['Curitiba', '361 km'], ['Joinville', '376 km'], ['Florianópolis', '421 km'], ['Porto Alegre', '545 km'], ['São Paulo', '779 km']];
 
+// fotografias reais já presentes no guia, uma por caminho principal
+const PATH_PHOTO = { fazer: 'museu-andreas-thaler', comer: 'restaurante-edelweiss', ficar: 'hotel-13-linden' };
+
 const S = {
   data: null, byId: new Map(), legacy: new Map(), cat: new Map(), group: new Map(),
-  route: { name: 'home' },       // estado derivado da URL
-  selected: null,                // id do lugar selecionado
-  map: null, markers: new Map(), mapReady: false, mapFailed: false,
-  lastRenderKey: '',
+  route: { name: 'home' }, selected: null,
+  map: null, markers: new Map(), mapFailed: false, mapLoaded: false,
+  lastListKey: '', sheetMode: null, savedView: null, openedInApp: false,
+  anims: new Map(),
 };
 
 // ---------- Dados ----------
@@ -55,7 +67,7 @@ const isFood = (p) => p.cats.some((c) => [3, 24].includes(c));
 
 function search(q) {
   const toks = fold(q).split(/\s+/).filter(Boolean);
-  if (!toks.length) return { places: [], cats: [] };
+  if (!toks.length) return { places: [], cats: [], groups: [] };
   const hit = (s) => toks.every((t) => s.includes(t));
   const cats = S.data.categories.filter((c) => hit(fold(c.name)));
   const groups = S.data.groups.filter((g) => hit(fold(g.name)));
@@ -63,8 +75,7 @@ function search(q) {
   for (const p of S.data.places) {
     if (!hit(p.search)) continue;
     const n = fold(p.name);
-    const score = toks.every((t) => n.includes(t)) ? (n.startsWith(toks[0]) ? 0 : 1) : 2;
-    scored.push([score, p]);
+    scored.push([toks.every((t) => n.includes(t)) ? (n.startsWith(toks[0]) ? 0 : 1) : 2, p]);
   }
   scored.sort((a, b) => a[0] - b[0] || a[1].name.localeCompare(b[1].name, 'pt'));
   return { places: scored.map((x) => x[1]), cats, groups };
@@ -73,9 +84,9 @@ function search(q) {
 // ---------- Rotas ----------
 function parse(loc = location) {
   const u = new URL(loc.href);
-  const parts = u.pathname.split('/').filter(Boolean).map(decodeURIComponent);
+  const parts = u.pathname.split('/').filter(Boolean).map((x) => { try { return decodeURIComponent(x); } catch { return x; } });
   const qp = u.searchParams;
-  const base = { q: qp.get('q') || '', vista: qp.get('vista') === 'mapa' ? 'mapa' : 'lista' };
+  const base = { q: qp.get('q') || '', vista: qp.get('vista') === 'mapa' ? 'mapa' : 'lista', ficha: qp.get('ficha') === 'resumo' ? 'resumo' : null };
   if (!parts.length) return { name: 'home' };
   if (parts[0] === 'telefones-uteis') return { name: 'explore', ...base, group: 'uteis', cat: 20 };
   if (parts[0] === 'categoria' && parts[1]) {
@@ -83,18 +94,16 @@ function parse(loc = location) {
     if (S.cat.has(cat)) return { name: 'explore', ...base, group: groupOfCat(cat), cat };
   }
   if (parts[0] === 'local' && /^\d+$/.test(parts[1] || '')) {
-    // endereços do guia atual: /local/45/Monumento Águia do Tirol
     const id = S.legacy.get(parts[1]);
-    if (id) return { name: 'explore', q: '', vista: 'lista', group: groupOfCat(S.byId.get(id).cats[0]) || null, cat: S.byId.get(id).cats[0] || null, place: id, legacy: true };
-    // ID antigo ainda sem correspondência confirmada: procura pelo nome que veio no endereço
+    if (id) { const c = S.byId.get(id).cats[0] || null; return { name: 'explore', q: '', vista: 'lista', ficha: null, group: groupOfCat(c) || null, cat: c, place: id, legacy: true }; }
     const nome = (parts[2] || '').replace(/\s+-\s+Treze T[ií]lias$/i, '').trim();
-    return { name: 'explore', q: nome, vista: 'lista', group: null, cat: null, legacyMiss: true };
+    return { name: 'explore', q: nome, vista: 'lista', ficha: null, group: null, cat: null };
   }
   if (parts[0] === 'local' && parts[1] && S.byId.has(parts[1])) {
     const p = S.byId.get(parts[1]);
     const cat = Number(qp.get('cat')) || null;
-    const group = qp.get('grupo') || (cat ? groupOfCat(cat) : base.q ? null : groupOfCat(p.cats[0]));
-    return { name: 'explore', ...base, group, cat: cat && S.cat.has(cat) ? cat : (base.q ? null : (qp.has('grupo') ? null : p.cats[0])), place: p.id };
+    const group = qp.get('grupo') || (cat ? groupOfCat(cat) : base.q ? null : groupOfCat(p.cats[0]) || null);
+    return { name: 'explore', ...base, group, cat: cat && S.cat.has(cat) ? cat : (base.q || qp.has('grupo') ? null : p.cats[0] || null), place: p.id };
   }
   if (parts[0] === 'explorar') {
     const cat = Number(qp.get('cat')) || null;
@@ -103,24 +112,29 @@ function parse(loc = location) {
   }
   return { name: 'home' };
 }
-function exploreUrl({ group, cat, q, vista, place } = {}) {
+function exploreUrl({ group, cat, q, vista, place, ficha } = {}) {
   const qp = new URLSearchParams();
   if (group && !(cat && groupOfCat(cat) === group && place)) qp.set('grupo', group);
   if (cat) qp.set('cat', cat);
   if (q) qp.set('q', q);
   if (vista === 'mapa') qp.set('vista', 'mapa');
+  if (place && ficha === 'resumo') qp.set('ficha', 'resumo');
   const s = qp.toString();
   return (place ? `/local/${encodeURIComponent(place)}` : '/explorar') + (s ? `?${s}` : '');
 }
-function go(url, { replace = false, keepScroll = true } = {}) {
-  const st = { scrollY: scrollY, listTop: $('#paneList')?.scrollTop ?? 0 };
-  if (replace) history.replaceState(st, '', url); else { history.replaceState({ ...history.state, ...st }, '', location.href); history.pushState(null, '', url); }
-  render({ fromNav: true, keepScroll });
+const routeUrl = (patch = {}) => { const r = S.route; return exploreUrl({ group: r.group, cat: r.cat, q: r.q, vista: r.vista, ...patch }); };
+function saveScroll() {
+  history.replaceState({ ...(history.state || {}), scrollY, listTop: $('#paneList')?.scrollTop ?? 0 }, '', location.href);
+}
+function go(url, { replace = false } = {}) {
+  if (replace) history.replaceState(null, '', url);
+  else { saveScroll(); history.pushState(null, '', url); }
+  render();
 }
 addEventListener('popstate', () => render({ fromPop: true }));
 document.addEventListener('click', (e) => {
   const a = e.target.closest('a[data-link]');
-  if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+  if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
   e.preventDefault();
   closeMenu();
   go(a.getAttribute('href'));
@@ -132,24 +146,30 @@ function renderMenu() {
   const cur = r.name === 'explore' && !r.q ? r.group : null;
   $('#menu').innerHTML = S.data.groups.map((g) =>
     `<li><a href="${exploreUrl({ group: g.id })}" data-link ${cur === g.id && r.cat !== 20 ? 'aria-current="true"' : ''}>${esc(g.name)}</a></li>`).join('') +
-    `<li class="menu-phones"><a href="/telefones-uteis" data-link ${r.cat === 20 ? 'aria-current="true"' : ''}>${ICON.phone.replace('<svg', '<svg width="18" height="18" style="fill:none;stroke:currentColor;stroke-width:2"')} Telefones úteis</a></li>`;
+    `<li class="menu-phones"><a href="/telefones-uteis" data-link ${r.cat === 20 ? 'aria-current="true"' : ''}>${icon('phone')} Telefones úteis</a></li>`;
 }
 const toggle = $('.menu-toggle');
-toggle.addEventListener('click', () => {
-  const open = !$('#menu').classList.contains('open');
-  $('#menu').classList.toggle('open', open); toggle.setAttribute('aria-expanded', String(open));
-});
-function closeMenu() { $('#menu').classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); }
+function setMenu(open) {
+  const m = $('#menu');
+  m.classList.toggle('open', open);
+  toggle.setAttribute('aria-expanded', String(open));
+  toggle.querySelector('.menu-label').textContent = open ? 'Fechar' : 'Menu';
+}
+toggle.addEventListener('click', () => setMenu(!$('#menu').classList.contains('open')));
+function closeMenu() { if ($('#menu').classList.contains('open')) setMenu(false); }
 document.addEventListener('click', (e) => { if (!e.target.closest('.mainnav')) closeMenu(); });
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && $('#menu').classList.contains('open')) { setMenu(false); toggle.focus(); e.stopImmediatePropagation(); }
+}, true);
 
-// ---------- Busca (componente compartilhado) ----------
+// ---------- Busca ----------
 function searchForm(q = '', idSuffix = 'home') {
   return `<form class="search" role="search" data-search>
     <label for="q-${idSuffix}">Busque um lugar ou uma experiência</label>
     <div class="search-row">
       <input id="q-${idSuffix}" name="q" type="search" value="${esc(q)}" placeholder="Ex.: águia, cerveja, pousada, táxi"
         autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" aria-autocomplete="list" aria-controls="sug-${idSuffix}">
-      <button type="submit">Buscar</button>
+      <button type="submit" class="btn-primary">Buscar</button>
     </div>
     <ul class="suggest" id="sug-${idSuffix}" role="listbox" hidden></ul>
   </form>`;
@@ -168,12 +188,12 @@ function wireSearch(root) {
     ];
     if (!items.length) { list.hidden = true; return; }
     active = -1;
-    list.innerHTML = items.map((it, i) => `<li role="option"><a href="${it.href}" data-link id="opt-${i}"><span>${esc(it.label)}</span><span class="s-type">${esc(it.type)}</span></a></li>`).join('');
+    list.innerHTML = items.map((it, i) => `<li role="option"><a href="${it.href}" data-link id="opt-${idSuffixOf(form)}-${i}"><span>${esc(it.label)}</span><span class="s-type">${esc(it.type)}</span></a></li>`).join('');
     list.hidden = false;
   };
   input.addEventListener('input', update);
   input.addEventListener('keydown', (e) => {
-    const opts = [...list.querySelectorAll('a')];
+    const opts = $$('a', list);
     if (list.hidden || !opts.length) return;
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       e.preventDefault();
@@ -181,21 +201,23 @@ function wireSearch(root) {
       opts.forEach((o, i) => o.setAttribute('aria-selected', String(i === active)));
       input.setAttribute('aria-activedescendant', opts[active].id);
     } else if (e.key === 'Enter' && active >= 0) { e.preventDefault(); opts[active].click(); }
-    else if (e.key === 'Escape') { list.hidden = true; }
+    else if (e.key === 'Escape') { list.hidden = true; e.stopPropagation(); }
   });
   input.addEventListener('blur', () => setTimeout(() => { list.hidden = true; }, 150));
   form.addEventListener('submit', (e) => {
     e.preventDefault(); list.hidden = true;
-    const q = input.value.trim();
-    const r = S.route;
-    go(exploreUrl({ q, vista: r.vista }));
+    input.blur();
+    go(exploreUrl({ q: input.value.trim(), vista: S.route.vista }));
   });
 }
+const idSuffixOf = (form) => $('input', form).id.replace('q-', '');
 
-// ---------- Página inicial ----------
-function renderHome() {
+// ---------- Abertura ----------
+function renderHome(firstVisit) {
   const counts = (g) => placesIn({ group: g }).length;
-  $('#home').innerHTML = `<div class="home">
+  const main = ['fazer', 'comer', 'ficar'].map((id) => S.group.get(id));
+  const photo = (gid) => S.byId.get(PATH_PHOTO[gid])?.photo;
+  $('#home').innerHTML = `<div class="home ${firstVisit && !reduceMotion() ? 'intro-anim' : ''}">
     <div class="home-top">
       <figure class="cover">
         <img src="/assets/photos/abertura-800.webp" srcset="/assets/photos/abertura-800.webp 800w, /assets/photos/abertura-1600.webp 1600w"
@@ -210,21 +232,24 @@ function renderHome() {
       </div>
     </div>
     <nav class="paths" aria-labelledby="paths-h">
-      <h2 id="paths-h">Explore por caminho</h2>
-      <ul class="path-list">
-        ${S.data.groups.map((g) => `<li><a class="path" href="${exploreUrl({ group: g.id })}" data-link>
-            <span class="path-name">${esc(g.name)}</span><span class="path-lede">${esc(g.lede)}</span>
-            <span class="path-count">${counts(g.id)}</span></a></li>`).join('')}
-        <li><a class="path is-phones" href="/telefones-uteis" data-link>
-          <span class="path-name">Telefones úteis</span><span class="path-lede">Bombeiros, polícia, saúde, táxi e atendimento ao turista</span>
-          <span class="path-count">${placesIn({ cat: 20 }).length}</span></a></li>
+      <h2 id="paths-h">Explore Treze Tílias</h2>
+      <ul class="path-main">
+        ${main.map((g) => { const ph = photo(g.id); return `<li><a class="path-card" href="${exploreUrl({ group: g.id })}" data-link>
+          <span class="path-thumb">${ph ? `<img src="${ph['480']}" alt="" width="480" height="${Math.round(480 / ph.ratio)}" loading="lazy" decoding="async">` : ''}</span>
+          <span class="path-text"><span class="path-name">${esc(g.name)}</span><span class="path-lede">${esc(g.lede)}</span></span>
+          <span class="path-go"><span class="path-count">${counts(g.id)} lugares</span>${icon('arrow', 20)}</span></a></li>`; }).join('')}
+      </ul>
+      <ul class="path-short" aria-label="Atalhos">
+        <li><a href="${exploreUrl({ group: 'planejar' })}" data-link>Planejar a visita ${icon('arrow', 16)}</a></li>
+        <li><a href="${exploreUrl({ group: 'uteis' })}" data-link>Informações úteis ${icon('arrow', 16)}</a></li>
+        <li><a class="is-phones" href="/telefones-uteis" data-link>${icon('phone', 16)} Telefones úteis</a></li>
       </ul>
     </nav>
     <div class="home-more">
       <section class="fact">
         <h2>Atendimento ao turista</h2>
         <p>CAT – Centro de Atendimento ao Turista, Rua Pedro Nelcido Käfer, 115, Centro.</p>
-        <p style="margin-top:8px"><a href="tel:+5549991649034">(49) 99164 9034</a> · telefone e WhatsApp</p>
+        <p class="fact-tel"><a href="tel:+5549991649034">(49) 99164 9034</a> · telefone e WhatsApp</p>
       </section>
       <section class="fact">
         <h2>Distâncias até Treze Tílias</h2>
@@ -239,7 +264,7 @@ function renderHome() {
   wireSearch($('#home'));
 }
 
-// ---------- Explorar ----------
+// ---------- Explorar: lista ----------
 function currentList(r) {
   if (r.q) {
     const res = search(r.q);
@@ -249,20 +274,17 @@ function currentList(r) {
     return { places, cats: res.cats, groups: res.groups };
   }
   let places = placesIn(r);
-  if (r.cat === 20 || r.group === 'uteis') {
-    places = [...places].sort((a, b) => (b.emergency ? 1 : 0) - (a.emergency ? 1 : 0));
-  } else {
-    places = [...places].sort((a, b) => a.name.localeCompare(b.name, 'pt'));
-  }
-  return { places, cats: [] };
+  places = (r.cat === 20 || r.group === 'uteis')
+    ? [...places].sort((a, b) => (b.emergency ? 1 : 0) - (a.emergency ? 1 : 0))
+    : [...places].sort((a, b) => a.name.localeCompare(b.name, 'pt'));
+  return { places, cats: [], groups: [] };
 }
 
 function renderToolbar(r) {
   const g = r.group ? S.group.get(r.group) : null;
   const tabs = g ? [{ id: null, name: 'Tudo' }, ...g.cats.map((id) => S.cat.get(id))] : [];
-  const scope = r.q ? currentList({ ...r, cat: null, group: r.group }).places : null;
-  const countFor = (cid) => (r.q ? scope.filter((p) => (cid ? p.cats.includes(cid) : true)).length
-    : placesIn(cid ? { cat: cid } : { group: r.group }).length);
+  const scope = r.q ? currentList({ ...r, cat: null }).places : null;
+  const countFor = (cid) => (r.q ? scope.filter((p) => (cid ? p.cats.includes(cid) : true)).length : placesIn(cid ? { cat: cid } : { group: r.group }).length);
   $('#toolbar').innerHTML = `${searchForm(r.q, 'bar')}
     <div class="groups" aria-label="Caminhos">
       ${S.data.groups.map((x) => `<a class="group-chip" href="${exploreUrl({ group: x.id, q: r.q, vista: r.vista })}" data-link ${x.id === r.group ? 'aria-current="true"' : ''}>${esc(x.name)}</a>`).join('')}
@@ -270,38 +292,85 @@ function renderToolbar(r) {
     </div>
     ${tabs.length ? `<div class="cats" role="group" aria-label="Categorias de ${esc(g.name)}">
       ${tabs.map((t) => `<button type="button" class="cat-tab" data-cat="${t.id ?? ''}" aria-pressed="${(t.id ?? null) === (r.cat ?? null)}">${esc(t.name)}<span class="n">${countFor(t.id)}</span></button>`).join('')}
-      <span class="cat-indicator" aria-hidden="true"></span></div>` : '<div style="height:10px"></div>'}`;
+      <span class="cat-indicator" aria-hidden="true"></span></div>` : ''}
+    <div class="resultbar">
+      <p class="count" id="resultCount" aria-live="polite"></p>
+      <div class="seg" role="group" aria-label="Visualização">
+        <button type="button" data-view="lista" aria-pressed="${r.vista !== 'mapa'}">${icon('list', 16)}Lista</button>
+        <button type="button" data-view="mapa" aria-pressed="${r.vista === 'mapa'}">${icon('map', 16)}Mapa</button>
+      </div>
+    </div>`;
   wireSearch($('#toolbar'));
   const chip = $('.group-chip[aria-current="true"]', $('#toolbar'));
-  if (chip) { const bar = chip.parentElement; bar.scrollLeft = Math.max(0, chip.offsetLeft - 16); }
-  $('#toolbar').querySelectorAll('.cat-tab').forEach((b) => b.addEventListener('click', () => switchCategory(b.dataset.cat ? Number(b.dataset.cat) : null)));
+  if (chip) revealInScroller(chip.parentElement, chip, false);
+  $$('.cat-tab', $('#toolbar')).forEach((b) => b.addEventListener('click', () => switchCategory(b.dataset.cat ? Number(b.dataset.cat) : null)));
+  $$('.seg button', $('#toolbar')).forEach((b) => b.addEventListener('click', () => switchView(b.dataset.view)));
   placeIndicator(false);
 }
 
-// Movimento 3: o indicador desliza até a categoria; a lista é trocada sem piscar e sem voltar ao topo.
+// desloca uma barra horizontal só o suficiente para mostrar o item inteiro
+function revealInScroller(bar, item, smooth = true) {
+  const pad = 16;
+  const l = item.offsetLeft, rgt = l + item.offsetWidth;
+  let to = null;
+  if (l - pad < bar.scrollLeft) to = l - pad;
+  else if (rgt + pad > bar.scrollLeft + bar.clientWidth) to = rgt + pad - bar.clientWidth;
+  if (to !== null) bar.scrollTo({ left: Math.max(0, to), behavior: smooth && !reduceMotion() ? 'smooth' : 'auto' });
+}
+
+// Movimento 1: o sublinhado vermelho desliza da categoria anterior até a nova e ajusta a largura ao texto.
 function placeIndicator(animate = true) {
   const bar = $('.cats'); if (!bar) return;
   const ind = $('.cat-indicator', bar), btn = $('.cat-tab[aria-pressed="true"]', bar) || $('.cat-tab', bar);
   if (!btn) return;
   if (!animate) ind.style.transition = 'none';
-  ind.style.width = `${btn.offsetWidth - 16}px`;
-  ind.style.transform = `translateX(${btn.offsetLeft + 8}px)`;
-  if (!animate) { ind.offsetWidth; ind.style.transition = ''; }
-  const l = btn.offsetLeft, rgt = l + btn.offsetWidth;
-  if (l < bar.scrollLeft || rgt > bar.scrollLeft + bar.clientWidth) bar.scrollTo({ left: l - 24, behavior: reduceMotion() ? 'auto' : 'smooth' });
+  // a transição CSS parte da posição atual (inclusive no meio de outra transição): toques rápidos seguem a última escolha
+  ind.style.width = `${btn.offsetWidth - 20}px`;
+  ind.style.transform = `translateX(${btn.offsetLeft + 10}px)`;
+  if (!animate) { void ind.offsetWidth; ind.style.transition = ''; }
+  revealInScroller(bar, btn, animate);
 }
 function switchCategory(cat) {
-  const r = S.route;
-  $('#toolbar').querySelectorAll('.cat-tab').forEach((b) => b.setAttribute('aria-pressed', String((b.dataset.cat ? Number(b.dataset.cat) : null) === cat)));
+  if ((S.route.cat ?? null) === cat) return;
+  $$('.cat-tab', $('#toolbar')).forEach((b) => b.setAttribute('aria-pressed', String((b.dataset.cat ? Number(b.dataset.cat) : null) === cat)));
   placeIndicator(true);
-  const url = exploreUrl({ group: r.group, cat, q: r.q, vista: r.vista });
-  history.replaceState(null, '', url);
+  history.replaceState(null, '', routeUrl({ cat }));
   S.route = parse();
   S.selected = null;
-  renderResults(S.route, { keepPosition: true });
+  S.lastListKey = listKey(S.route);
+  renderResults(S.route, { keepPosition: true, fade: true });
   updateMap(S.route, { fit: true });
   renderMenu();
 }
+
+function switchView(vista) {
+  if (S.route.vista === vista) return;
+  saveScroll();
+  const listY = scrollY;
+  history.replaceState(history.state, '', routeUrl({ vista, place: S.route.place, ficha: S.route.ficha }));
+  S.route = parse();
+  S.lastListKey = listKey(S.route);
+  $$('.seg button', $('#toolbar')).forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.view === vista)));
+  applyView();
+  if (vista === 'mapa') {
+    S.listY = listY;
+    scrollTo({ top: 0, behavior: 'instant' });
+    ensureMap();
+    requestAnimationFrame(() => {
+      S.map?.invalidateSize();
+      updateMap(S.route, { fit: !S.selected || !S.markers.has(S.selected) });
+      if (S.selected && S.markers.has(S.selected)) { markSelected(); S.map.setView(S.markers.get(S.selected).getLatLng(), Math.max(S.map.getZoom(), 15), { animate: false }); }
+    });
+  } else {
+    requestAnimationFrame(() => {
+      const card = S.selected && $(`#results .card[data-id="${CSS.escape(S.selected)}"]`);
+      if (card) { const r = card.getBoundingClientRect(); const top = toolbarBottom(); if (r.top < top || r.bottom > innerHeight) scrollTo({ top: scrollY + r.top - top - 12, behavior: 'instant' }); }
+      else scrollTo({ top: S.listY || 0, behavior: 'instant' });
+    });
+  }
+}
+const toolbarBottom = () => $('#toolbar').getBoundingClientRect().bottom;
+const listKey = (r) => JSON.stringify([r.group, r.cat, r.q]);
 
 function cardHtml(p, r) {
   const ctxCat = r.cat && p.cats.includes(r.cat) ? r.cat : p.cats.find((c) => !r.group || groupOfCat(c) === r.group) ?? p.cats[0];
@@ -309,19 +378,19 @@ function cardHtml(p, r) {
   if (p.kind === 'service' && !p.photo) {
     const ph = p.phones?.[0];
     return `<li class="card is-service ${S.selected === p.id ? 'is-selected' : ''}" data-id="${esc(p.id)}">
-      <div class="card-main"><a class="card-link" href="${href}" data-link data-open="${esc(p.id)}"><h3 class="card-name">${esc(p.name)}</h3></a>
-        <p class="card-cat">${esc(p.group || catName(ctxCat))}${p.summary ? ` · <span style="color:var(--ink-2);font-weight:400">${esc(p.summary)}</span>` : ''}</p>
+      <div class="card-main"><a class="card-link" href="${href}" data-open="${esc(p.id)}"><h3 class="card-name">${esc(p.name)}</h3></a>
+        <p class="card-cat">${esc(p.group || catName(ctxCat))}${p.summary ? ` · <span class="card-sub">${esc(p.summary)}</span>` : ''}</p>
         ${p.emergency || ph ? `<p class="card-phone">${p.emergency ? `<span class="emergency">${esc(p.emergency)}</span>` : ''}${ph ? esc(ph.label) : ''}</p>` : ''}
       </div>
-      ${p.emergency ? `<a class="card-call" href="tel:${p.emergency}">${ICON.phone.replace('<svg', '<svg width="18" height="18" style="fill:none;stroke:currentColor;stroke-width:2"')} Ligar ${esc(p.emergency)}</a>`
-        : ph ? `<a class="card-call" href="tel:${esc(ph.tel)}" aria-label="Ligar para ${esc(p.name)}">${ICON.phone.replace('<svg', '<svg width="18" height="18" style="fill:none;stroke:currentColor;stroke-width:2"')} Ligar</a>` : ''}
+      ${p.emergency ? `<a class="card-call btn-primary" href="tel:${p.emergency}">${icon('phone')} Ligar ${esc(p.emergency)}</a>`
+        : ph ? `<a class="card-call btn-primary" href="tel:${esc(ph.tel)}" aria-label="Ligar para ${esc(p.name)}">${icon('phone')} Ligar</a>` : ''}
     </li>`;
   }
   const meta = p.summary || [p.address, p.district].filter(Boolean).join(' · ');
   const flags = [p.coords ? 'No mapa' : null, p.hours ? 'Horário informado' : null, p.whatsapp ? 'WhatsApp' : null, p.tour ? 'Vista em 360°' : null].filter(Boolean);
   return `<li class="card ${S.selected === p.id ? 'is-selected' : ''}" data-id="${esc(p.id)}">
     <div class="card-main">
-      <a class="card-link" href="${href}" data-link data-open="${esc(p.id)}"><h3 class="card-name">${esc(p.name)}</h3></a>
+      <a class="card-link" href="${href}" data-open="${esc(p.id)}"><h3 class="card-name">${esc(p.name)}</h3></a>
       <p class="card-cat">${esc(placeLabel(p, ctxCat))}</p>
       ${meta ? `<p class="card-meta">${esc(meta)}</p>` : ''}
       ${flags.length ? `<p class="card-flags">${flags.map((f) => `<span>${esc(f)}</span>`).join('<span aria-hidden="true">·</span>')}</p>` : ''}
@@ -330,18 +399,22 @@ function cardHtml(p, r) {
   </li>`;
 }
 
-function renderResults(r, { keepPosition = false } = {}) {
+function renderResults(r, { keepPosition = false, fade = false } = {}) {
   const { places, cats, groups } = currentList(r);
   const el = $('#results');
   const title = r.q ? `Resultados para “${esc(r.q)}”` : r.cat ? esc(catName(r.cat)) : r.group ? esc(S.group.get(r.group).name) : 'Todos os lugares';
   const onMap = places.filter((p) => p.coords).length;
-  let html = `<div class="results-head"><h2>${title}</h2><span>${places.length} ${places.length === 1 ? 'resultado' : 'resultados'}${onMap ? ` · ${onMap} no mapa` : ''}</span></div>`;
+  const count = $('#resultCount');
+  if (count) count.textContent = `${places.length} ${places.length === 1 ? 'lugar' : 'lugares'}${onMap ? ` · ${onMap} no mapa` : ''}`;
+  const seg = $('.seg', $('#toolbar'));
+  if (seg) { seg.hidden = !onMap; }
+  let html = `<h2 class="results-title">${title}</h2>`;
   if (r.q && (cats?.length || groups?.length)) {
     html += `<div class="cat-matches">${[...(groups || []).map((g) => `<a href="${exploreUrl({ group: g.id })}" data-link>${esc(g.name)}</a>`),
       ...cats.map((c) => `<a href="${exploreUrl({ group: c.group, cat: c.id })}" data-link>Categoria: ${esc(c.name)}</a>`)].join('')}</div>`;
   }
   if (!places.length) {
-    html += `<div class="empty"><h2>Nada encontrado${r.q ? ` para “${esc(r.q)}”` : ' nesta categoria'}</h2>
+    html += `<div class="empty"><h3>Nada encontrado${r.q ? ` para “${esc(r.q)}”` : ' nesta categoria'}</h3>
       ${!r.q && r.cat ? '<p>Ainda não há lugares confirmados nesta categoria.</p>' : ''}
       <p>Tente:</p><ul>
         ${r.q && (r.group || r.cat) ? `<li><a href="${exploreUrl({ q: r.q })}" data-link>buscar “${esc(r.q)}” em todo o guia</a></li>` : ''}
@@ -358,136 +431,173 @@ function renderResults(r, { keepPosition = false } = {}) {
     html += `<ul class="cards">${places.map((p) => cardHtml(p, r)).join('')}</ul>`;
   }
   if (r.group === 'planejar' && !r.q && (!r.cat || r.cat === 28)) {
-    html += `<section class="fact" style="margin-top:12px"><h2>Distâncias até Treze Tílias</h2><ul class="dist">${DISTANCES.map(([c, d]) => `<li><span>${c}</span><b>${d}</b></li>`).join('')}</ul></section>`;
+    html += `<section class="fact"><h2>Distâncias até Treze Tílias</h2><ul class="dist">${DISTANCES.map(([c, d]) => `<li><span>${c}</span><b>${d}</b></li>`).join('')}</ul></section>`;
   }
-
-  // Troca sem piscar: mesma caixa, conteúdo substituído num único quadro; altura mínima mantida durante a troca.
   const pane = isDesktop() ? $('#paneList') : null;
-  const tb = $('#toolbar');
   const before = pane ? pane.scrollTop : scrollY;
-  el.style.minHeight = `${el.offsetHeight}px`;
+  el.style.minHeight = `${el.offsetHeight}px`;    // evita que a página encolha e pule durante a troca
   el.innerHTML = html;
   requestAnimationFrame(() => { el.style.minHeight = ''; });
   if (keepPosition) {
-    // mantém a pessoa onde estava; só reposiciona se ela estava abaixo do início da lista
+    const tb = $('#toolbar');
     const listTop = pane ? el.offsetTop - tb.offsetHeight : el.getBoundingClientRect().top + scrollY - S.headerH - tb.offsetHeight;
     const target = Math.min(before, Math.max(0, listTop));
     if (pane) pane.scrollTop = target; else scrollTo({ top: target, behavior: 'instant' });
   }
-  updateToggle(r, onMap);
-  updatePeek();
+  if (fade) animate(el, 'results', [{ opacity: 0.35 }, { opacity: 1 }], { duration: 160, easing: 'ease-out' });
 }
 
-function updateToggle(r, onMap) {
-  const b = $('#viewToggle');
-  if (isDesktop() || !onMap) { b.hidden = true; return; }
-  b.hidden = false;
-  b.innerHTML = r.vista === 'mapa' ? `${ICON.list} Ver lista` : `${ICON.map} Ver no mapa (${onMap})`;
-  b.onclick = () => {
-    const url = exploreUrl({ group: r.group, cat: r.cat, q: r.q, vista: r.vista === 'mapa' ? 'lista' : 'mapa', place: S.route.place });
-    S.listScroll = scrollY;
-    history.replaceState(null, '', url);
-    S.route = parse();
-    applyView();
-    renderResults(S.route);
-    if (S.route.vista === 'mapa') { ensureMap(); setTimeout(() => { S.map?.invalidateSize(); updateMap(S.route, { fit: !S.selected }); if (S.selected) selectPlace(S.selected, { pan: true, scroll: false }); }, 0); }
-    else { requestAnimationFrame(() => { const it = S.selected && $(`.card[data-id="${CSS.escape(S.selected)}"]`); if (it) it.scrollIntoView({ block: 'center' }); else scrollTo({ top: S.listScrollBefore || 0 }); }); }
-  };
+// animações JS interrompíveis: uma nova chamada com a mesma chave cancela a anterior
+function animate(el, key, frames, opts) {
+  S.anims.get(key)?.cancel();
+  if (reduceMotion() || !el.animate) return null;
+  const a = el.animate(frames, opts);
+  S.anims.set(key, a);
+  return a;
 }
+
 function applyView() {
-  const v = $('#explore');
-  v.classList.toggle('is-map', S.route.vista === 'mapa');
+  $('#explore').classList.toggle('is-map', S.route.vista === 'mapa');
+  document.body.classList.toggle('map-mode', S.route.name === 'explore' && S.route.vista === 'mapa' && !isDesktop());
   document.documentElement.style.setProperty('--toolbar-h', `${$('#toolbar').offsetHeight}px`);
-}
-
-function updatePeek() {
-  const peek = $('#mapPeek');
-  if (isDesktop() || S.route.vista !== 'mapa' || !S.selected) { peek.hidden = true; return; }
-  const p = S.byId.get(S.selected);
-  peek.hidden = false;
-  peek.innerHTML = `<ul class="cards">${cardHtml(p, S.route)}</ul>`;
 }
 
 // ---------- Mapa ----------
 function ensureMap() {
   if (S.map || S.mapFailed) return;
+  const loading = $('#mapLoading');
   if (!window.L) { mapFail('O mapa não carregou. A lista, os endereços e os contatos continuam disponíveis.'); return; }
   try {
-    S.map = L.map('map', { zoomControl: true, scrollWheelZoom: true, keyboard: true, zoomSnap: 0.5 }).setView([-26.9995, -51.4075], 14);
-    let tileErrors = 0, tileOk = 0;
+    loading.hidden = false;
+    S.map = L.map('map', { zoomControl: true, scrollWheelZoom: true, keyboard: true, zoomSnap: 0.5, fadeAnimation: true }).setView([-26.9995, -51.4075], 14);
+    let errors = 0;
     const layer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(S.map);
-    layer.on('tileerror', () => { tileErrors++; if (tileErrors > 6 && !tileOk) mapFail('As imagens do mapa não carregaram. Use a lista e o botão “Como chegar” de cada lugar.'); });
-    layer.on('tileload', () => { tileOk++; });
-    S.mapReady = true;
+    const done = () => {
+      if (S.mapLoaded) return; S.mapLoaded = true;
+      loading.classList.add('is-done');
+      setTimeout(() => { loading.hidden = true; }, reduceMotion() ? 0 : 220);
+    };
+    layer.on('load', done);
+    let firstTiles = 0;
+    layer.on('tileload', () => { if (++firstTiles >= 4) setTimeout(done, 120); });
+    layer.on('tileerror', () => { if (++errors > 6 && !S.mapLoaded) mapFail('As imagens do mapa não carregaram. Use a lista e o botão “Como chegar” de cada lugar.'); });
+    // toque no mapa: escolhe o ponto mais próximo do dedo (até 26 px). Áreas de toque grandes não "roubam" o vizinho.
+    S.map.on('click', (e) => {
+      if (!e.containerPoint) return;
+      const id = nearestMarker(e.containerPoint, 26);
+      if (id) tapMarker(id);
+      else if (S.sheetMode === 'half') closeSheet();
+    });
+    S.map.on('mousemove', (e) => { $('#map').style.cursor = nearestMarker(e.containerPoint, 26) ? 'pointer' : ''; });
   } catch { mapFail('O mapa não carregou. A lista, os endereços e os contatos continuam disponíveis.'); }
+}
+function nearestMarker(pt, max) {
+  let best = null, bd = max;
+  for (const [id, m] of S.markers) {
+    const c = S.map.latLngToContainerPoint(m.getLatLng()).add(L.point(m.pinOff || [0, 0]));
+    const d = c.distanceTo(pt);
+    if (d <= bd) { bd = d; best = id; }
+  }
+  return best;
 }
 function mapFail(msg) {
   S.mapFailed = true;
+  $('#mapLoading').hidden = true;
   const f = $('#mapFallback'); f.hidden = false; f.innerHTML = `<p>${esc(msg)}</p>`;
 }
-function pinIcon(p) {
+function pinIcon(p, off = [0, 0]) {
   const cls = isStay(p) ? 'is-stay' : isFood(p) ? 'is-food' : '';
-  return L.divIcon({ className: '', iconSize: [28, 28], iconAnchor: [14, 14],
-    html: `<span class="pin ${cls}" data-pin="${esc(p.id)}"><svg class="pin-ring" viewBox="0 0 46 46" aria-hidden="true"><circle cx="23" cy="23" r="20"/></svg><span class="pin-dot"></span></span>` });
+  return L.divIcon({ className: 'pin-icon', iconSize: [44, 44], iconAnchor: [22 - off[0], 22 - off[1]],
+    html: `<span class="pin ${cls}" data-pin="${esc(p.id)}"><span class="pin-ring"></span><span class="pin-dot"></span></span>` });
 }
 function updateMap(r, { fit = false } = {}) {
   if (!S.map) return;
   const places = currentList(r).places.filter((p) => p.coords);
   const keep = new Set(places.map((p) => p.id));
   for (const [id, m] of S.markers) if (!keep.has(id)) { m.remove(); S.markers.delete(id); }
+  // lugares com a mesma coordenada ficam lado a lado, a 12 px do ponto comum, para que todos possam ser tocados
+  const groups = new Map();
+  for (const p of places) { const k = p.coords.join(','); groups.set(k, [...(groups.get(k) || []), p.id]); }
+  const offsetOf = (p) => { const g = groups.get(p.coords.join(',')); if (g.length < 2) return [0, 0]; const i = g.indexOf(p.id), a = (2 * Math.PI * i) / g.length - Math.PI / 2; return [Math.round(Math.cos(a) * 12), Math.round(Math.sin(a) * 12)]; };
   for (const p of places) {
-    if (S.markers.has(p.id)) continue;
-    const m = L.marker(p.coords, { icon: pinIcon(p), title: p.name, alt: p.name, keyboard: true, riseOnHover: true });
-    m.on('click', () => { selectPlace(p.id, { pan: false, scroll: true }); if (isDesktop()) openPlace(p.id); });
-    m.on('keypress', (e) => { if (e.originalEvent.key === 'Enter') { selectPlace(p.id, { pan: false }); openPlace(p.id); } });
+    const off = offsetOf(p);
+    if (S.markers.has(p.id)) { const m0 = S.markers.get(p.id); if (String(m0.pinOff) !== String(off)) { m0.pinOff = off; m0.setIcon(pinIcon(p, off)); } continue; }
+    const m = L.marker(p.coords, { icon: pinIcon(p, off), title: p.name, alt: p.name, keyboard: true, riseOnHover: true });
+    m.pinOff = off;
+    m.on('keypress', (e) => { if (e.originalEvent.key === 'Enter' || e.originalEvent.key === ' ') tapMarker(p.id); });
     m.addTo(S.map); S.markers.set(p.id, m);
   }
   markSelected();
   if (fit && places.length) {
     const b = L.latLngBounds(places.map((p) => p.coords));
-    S.map.fitBounds(b, { padding: [40, 40], maxZoom: 16, animate: !reduceMotion() });
+    S.map.fitBounds(b, { padding: [36, 36], maxZoom: 16, animate: !reduceMotion() && S.mapLoaded });
   }
 }
 function markSelected() {
   for (const [id, m] of S.markers) {
-    const el = m.getElement()?.querySelector('.pin');
-    if (el) el.classList.toggle('is-selected', id === S.selected);
+    m.getElement()?.querySelector('.pin')?.classList.toggle('is-selected', id === S.selected);
     m.setZIndexOffset(id === S.selected ? 1000 : 0);
   }
 }
 
-// Movimento 1: destaca na lista e contorna o marcador; move o mapa uma única vez, só se o ponto estiver fora de vista.
-function selectPlace(id, { pan = true, scroll = true } = {}) {
+// Movimento 2: um único anel vermelho se expande e some; o ponto continua destacado depois.
+function ringMarker(id) {
+  const ring = S.markers.get(id)?.getElement()?.querySelector('.pin-ring');
+  if (!ring) return;
+  animate(ring, 'ring', [
+    { transform: 'scale(.45)', opacity: 0.95 },
+    { transform: 'scale(1.9)', opacity: 0 },
+  ], { duration: 560, easing: 'cubic-bezier(.2,.7,.2,1)' });
+}
+
+function highlightCard(id, { scroll = false } = {}) {
+  $$('#results .card.is-selected').forEach((c) => c.classList.remove('is-selected'));
+  const card = id && $(`#results .card[data-id="${CSS.escape(id)}"]`);
+  if (!card) return;
+  card.classList.add('is-selected');
+  if (scroll && isDesktop()) {
+    const pane = $('#paneList'), cr = card.getBoundingClientRect(), pr = pane.getBoundingClientRect();
+    if (cr.top < pr.top + $('#toolbar').offsetHeight || cr.bottom > pr.bottom) card.scrollIntoView({ block: 'center', behavior: reduceMotion() ? 'auto' : 'smooth' });
+  }
+}
+function selectPlace(id, { ring = true, scroll = false } = {}) {
   S.selected = id;
-  document.querySelectorAll('.card.is-selected').forEach((c) => c.classList.remove('is-selected'));
-  const card = $(`#results .card[data-id="${CSS.escape(id)}"]`);
-  if (card) {
-    card.classList.add('is-selected');
-    if (scroll && isDesktop()) {
-      const pane = $('#paneList'); const cr = card.getBoundingClientRect(), pr = pane.getBoundingClientRect();
-      const tbH = $('#toolbar').offsetHeight;
-      if (cr.top < pr.top + tbH || cr.bottom > pr.bottom) card.scrollIntoView({ block: 'center', behavior: reduceMotion() ? 'auto' : 'smooth' });
-    }
-  }
+  highlightCard(id, { scroll });
+  if (S.map) { markSelected(); if (ring) ringMarker(id); }
+}
+
+// área do mapa que fica visível com a ficha aberta (coordenadas do contêiner do mapa)
+function visibleMapRect(mode) {
+  const size = S.map.getSize();
+  const mapBox = $('#map').getBoundingClientRect();
+  let left = 0, bottom = size.y;
+  if (isDesktop() && mode) left = Math.max(0, $('#sheet').getBoundingClientRect().width - ($('#paneList').getBoundingClientRect().width));
+  if (!isDesktop() && mode === 'half') bottom = Math.min(size.y, innerHeight - halfHeight() - mapBox.top);
+  return { left, top: 0, right: size.x, bottom };
+}
+// câmera: se o ponto já está bem enquadrado, fica parada; senão, um único deslocamento suave.
+function frameMarker(id, mode) {
   const m = S.markers.get(id);
-  if (m && S.map) {
-    markSelected();
-    const el = m.getElement()?.querySelector('.pin');
-    if (el) { el.classList.remove('ring-draw'); void el.offsetWidth; el.classList.add('ring-draw'); }
-    if (pan) {
-      const pad = isDesktop() && $('#sheet').classList.contains('is-open') ? L.point(40, 40) : L.point(40, 40);
-      const size = S.map.getSize();
-      const pt = S.map.latLngToContainerPoint(m.getLatLng());
-      const leftCover = isDesktop() && $('#sheet').classList.contains('is-open') ? Math.max(0, $('#sheet').getBoundingClientRect().right - $('#paneMap').getBoundingClientRect().left) : 0;
-      const bottomCover = !isDesktop() ? 150 : 0;
-      const inView = pt.x > leftCover + pad.x && pt.x < size.x - pad.x && pt.y > pad.y && pt.y < size.y - pad.y - bottomCover;
-      if (!inView) {
-        const target = S.map.containerPointToLatLng(L.point(pt.x - (leftCover + (size.x - leftCover) / 2), pt.y - (size.y - bottomCover) / 2).add(S.map.getSize().divideBy(2)));
-        S.map.panTo(target, { animate: !reduceMotion(), duration: 0.45, easeLinearity: 0.3 });
-      }
-    }
+  if (!m || !S.map) return false;
+  const v = visibleMapRect(mode), pad = 40;
+  const pt = S.map.latLngToContainerPoint(m.getLatLng()).add(L.point(m.pinOff || [0, 0]));
+  const ok = pt.x > v.left + pad && pt.x < v.right - pad && pt.y > v.top + pad && pt.y < v.bottom - pad;
+  if (ok) return false;
+  const target = L.point((v.left + v.right) / 2, v.top + (v.bottom - v.top) * 0.5);
+  S.map.panBy(pt.subtract(target), { animate: !reduceMotion(), duration: ms('--t-sheet') / 1000 || 0.36, easeLinearity: 0.25 });
+  return true;
+}
+
+function tapMarker(id) {
+  if (isDesktop()) {
+    selectPlace(id, { scroll: true });
+    openPlace(id, 'full');
+    return;
   }
-  updatePeek();
+  // celular: resumo em meia altura; câmera e ficha começam no mesmo quadro
+  if (S.sheetMode !== 'half') S.savedView = { center: S.map.getCenter(), zoom: S.map.getZoom() };
+  selectPlace(id);
+  openPlace(id, 'half');
 }
 
 // ---------- Ficha ----------
@@ -497,20 +607,20 @@ function directionsUrl(p) {
 }
 function primaryAction(p) {
   const tel = p.phones?.[0];
-  if (p.emergency) return { href: `tel:${p.emergency}`, label: `Ligar ${p.emergency}`, icon: ICON.phone };
+  if (p.emergency) return { href: `tel:${p.emergency}`, label: `Ligar ${p.emergency}`, icon: 'phone' };
   if (p.kind === 'service' || p.cats.includes(20) || p.cats.includes(10) || p.cats.includes(9)) {
-    if (tel) return { href: `tel:${tel.tel}`, label: 'Ligar', icon: ICON.phone };
-    if (p.whatsapp) return { href: p.whatsapp, label: 'Conversar no WhatsApp', icon: ICON.wa, ext: true };
-    if (p.link) return { href: p.link.url, label: p.link.label, icon: ICON.link, ext: true };
+    if (tel) return { href: `tel:${tel.tel}`, label: 'Ligar', icon: 'phone' };
+    if (p.whatsapp) return { href: p.whatsapp, label: 'Conversar no WhatsApp', icon: 'wa', ext: true };
+    if (p.link) return { href: p.link.url, label: p.link.label, icon: 'link', ext: true };
   }
   if (isStay(p)) {
-    if (p.whatsapp) return { href: p.whatsapp, label: 'Entrar em contato pelo WhatsApp', icon: ICON.wa, ext: true };
-    if (tel) return { href: `tel:${tel.tel}`, label: 'Entrar em contato', icon: ICON.phone };
+    if (p.whatsapp) return { href: p.whatsapp, label: 'Entrar em contato pelo WhatsApp', icon: 'wa', ext: true };
+    if (tel) return { href: `tel:${tel.tel}`, label: 'Entrar em contato', icon: 'phone' };
   }
   const dir = directionsUrl(p);
-  if (dir) return { href: dir, label: 'Como chegar', icon: ICON.route, ext: true };
-  if (tel) return { href: `tel:${tel.tel}`, label: 'Ligar', icon: ICON.phone };
-  if (p.link) return { href: p.link.url, label: p.link.label, icon: ICON.link, ext: true };
+  if (dir) return { href: dir, label: 'Como chegar', icon: 'route', ext: true };
+  if (tel) return { href: `tel:${tel.tel}`, label: 'Ligar', icon: 'phone' };
+  if (p.link) return { href: p.link.url, label: p.link.label, icon: 'link', ext: true };
   return null;
 }
 function sheetHtml(p, r) {
@@ -518,103 +628,165 @@ function sheetHtml(p, r) {
   const dir = directionsUrl(p);
   const pa = primaryAction(p);
   const acts = [];
-  const add = (cond, href, label, icon, cls = '', ext = true) => { if (cond && href !== pa?.href) acts.push(`<a class="action ${cls}" href="${esc(href)}" ${ext ? 'target="_blank" rel="noopener"' : ''}>${icon}${esc(label)}</a>`); };
-  add(!!dir, dir, 'Como chegar', ICON.route);
-  add(!!p.phones?.length, `tel:${p.phones?.[0]?.tel}`, 'Ligar', ICON.phone, '', false);
-  add(!!p.whatsapp, p.whatsapp, 'WhatsApp', ICON.wa);
-  add(!!p.site, p.site, 'Site', ICON.web);
-  add(!!p.instagram, p.instagram, 'Instagram', ICON.ig);
-  add(!!p.facebook, p.facebook, 'Facebook', ICON.fb);
-  add(!!p.email, `mailto:${p.email}`, 'E-mail', ICON.mail, '', false);
-  add(!!p.link && pa?.href !== p.link?.url, p.link?.url, p.link?.label, ICON.link);
-  const mapBtn = p.coords && !isDesktop() ? `<button type="button" class="action" data-show-map="${esc(p.id)}">${ICON.map}Ver no mapa do guia</button>` : '';
+  const add = (cond, href, label, ic, ext = true) => { if (cond && href !== pa?.href) acts.push(`<a class="action" href="${esc(href)}" ${ext ? 'target="_blank" rel="noopener"' : ''}>${icon(ic, 20)}${esc(label)}</a>`); };
+  add(!!dir, dir, 'Como chegar', 'route');
+  add(!!p.phones?.length, `tel:${p.phones?.[0]?.tel}`, 'Ligar', 'phone', false);
+  add(!!p.whatsapp, p.whatsapp, 'WhatsApp', 'wa');
+  add(!!p.site, p.site, 'Site', 'web');
+  add(!!p.instagram, p.instagram, 'Instagram', 'ig');
+  add(!!p.facebook, p.facebook, 'Facebook', 'fb');
+  add(!!p.email, `mailto:${p.email}`, 'E-mail', 'mail', false);
+  add(!!p.link && pa?.href !== p.link?.url, p.link?.url, p.link?.label, 'link');
+  const mapBtn = p.coords && !isDesktop() && r.vista !== 'mapa' ? `<button type="button" class="action" data-show-map>${icon('map', 20)}Ver no mapa do guia</button>` : '';
   const facts = [];
-  if (p.address) facts.push(['Endereço', `${esc(p.address)}${p.district ? `<br>${esc(p.district)}` : ''}${p.address2 ? `<br>${esc(p.address2)}` : ''}${p.ref ? `<br><span style="color:var(--ink-3)">${esc(p.ref)}</span>` : ''}`]);
-  if (p.hours) facts.push(['Horário', `${esc(p.hours)}${p.note ? `<br><span style="color:var(--ink-3)">${esc(p.note)}</span>` : ''}`]);
-  if (p.phones?.length) facts.push(['Telefone', `<ul class="tel-list">${p.phones.map((t) => `<li><a href="tel:${esc(t.tel)}">${esc(t.label)}</a></li>`).join('')}</ul>${p.phoneLabel ? `<span style="color:var(--ink-3);font-size:.9rem">${esc(p.phoneLabel)}</span>` : ''}`]);
+  if (p.address) facts.push(['Endereço', `${esc(p.address)}${p.district ? `<br>${esc(p.district)}` : ''}${p.address2 ? `<br>${esc(p.address2)}` : ''}${p.ref ? `<br><span class="muted">${esc(p.ref)}</span>` : ''}`]);
+  if (p.hours) facts.push(['Horário', `${esc(p.hours)}${p.note ? `<br><span class="muted">${esc(p.note)}</span>` : ''}`]);
+  if (p.phones?.length) facts.push(['Telefone', `<ul class="tel-list">${p.phones.map((t) => `<li><a href="tel:${esc(t.tel)}">${esc(t.label)}</a></li>`).join('')}</ul>${p.phoneLabel ? `<span class="muted small">${esc(p.phoneLabel)}</span>` : ''}`]);
   if (p.email) facts.push(['E-mail', `<a href="mailto:${esc(p.email)}">${esc(p.email)}</a>`]);
   if (!p.coords && p.map) facts.push(['Localização', `<a href="${esc(p.map)}" target="_blank" rel="noopener">Abrir a localização do cadastro</a>`]);
   if (p.cats.length > 1) facts.push(['Também em', p.cats.filter((c) => c !== ctx).map((c) => `<a href="${exploreUrl({ group: groupOfCat(c), cat: c })}" data-link>${esc(catName(c))}</a>`).join(', ')]);
+  const logo = p.photo?.logo;
   return `<div class="sheet-grab" aria-hidden="true"></div>
     <header class="sheet-head">
-      <div><p class="sheet-cat">${esc(placeLabel(p, ctx))}</p><h2 class="sheet-title" id="sheetTitle">${esc(p.name)}</h2></div>
-      <button type="button" class="sheet-close" data-close>${ICON.close}<span>Fechar</span></button>
+      ${logo ? `<img class="sheet-logo" src="${p.photo['480']}" alt="Marca de ${esc(p.name)}" width="56" height="56">` : ''}
+      <div class="sheet-id"><p class="sheet-cat">${esc(placeLabel(p, ctx))}</p><h2 class="sheet-title" id="sheetTitle" tabindex="-1">${esc(p.name)}</h2></div>
+      <button type="button" class="sheet-close" data-close aria-label="Fechar a ficha">${icon('close')}<span>Fechar</span></button>
       <div class="head-actions ${p.tour ? 'has-tour' : ''}">
-        ${pa ? `<a class="primary-action" href="${esc(pa.href)}" ${pa.ext ? 'target="_blank" rel="noopener"' : ''}>${pa.icon}${esc(pa.label)}</a>` : ''}
-        ${p.tour ? `<a class="tour-action" href="${esc(p.tour)}" target="_blank" rel="noopener" aria-label="Ver em 360° (${esc(p.tourNote || 'Street View')})">${ICON.tour}Ver em 360°</a>` : ''}
+        ${pa ? `<a class="primary-action btn-primary" href="${esc(pa.href)}" ${pa.ext ? 'target="_blank" rel="noopener"' : ''}>${icon(pa.icon, 20)}${esc(pa.label)}</a>` : ''}
+        ${p.tour ? `<a class="tour-action" href="${esc(p.tour)}" target="_blank" rel="noopener" aria-label="Ver em 360° (${esc(p.tourNote || 'Street View')})">${icon('tour', 20)}Ver em 360°</a>` : ''}
       </div>
       ${p.tour && p.tourNote ? `<p class="tour-note">${esc(p.tourNote)}</p>` : ''}
+      <button type="button" class="sheet-expand" data-expand aria-expanded="false" aria-controls="sheetBody">${icon('up')}<span>Ver detalhes</span></button>
     </header>
-    ${p.photo ? `<figure class="sheet-photo ${p.photo.logo ? 'is-logo' : ''}"><img src="${p.photo['960']}" srcset="${p.photo['480']} 480w, ${p.photo['960']} 960w" sizes="(min-width: 900px) 460px, 100vw" alt="${p.photo.logo ? `Marca de ${esc(p.name)}` : esc(p.name)}" width="960" height="${Math.round(960 / (p.photo.ratio || 1.6))}"><figcaption>${p.photo.logo ? 'Marca do estabelecimento' : 'Foto'}: cadastro no site da Asturtílias</figcaption></figure>` : ''}
-    <div class="sheet-body">
-      ${p.summary ? `<p class="sheet-summary">${esc(p.summary)}</p>` : ''}
-      ${p.text ? `<p class="sheet-text">${esc(p.text)}</p>` : ''}
-      ${acts.length || mapBtn ? `<div class="actions">${acts.join('')}${mapBtn}</div>` : ''}
-      ${facts.length ? `<dl class="facts">${facts.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>` : ''}
+    <div class="sheet-body" id="sheetBody">
+      ${p.photo && !logo ? `<figure class="sheet-photo"><img src="${p.photo['960']}" srcset="${p.photo['480']} 480w, ${p.photo['960']} 960w" sizes="(min-width: 900px) 460px, 100vw" alt="${esc(p.name)}" width="960" height="${Math.round(960 / (p.photo.ratio || 1.6))}"></figure>` : ''}
+      <div class="sheet-inner">
+        ${p.summary ? `<p class="sheet-summary">${esc(p.summary)}</p>` : ''}
+        ${p.text ? `<p class="sheet-text">${esc(p.text)}</p>` : ''}
+        ${facts.length ? `<dl class="facts">${facts.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>` : ''}
+        ${acts.length || mapBtn ? `<div class="actions">${acts.join('')}${mapBtn}</div>` : ''}
+        ${p.photo ? `<p class="credit">${logo ? 'Marca' : 'Foto'}: cadastro do estabelecimento no site da Asturtílias</p>` : ''}
+      </div>
     </div>`;
 }
 
+const halfHeight = () => Math.round(Math.min(innerHeight * 0.5, Math.max(innerHeight * 0.42, $('#sheet .sheet-head')?.offsetHeight + 72 || 0)));
+
 let lastFocus = null;
-// Movimento 2: no celular a ficha sobe da base; nome e ação principal chegam juntos. Fechar devolve posição e foco.
-function openPlace(id) {
-  const r = S.route;
-  S.openedInApp = true;
-  go(exploreUrl({ group: r.group, cat: r.cat, q: r.q, vista: r.vista, place: id }));
+function openPlace(id, mode = 'full') {
+  const ficha = mode === 'half' ? 'resumo' : null;
+  const url = routeUrl({ place: id, ficha });
+  // com uma ficha já aberta, trocar de lugar substitui a entrada: Voltar/Esc fecham em vez de voltar à ficha anterior
+  if (S.sheetMode && S.openedInApp) go(url, { replace: true });
+  else { S.openedInApp = true; go(url); }
 }
-function showSheet(p) {
-  const sheet = $('#sheet'), back = $('#sheetBackdrop');
+function setSheetMode(mode, { instant = false } = {}) {
+  const sheet = $('#sheet');
+  S.sheetMode = mode;
+  sheet.dataset.mode = mode;
+  const expand = $('[data-expand]', sheet);
+  if (expand) expand.setAttribute('aria-expanded', String(mode === 'full'));
+  if (!isDesktop()) {
+    const h = sheet.offsetHeight;
+    const offset = mode === 'half' ? Math.max(0, h - halfHeight()) : 0;
+    if (instant) sheet.style.transition = 'none';
+    sheet.style.setProperty('--sheet-y', `${offset}px`);
+    if (instant) { void sheet.offsetWidth; sheet.style.transition = ''; }
+    $('#sheetBackdrop').classList.toggle('is-open', mode === 'full');
+    $('#sheetBackdrop').hidden = mode !== 'full';
+  }
+}
+function showSheet(p, mode) {
+  const sheet = $('#sheet');
   const wasOpen = sheet.classList.contains('is-open');
-  if (!wasOpen) lastFocus = document.activeElement?.closest?.('.card') ? document.activeElement : $(`#results .card[data-id="${CSS.escape(p.id)}"] .card-link`);
+  const prevMode = S.sheetMode;
+  if (!wasOpen) {
+    const ae = document.activeElement;
+    lastFocus = ae?.closest?.('.card') ? ae : $(`#results .card[data-id="${CSS.escape(p.id)}"] .card-link`);
+  }
   sheet.innerHTML = sheetHtml(p, S.route);
   sheet.scrollTop = 0;
   sheet.hidden = false;
-  if (!isDesktop()) { back.hidden = false; }
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    sheet.classList.add('is-open'); back.classList.add('is-open');
-  }));
+  sheet.setAttribute('aria-modal', String(!isDesktop() && mode === 'full'));
   $('[data-close]', sheet).addEventListener('click', closeSheet);
-  const smap = $('[data-show-map]', sheet);
-  if (smap) smap.addEventListener('click', () => {
-    const r = S.route;
+  $('[data-expand]', sheet).addEventListener('click', () => expandSheet());
+  $('.sheet-grab', sheet).addEventListener('click', () => (S.sheetMode === 'half' ? expandSheet() : null));
+  $('[data-show-map]', sheet)?.addEventListener('click', () => {
     S.selected = p.id;
-    history.replaceState(null, '', exploreUrl({ group: r.group, cat: r.cat, q: r.q, vista: 'mapa' }));
-    hideSheet(false); S.route = parse(); render({ keepScroll: true });
+    if (S.map) S.savedView = null;
+    go(routeUrl({ vista: 'mapa', place: p.id, ficha: 'resumo' }), { replace: true });
   });
-  setTimeout(() => $('[data-close]', sheet)?.focus({ preventScroll: true }), wasOpen ? 0 : 60);
+  if (!wasOpen) {
+    // posição inicial fora da tela, depois sobe até o estado pedido
+    sheet.classList.remove('is-open');
+    if (!isDesktop()) { sheet.style.transition = 'none'; sheet.style.setProperty('--sheet-y', `${sheet.offsetHeight + 24}px`); void sheet.offsetWidth; sheet.style.transition = ''; }
+    // câmera e ficha no mesmo quadro: o ponto termina visível acima do resumo
+    if (mode === 'half' && S.map) frameMarker(p.id, 'half');
+    if (isDesktop() && S.map) requestAnimationFrame(() => frameMarker(p.id, 'full'));
+    requestAnimationFrame(() => { sheet.classList.add('is-open'); setSheetMode(mode); });
+  } else {
+    setSheetMode(mode, { instant: prevMode === mode });
+    if (mode === 'half' && S.map) frameMarker(p.id, 'half');
+    if (isDesktop() && S.map) frameMarker(p.id, 'full');
+    if (prevMode === mode) animate($('.sheet-head', sheet), 'swap', [{ opacity: 0.4 }, { opacity: 1 }], { duration: 160, easing: 'ease-out' });
+  }
+  const focusTarget = mode === 'half' ? $('#sheetTitle', sheet) : $('[data-close]', sheet);
+  setTimeout(() => focusTarget?.focus({ preventScroll: true }), wasOpen ? 0 : 40);
 }
-function hideSheet(restoreFocus = true) {
+function expandSheet() {
+  if (S.sheetMode !== 'half') return;
+  history.replaceState(history.state, '', routeUrl({ place: S.route.place }));
+  S.route = parse();
+  setSheetMode('full');
+  $('#sheet').setAttribute('aria-modal', 'true');
+  $('[data-close]', $('#sheet')).focus({ preventScroll: true });
+}
+function hideSheet({ restoreFocus = true } = {}) {
   const sheet = $('#sheet'), back = $('#sheetBackdrop');
   if (sheet.hidden) return;
-  sheet.classList.remove('is-open'); back.classList.remove('is-open');
-  const t = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--t-sheet')) || 0;
-  setTimeout(() => { if (!sheet.classList.contains('is-open')) { sheet.hidden = true; back.hidden = true; } }, t + 30);
+  const wasHalfOnMap = !isDesktop() && S.route.vista === 'mapa';
+  sheet.classList.remove('is-open');
+  if (!isDesktop()) sheet.style.setProperty('--sheet-y', `${sheet.offsetHeight + 24}px`);
+  back.classList.remove('is-open');
+  S.sheetMode = null;
+  // movimento inverso: a câmera volta à região de antes, sem mudar o zoom
+  if (wasHalfOnMap && S.map && S.savedView) {
+    S.map.panTo(S.savedView.center, { animate: !reduceMotion(), duration: ms('--t-sheet') / 1000 || 0.3, easeLinearity: 0.25 });
+  }
+  S.savedView = null;
+  const t = ms('--t-sheet');
+  setTimeout(() => { if (!sheet.classList.contains('is-open')) { sheet.hidden = true; back.hidden = true; } }, t + 40);
   if (restoreFocus) {
     const card = S.selected && $(`#results .card[data-id="${CSS.escape(S.selected)}"]`);
-    const target = card ? $('.card-link', card) : lastFocus;
-    target?.focus({ preventScroll: true });
+    const pin = S.selected && S.markers.get(S.selected)?.getElement();
+    const target = (S.route.vista === 'mapa' && !isDesktop() && pin) ? pin : card ? $('.card-link', card) : lastFocus;
+    target?.focus?.({ preventScroll: true });
   }
 }
 function closeSheet() {
-  // volta para a lista pelo histórico quando a ficha foi aberta dentro do guia (preserva rolagem e filtros)
   if (S.openedInApp) { S.openedInApp = false; history.back(); }
-  else { const r = S.route; go(exploreUrl({ group: r.group, cat: r.cat, q: r.q, vista: r.vista }), { replace: true }); }
+  else go(routeUrl({ place: null, ficha: null }), { replace: true });
 }
 $('#sheetBackdrop').addEventListener('click', closeSheet);
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('#sheet').hidden) closeSheet(); });
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape' || $('#sheet').hidden) return;
+  e.preventDefault();
+  closeSheet();
+});
 
-// abrir ficha a partir dos cartões (mantém o contexto da lista)
+// abrir ficha pelos cartões: completa desde o início, mantendo o contexto da lista
 document.addEventListener('click', (e) => {
   const a = e.target.closest('[data-open]');
-  if (!a) return;
-  e.preventDefault(); e.stopPropagation();
+  if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+  e.preventDefault();
   const id = a.dataset.open;
-  selectPlace(id, { pan: true, scroll: false });
-  S.openedInApp = true;
-  openPlace(id);
-}, true);
+  selectPlace(id, { ring: isDesktop() });
+  if (isDesktop()) S.savedView = null;
+  openPlace(id, 'full');
+});
 
 // ---------- Renderização principal ----------
-function render({ fromPop = false, keepScroll = true } = {}) {
+function render({ fromPop = false } = {}) {
   const prev = S.route;
   S.route = parse();
   const r = S.route;
@@ -627,35 +799,57 @@ function render({ fromPop = false, keepScroll = true } = {}) {
   $('#explore').hidden = r.name !== 'explore';
   document.querySelector('.site-footer').classList.toggle('is-explore', r.name === 'explore');
   if (r.name === 'home') {
-    hideSheet(false);
-    renderHome();
-    if (fromPop && history.state?.scrollY != null) scrollTo(0, history.state.scrollY); else if (!fromPop) scrollTo(0, 0);
+    document.body.classList.remove('map-mode');
+    hideSheet({ restoreFocus: false });
+    let first = false;
+    try { first = !sessionStorage.getItem('tt-intro'); sessionStorage.setItem('tt-intro', '1'); } catch { first = !S.introDone; }
+    S.introDone = true;
+    renderHome(first && !fromPop && prev.name === 'home' && !S.rendered);
+    if (fromPop && history.state?.scrollY != null) scrollTo(0, history.state.scrollY); else scrollTo(0, 0);
+    S.rendered = true;
+    S.lastListKey = '';
     return;
   }
-  const listKey = JSON.stringify([r.group, r.cat, r.q, r.vista]);
-  const listChanged = listKey !== S.lastRenderKey || prev.name !== 'explore';
-  if (listChanged) {
+  const key = listKey(r);
+  const viewChanged = prev.vista !== r.vista;
+  const listChanged = key !== S.lastListKey || prev.name !== 'explore';
+  if (listChanged || viewChanged) {
+    const fade = prev.name === 'explore' && listChanged;
     renderToolbar(r);
     applyView();
-    S.selected = r.place || (fromPop ? S.selected : null);
-    renderResults(r);
-    if (r.vista === 'mapa' || isDesktop()) { ensureMap(); setTimeout(() => { S.map?.invalidateSize(); updateMap(r, { fit: true }); if (r.place) selectPlace(r.place, { pan: true, scroll: true }); }, 0); }
+    if (listChanged) S.selected = r.place || (fromPop ? S.selected : null);
+    renderResults(r, { fade });
+    if (r.vista === 'mapa' || isDesktop()) {
+      ensureMap();
+      S.map?.invalidateSize();
+      updateMap(r, { fit: listChanged && !(r.place && S.markers.size) });
+      if (r.place && S.markers.has(r.place) && (listChanged || !S.mapLoaded)) {
+        // ficha aberta direto pelo endereço: enquadra o ponto sem animação
+        S.map.setView(S.byId.get(r.place).coords, 16, { animate: false });
+      }
+    }
     if (fromPop && history.state) {
       if (isDesktop()) $('#paneList').scrollTop = history.state.listTop || 0; else scrollTo(0, history.state.scrollY || 0);
-    } else if (!r.place && !keepScroll) scrollTo(0, 0);
-    else if (!r.place && prev.name !== 'explore') scrollTo(0, 0);
-    S.lastRenderKey = listKey;
+    } else if (!r.place && listChanged) {
+      if (isDesktop()) $('#paneList').scrollTop = 0; else scrollTo(0, 0);
+    }
+    S.lastListKey = key;
   }
   if (r.place) {
     const p = S.byId.get(r.place);
-    if (!listChanged) selectPlace(p.id, { pan: true, scroll: false });
-    showSheet(p);
+    const mode = (r.ficha === 'resumo' && !isDesktop() && r.vista === 'mapa') ? 'half' : 'full';
+    if (S.selected !== p.id) selectPlace(p.id, { ring: S.route.vista === 'mapa' || isDesktop(), scroll: true });
+    else highlightCard(p.id, { scroll: isDesktop() });
+    if (mode === 'half' && !S.savedView && S.map) S.savedView = { center: S.map.getCenter(), zoom: S.map.getZoom() };
+    showSheet(p, mode);
   } else {
-    hideSheet(true);
+    hideSheet();
     if (fromPop && history.state && !listChanged) {
-      if (isDesktop()) $('#paneList').scrollTop = history.state.listTop || 0; else scrollTo(0, history.state.scrollY || 0);
+      if (isDesktop()) $('#paneList').scrollTop = history.state.listTop || 0;
+      else if (r.vista !== 'mapa') scrollTo(0, history.state.scrollY || 0);
     }
   }
+  S.rendered = true;
 }
 
 // ---------- Início ----------
@@ -668,8 +862,13 @@ function render({ fromPop = false, keepScroll = true } = {}) {
   }
   S.headerH = $('.masthead').offsetHeight;
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-  if (location.pathname.startsWith('/local/')) S.openedInApp = false;
   render();
-  addEventListener('resize', () => { placeIndicator(false); applyView(); S.map?.invalidateSize(); updateToggle(S.route, currentList(S.route).places.filter((p) => p.coords).length); });
-  window.__leafletLoaded = !!window.L;
+  let rt;
+  addEventListener('resize', () => {
+    clearTimeout(rt);
+    rt = setTimeout(() => {
+      placeIndicator(false); applyView(); S.map?.invalidateSize();
+      if (S.sheetMode) setSheetMode(S.sheetMode, { instant: true });
+    }, 80);
+  });
 })();
