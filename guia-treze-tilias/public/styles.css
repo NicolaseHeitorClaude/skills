@@ -297,8 +297,17 @@ button { font: inherit; color: inherit; }
 .sheet-title { margin: 0; font: 700 1.45rem/1.12 var(--serif); text-wrap: balance; }
 .sheet-close { min-width: 44px; min-height: 44px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--rule-strong); background: var(--card); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; }
 .sheet-close svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.2; fill: none; stroke-linecap: round; }
+.head-actions { grid-column: 1 / -1; display: grid; gap: 8px; }
+.head-actions.has-tour { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
+.tour-action {
+  display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; border-radius: 12px; padding: 0 10px;
+  border: 1.5px solid var(--forest); color: var(--forest); background: var(--card); text-decoration: none; font-weight: 700; font-size: 1.02rem;
+}
+.tour-action:hover { background: #eef3ee; }
+.tour-action svg { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.tour-note { grid-column: 1 / -1; margin: -2px 0 0; font-size: .78rem; color: var(--ink-3); text-align: right; }
 .primary-action {
-  grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; border-radius: 12px;
   background: var(--accent); color: #fff; text-decoration: none; font-weight: 700; font-size: 1.05rem;
 }
 .primary-action:hover { background: var(--accent-ink); }
@@ -317,7 +326,6 @@ button { font: inherit; color: inherit; }
 .actions { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; margin: 12px 0 16px; }
 .action { display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 12px; border: 1px solid var(--rule-strong); border-radius: 10px; text-decoration: none; background: var(--card); font-weight: 700; font-size: .95rem; cursor: pointer; text-align: left; }
 .action:hover { border-color: var(--ink-2); }
-.action.is-tour { border-color: var(--forest); color: var(--forest); }
 .facts { margin: 0; display: grid; gap: 0; border-top: 1px solid var(--rule); }
 .facts > div { display: grid; grid-template-columns: 96px minmax(0,1fr); gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--rule); }
 .facts dt { font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); font-weight: 700; padding-top: 2px; }
@@ -325,9 +333,6 @@ button { font: inherit; color: inherit; }
 .facts a { text-underline-offset: 3px; }
 .tel-list { list-style: none; margin: 0; padding: 0; }
 .tel-list a { font-variant-numeric: tabular-nums; }
-.confirm { margin: 16px 0 0; padding: 10px 12px; border: 1px solid #e6d3a3; background: #faf3e2; font-size: .88rem; color: var(--ink-2); border-radius: 8px; }
-.confirm b { color: var(--ink); }
-.confirm ul { margin: 4px 0 0; padding-left: 18px; }
 
 @media (min-width: 900px) {
   .sheet-backdrop { display: none !important; }

@@ -27,7 +27,7 @@ const DISTANCES = [['Videira', '32 km'], ['Joaçaba', '37 km'], ['Caçador', '76
   ['Curitiba', '361 km'], ['Joinville', '376 km'], ['Florianópolis', '421 km'], ['Porto Alegre', '545 km'], ['São Paulo', '779 km']];
 
 const S = {
-  data: null, byId: new Map(), cat: new Map(), group: new Map(),
+  data: null, byId: new Map(), legacy: new Map(), cat: new Map(), group: new Map(),
   route: { name: 'home' },       // estado derivado da URL
   selected: null,                // id do lugar selecionado
   map: null, markers: new Map(), mapReady: false, mapFailed: false,
@@ -40,9 +40,13 @@ async function load() {
   S.data = await res.json();
   for (const c of S.data.categories) S.cat.set(c.id, c);
   for (const g of S.data.groups) S.group.set(g.id, g);
-  for (const p of S.data.places) S.byId.set(p.id, p);
+  for (const p of S.data.places) {
+    S.byId.set(p.id, p);
+    for (const n of p.legacy || []) S.legacy.set(String(n), p.id);
+  }
 }
 const catName = (id) => S.cat.get(id)?.name ?? '';
+const placeLabel = (p, cat) => (cat ? catName(cat) : '') || p.label || catName(p.cats[0]);
 const groupOfCat = (id) => S.cat.get(id)?.group;
 const placesIn = ({ group, cat }) => S.data.places.filter((p) =>
   cat ? p.cats.includes(cat) : group ? p.cats.some((c) => groupOfCat(c) === group) : true);
@@ -77,6 +81,14 @@ function parse(loc = location) {
   if (parts[0] === 'categoria' && parts[1]) {
     const cat = Number(parts[1]);
     if (S.cat.has(cat)) return { name: 'explore', ...base, group: groupOfCat(cat), cat };
+  }
+  if (parts[0] === 'local' && /^\d+$/.test(parts[1] || '')) {
+    // endereços do guia atual: /local/45/Monumento Águia do Tirol
+    const id = S.legacy.get(parts[1]);
+    if (id) return { name: 'explore', q: '', vista: 'lista', group: groupOfCat(S.byId.get(id).cats[0]) || null, cat: S.byId.get(id).cats[0] || null, place: id, legacy: true };
+    // ID antigo ainda sem correspondência confirmada: procura pelo nome que veio no endereço
+    const nome = (parts[2] || '').replace(/\s+-\s+Treze T[ií]lias$/i, '').trim();
+    return { name: 'explore', q: nome, vista: 'lista', group: null, cat: null, legacyMiss: true };
   }
   if (parts[0] === 'local' && parts[1] && S.byId.has(parts[1])) {
     const p = S.byId.get(parts[1]);
@@ -152,7 +164,7 @@ function wireSearch(root) {
     const r = search(q);
     const items = [
       ...r.cats.slice(0, 3).map((c) => ({ href: exploreUrl({ group: c.group, cat: c.id }), label: c.name, type: 'Categoria' })),
-      ...r.places.slice(0, 6).map((p) => ({ href: exploreUrl({ q, place: p.id }), label: p.name, type: catName(p.cats[0]) })),
+      ...r.places.slice(0, 6).map((p) => ({ href: exploreUrl({ q, place: p.id }), label: p.name, type: placeLabel(p) })),
     ];
     if (!items.length) { list.hidden = true; return; }
     active = -1;
@@ -306,11 +318,11 @@ function cardHtml(p, r) {
     </li>`;
   }
   const meta = p.summary || [p.address, p.district].filter(Boolean).join(' · ');
-  const flags = [p.coords ? 'No mapa' : null, p.hours ? 'Horário informado' : null, p.whatsapp ? 'WhatsApp' : null, p.tour ? 'Tour virtual' : null].filter(Boolean);
+  const flags = [p.coords ? 'No mapa' : null, p.hours ? 'Horário informado' : null, p.whatsapp ? 'WhatsApp' : null, p.tour ? 'Vista em 360°' : null].filter(Boolean);
   return `<li class="card ${S.selected === p.id ? 'is-selected' : ''}" data-id="${esc(p.id)}">
     <div class="card-main">
       <a class="card-link" href="${href}" data-link data-open="${esc(p.id)}"><h3 class="card-name">${esc(p.name)}</h3></a>
-      <p class="card-cat">${esc(catName(ctxCat))}</p>
+      <p class="card-cat">${esc(placeLabel(p, ctxCat))}</p>
       ${meta ? `<p class="card-meta">${esc(meta)}</p>` : ''}
       ${flags.length ? `<p class="card-flags">${flags.map((f) => `<span>${esc(f)}</span>`).join('<span aria-hidden="true">·</span>')}</p>` : ''}
     </div>
@@ -330,7 +342,7 @@ function renderResults(r, { keepPosition = false } = {}) {
   }
   if (!places.length) {
     html += `<div class="empty"><h2>Nada encontrado${r.q ? ` para “${esc(r.q)}”` : ' nesta categoria'}</h2>
-      ${r.cat === 27 || r.cat === 26 ? '<p>O cadastro desta categoria ainda está sendo revisado.</p>' : ''}
+      ${!r.q && r.cat ? '<p>Ainda não há lugares confirmados nesta categoria.</p>' : ''}
       <p>Tente:</p><ul>
         ${r.q && (r.group || r.cat) ? `<li><a href="${exploreUrl({ q: r.q })}" data-link>buscar “${esc(r.q)}” em todo o guia</a></li>` : ''}
         <li>uma palavra mais curta, como “pousada”, “café” ou “escultor”;</li>
@@ -503,11 +515,11 @@ function primaryAction(p) {
 }
 function sheetHtml(p, r) {
   const ctx = r.cat && p.cats.includes(r.cat) ? r.cat : p.cats[0];
+  const dir = directionsUrl(p);
   const pa = primaryAction(p);
   const acts = [];
   const add = (cond, href, label, icon, cls = '', ext = true) => { if (cond && href !== pa?.href) acts.push(`<a class="action ${cls}" href="${esc(href)}" ${ext ? 'target="_blank" rel="noopener"' : ''}>${icon}${esc(label)}</a>`); };
-  add(!!p.tour, p.tour, 'Tour virtual', ICON.tour, 'is-tour');
-  add(!!(p.coords || p.map), directionsUrl(p) || p.map, 'Como chegar', ICON.route);
+  add(!!dir, dir, 'Como chegar', ICON.route);
   add(!!p.phones?.length, `tel:${p.phones?.[0]?.tel}`, 'Ligar', ICON.phone, '', false);
   add(!!p.whatsapp, p.whatsapp, 'WhatsApp', ICON.wa);
   add(!!p.site, p.site, 'Site', ICON.web);
@@ -525,9 +537,13 @@ function sheetHtml(p, r) {
   if (p.cats.length > 1) facts.push(['Também em', p.cats.filter((c) => c !== ctx).map((c) => `<a href="${exploreUrl({ group: groupOfCat(c), cat: c })}" data-link>${esc(catName(c))}</a>`).join(', ')]);
   return `<div class="sheet-grab" aria-hidden="true"></div>
     <header class="sheet-head">
-      <div><p class="sheet-cat">${esc(catName(ctx))}</p><h2 class="sheet-title" id="sheetTitle">${esc(p.name)}</h2></div>
+      <div><p class="sheet-cat">${esc(placeLabel(p, ctx))}</p><h2 class="sheet-title" id="sheetTitle">${esc(p.name)}</h2></div>
       <button type="button" class="sheet-close" data-close>${ICON.close}<span>Fechar</span></button>
-      ${pa ? `<a class="primary-action" href="${esc(pa.href)}" ${pa.ext ? 'target="_blank" rel="noopener"' : ''}>${pa.icon}${esc(pa.label)}</a>` : ''}
+      <div class="head-actions ${p.tour ? 'has-tour' : ''}">
+        ${pa ? `<a class="primary-action" href="${esc(pa.href)}" ${pa.ext ? 'target="_blank" rel="noopener"' : ''}>${pa.icon}${esc(pa.label)}</a>` : ''}
+        ${p.tour ? `<a class="tour-action" href="${esc(p.tour)}" target="_blank" rel="noopener" aria-label="Ver em 360° (${esc(p.tourNote || 'Street View')})">${ICON.tour}Ver em 360°</a>` : ''}
+      </div>
+      ${p.tour && p.tourNote ? `<p class="tour-note">${esc(p.tourNote)}</p>` : ''}
     </header>
     ${p.photo ? `<figure class="sheet-photo ${p.photo.logo ? 'is-logo' : ''}"><img src="${p.photo['960']}" srcset="${p.photo['480']} 480w, ${p.photo['960']} 960w" sizes="(min-width: 900px) 460px, 100vw" alt="${p.photo.logo ? `Marca de ${esc(p.name)}` : esc(p.name)}" width="960" height="${Math.round(960 / (p.photo.ratio || 1.6))}"><figcaption>${p.photo.logo ? 'Marca do estabelecimento' : 'Foto'}: cadastro no site da Asturtílias</figcaption></figure>` : ''}
     <div class="sheet-body">
@@ -535,7 +551,6 @@ function sheetHtml(p, r) {
       ${p.text ? `<p class="sheet-text">${esc(p.text)}</p>` : ''}
       ${acts.length || mapBtn ? `<div class="actions">${acts.join('')}${mapBtn}</div>` : ''}
       ${facts.length ? `<dl class="facts">${facts.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>` : ''}
-      ${p.confirm?.length ? `<div class="confirm"><b>Dados a confirmar</b><ul>${p.confirm.map((c) => `<li>${esc(c)}</li>`).join('')}</ul></div>` : ''}
     </div>`;
 }
 
@@ -606,6 +621,7 @@ function render({ fromPop = false, keepScroll = true } = {}) {
   document.title = r.name === 'home' ? 'Guia turístico de Treze Tílias'
     : r.place ? `${S.byId.get(r.place).name} · Guia turístico de Treze Tílias`
     : `${r.q ? `Busca: ${r.q}` : r.cat ? catName(r.cat) : r.group ? S.group.get(r.group).name : 'Explorar'} · Guia turístico de Treze Tílias`;
+  if (r.legacy) history.replaceState(history.state, '', exploreUrl({ group: r.group, cat: r.cat, place: r.place }));
   renderMenu();
   $('#home').hidden = r.name !== 'home';
   $('#explore').hidden = r.name !== 'explore';

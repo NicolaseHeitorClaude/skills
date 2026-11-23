@@ -83,7 +83,20 @@ def main():
         byid[p["id"]] = dict(p, cats=list(p["cats"]))
 
     out = []
+    internal = []
     for pid, p in byid.items():
+        hide = set(p.get("hide") or [])
+        p = dict(p)
+        # dado em dúvida: some só a ação afetada (pendência fica no documento interno)
+        if "directions" in hide:
+            p.pop("coords", None); p.pop("map", None)
+        if "phone" in hide:
+            p.pop("phones", None); p.pop("whatsapp", None); p.pop("phoneLabel", None)
+        for k in ("email", "facebook", "ref"):
+            if k in hide:
+                p.pop(k, None)
+        if "addressNumber" in hide and p.get("address"):
+            p["address"] = re.sub(r",\s*\d+.*$", "", p["address"])
         rec = {
             "id": pid,
             "name": p["name"],
@@ -108,22 +121,27 @@ def main():
             "map": p.get("map"),
             "coords": list(p["coords"]) if p.get("coords") else None,
             "tour": p.get("tour"),
+            "tourNote": p.get("tourNote"),
+            "legacy": p.get("legacy"),
+            "label": p.get("label"),
             "link": {"label": p["link"][0], "url": p["link"][1]} if p.get("link") else None,
             "group": p.get("group"),
-            "confirm": [c for c in (p.get("confirm") or []) if c],
         }
+        pend = [c for c in (p.get("confirm") or []) if c]
         if p.get("photo"):
             try:
                 rec["photo"] = make_sizes(p["photo"], pid)
             except Exception as e:  # noqa: BLE001
                 print("FOTO FALHOU", pid, e)
                 rec["photo"] = None
-                rec["confirm"].append("Foto do cadastro não pôde ser baixada.")
+                pend.append("Foto do cadastro não pôde ser baixada.")
         else:
             rec["photo"] = None
-        rec["search"] = fold(" ".join(filter(None, [p["name"], p.get("summary"), p.get("address"), p.get("district"),
+        if pend or hide:
+            internal.append({"id": pid, "name": p["name"], "hidden": sorted(hide), "notes": pend})
+        rec["search"] = fold(" ".join(filter(None, [p["name"], p.get("summary"), p.get("address"), p.get("district"), p.get("label"),
                                                     " ".join(c["name"] for c in cats if c["id"] in p["cats"])])))
-        out.append({k: v for k, v in rec.items() if v not in (None, [], "")})
+        out.append({k: v for k, v in rec.items() if k == "cats" or v not in (None, [], "")})
 
     # foto de abertura: Monumento Águia do Tirol, em tamanho maior
     hero = Image.open(fetch_photo("313f8c_6001480980ed48bca3b5dfea4181a19c~mv2_d_5158_3439_s_4_2.jpg")).convert("RGB")
@@ -131,6 +149,8 @@ def main():
         c = hero.resize((w, round(hero.height * w / hero.width)), Image.LANCZOS)
         c.save(os.path.join(PHOTOS, f"abertura-{w}.webp"), "WEBP", quality=74, method=6)
 
+    # pendências: só para uso interno (não vão para public/)
+    json.dump(internal, open(os.path.join(ROOT, "tools", "pendencias.json"), "w"), ensure_ascii=False, indent=1)
     data = {"source": "Asturtílias – www.trezetilias.com.br (lido em 23/11/2026)", "groups": groups, "categories": cats, "places": out}
     json.dump(data, open(os.path.join(ROOT, "public", "data.json"), "w"), ensure_ascii=False, separators=(",", ":"))
     print(len(out), "cadastros;", sum(1 for r in out if r.get("coords")), "com coordenadas;",

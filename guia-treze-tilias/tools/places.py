@@ -54,17 +54,17 @@ add(id="hotel-schneider", name="Hotel Schneider", cats=[1], photo="313f8c_2dc852
 add(id="hotel-tirol", name="Hotel Tirol", cats=[1, 3], photo="313f8c_ef69e7bee96d45b8a443b30a7875719e~mv2.png",
     summary="Hotel no centro, com restaurante de buffet de saladas e comidas típicas.",
     address="Rua São Vicente de Paula, 111", district="Centro", ref="230 m da Prefeitura Municipal",
-    phones=["(49) 3537 0125"], email="reservas@hoteltirol.com.br", site="http://www.hoteltirol.com.br",
+    phones=["(49) 3537 0125"], email="reservas@hoteltirol.com.br", hide=["email"], site="http://www.hoteltirol.com.br",
     instagram="https://www.instagram.com/hotel.tirol/", facebook="https://www.facebook.com/hoteltirol.trezetilias",
     map="https://goo.gl/maps/JJTKHERZR4sRL5eP6", coords=(-27.000709, -51.406188),
     confirm=["E-mail: o site da Asturtílias traz dois endereços diferentes (hotelstirol e hoteltirol)."])
-add(id="pousada-adler", name="Pousada Adler", cats=[1, 2], photo="313f8c_791e4513e29445189e4492c5560d2b10~mv2.png",
+add(id="pousada-adler", name="Pousada Adler", cats=[1], photo="313f8c_791e4513e29445189e4492c5560d2b10~mv2.png",
     address="Rua João Belarmino Grando, 101", district="Bairro Santa Catarina", ref="1,4 km da Prefeitura Municipal",
     phones=["(49) 3537 0047"], email="pousadaadler@yahoo.com.br", site="http://www.pousadaadler.com.br",
     facebook="https://www.facebook.com/pages/Pousada-Adler/466962133325346",
-    map="https://goo.gl/maps/dXG4PvPJYY8w5bSn8", coords=(-26.9977194, -51.4136489),
+    map="https://goo.gl/maps/dXG4PvPJYY8w5bSn8", coords=(-26.9977194, -51.4136489), hide=["ref"],
     confirm=["Distância: o cadastro diz “1,4 m da Prefeitura”; provavelmente 1,4 km."])
-add(id="treze-tilias-park-hotel", name="Treze Tílias Park Hotel", cats=[1, 26], photo="313f8c_48b739a282d14c9798326982dd42773a~mv2.jpg",
+add(id="treze-tilias-park-hotel", name="Treze Tílias Park Hotel", cats=[1], photo="313f8c_48b739a282d14c9798326982dd42773a~mv2.jpg",
     address="Rua Videira, 55", district="Centro", ref="550 m da Prefeitura Municipal",
     phones=["(49) 3537 0277"], site="http://www.ttph.com.br",
     instagram="https://www.instagram.com/trezetiliasparkhotel/", facebook="https://www.facebook.com/www.ttph.com.br/",
@@ -106,13 +106,13 @@ add(id="hartmann-haus", name="Hospedaria Hartmann Haus", **H, photo="313f8c_f297
     phones=["(49) 3537 0219"], whatsapp="(49) 9 9963 2002", email="hartmannhospedagem@gmail.com",
     instagram="https://www.instagram.com/hospedariahartmannhaus/",
     map="https://www.google.com/maps/search/?api=1&query=Hartmann+Haus+Treze+T%C3%ADlias", coords=(-26.9958258, -51.4095321))
-add(id="pousada-kuh-haus", name="Pousada Kuh Haus", cats=[2, 7], photo="313f8c_80780da08bf140d89a1491322752d882~mv2.jpg",
+add(id="pousada-kuh-haus", name="Pousada Kuh Haus", cats=[2], photo="313f8c_80780da08bf140d89a1491322752d882~mv2.jpg",
     summary="Pousada na Granja Natter, no interior.",
     address="Linha Natter, 1951", district="Granja Natter, interior", ref="3,9 km da Prefeitura Municipal",
     phones=["(49) 9 9965 7998"], whatsapp="(49) 9 9996 7556", email="pousadakuhhaus@gmail.com",
     instagram="https://www.instagram.com/pousada_kuh_haus/",
     map="https://maps.app.goo.gl/WYQ6zviGZSHD2eZh6", coords=(-26.9918918, -51.4262924))
-add(id="sitio-hartmann", name="Casa de Campo Sítio Hartmann", cats=[2, 7], photo="313f8c_174db66bc3734c0c94bbee683bab9b9c~mv2.png",
+add(id="sitio-hartmann", name="Casa de Campo Sítio Hartmann", cats=[2], photo="313f8c_174db66bc3734c0c94bbee683bab9b9c~mv2.png",
     address="Rodovia SC 355, km 94", district="Linha Nova Áustria", ref="4 km da Prefeitura Municipal",
     phones=["(49) 3537 0219"], whatsapp="(49) 9 9963 2002", email="hartmannhospedagem@gmail.com",
     instagram="https://www.instagram.com/casadecampohartmann/",
@@ -129,7 +129,7 @@ add(id="viena-hospedaria-2", name="Viena Hospedaria 2 (Dolce Vitta)", **H, photo
     address="Rua Domingos Perondi, 115", district="Bairro Lindner", ref="1,9 km da Prefeitura Municipal",
     phones=["(49) 9 9968 6880"], email="solangecalza@yahoo.com.br", instagram="https://www.instagram.com/vienahospedaria/",
     confirm=["Localização: os links de mapa das duas unidades Viena estão trocados ou ambíguos no cadastro; sem ponto no mapa."])
-add(id="villa-gruntal", name="Villa Grüntal Hospedaria", cats=[2, 25], photo="58bdae_c6f1c3842ec441808429f82c867a2dff~mv2.jpg",
+add(id="villa-gruntal", name="Villa Grüntal Hospedaria", cats=[2], photo="58bdae_c6f1c3842ec441808429f82c867a2dff~mv2.jpg",
     summary="Hospedaria com estacionamento para trailer e motorhome.",
     address="Rua Padre Franz Pointl, 185", district="Bairro do Imigrante", ref="650 m do centro",
     phones=["(49) 9 9985 2003", "(49) 9 9927 5556"], whatsapp="(49) 9 9985 2003",
@@ -151,14 +151,14 @@ add(id="pousada-dona-ines", name="Pousada Dona Inês", **H, photo="313f8c_cf1a8f
     address="Rua Gisela Thaler", district="Centro", ref="400 m da Prefeitura Municipal",
     phones=["(49) 9 9117 9919", "(49) 9 9201 6032"],
     map="https://www.google.com/maps/search/Pousada+Dona+In%C3%AAs/@-26.9992477,-51.4039514,20.07z")
-add(id="pousada-nova-austria", name="Pousada Nova Áustria", cats=[2, 7], photo="313f8c_11346e9f14664e748c8c20f0d2d774bf~mv2.jpg",
+add(id="pousada-nova-austria", name="Pousada Nova Áustria", cats=[2], photo="313f8c_11346e9f14664e748c8c20f0d2d774bf~mv2.jpg",
     address="Linha Nova Áustria", phones=["(49) 9 9194 9397"], email="neivinhasbardella@yahoo.com.br",
     map="https://www.google.com/maps/search/?api=1&query=-26.9932574,-51.4445811", coords=(-26.9932574, -51.4445811))
 add(id="cabana-do-lago", name="Cabana do Lago", **H, photo="58bdae_eceae961eec3437e9e07c78241462af3~mv2.jpg",
     address="Estrada Linha São Paulo", ref="2,5 km da Prefeitura Municipal",
     phones=["(49) 9 9149 1464"], email="ceres@domdomenico.com.br", instagram="https://www.instagram.com/cabanadolagotrezetilias/",
     map="https://www.google.com/maps/search/?api=1&query=Cabana+do+Lago+Treze+T%C3%ADlias", coords=(-27.0131626, -51.4221043))
-add(id="hospedaria-felder", name="Hospedaria Felder", cats=[2, 9], photo="313f8c_276ca0b1dc904163985f43c5c751f124~mv2.jpg",
+add(id="hospedaria-felder", name="Hospedaria Felder", cats=[2], photo="313f8c_276ca0b1dc904163985f43c5c751f124~mv2.jpg",
     address="Rua João Schöll, 140", ref="450 m da Prefeitura Municipal",
     phones=["(49) 99194 0349"], email="felder84@hotmail.com", site="http://www.felderviagens.com.br",
     instagram="https://www.instagram.com/felderviagens/",
@@ -180,7 +180,7 @@ add(id="restaurante-parque-lindendorf", name="Restaurante do Parque Lindendorf",
     address="Rua Antônio Pattis, 10", district="Bairro Jardim das Flores",
     phones=["(49) 3537 0658"], email="contato@minicidade.com", site="http://www.minicidade.com",
     instagram="https://www.instagram.com/minicidade/", map="https://goo.gl/maps/JAeCht92XKnmrfQZ6", coords=(-27.0029824, -51.4177591))
-add(id="restaurante-edelweiss", name="Restaurante e Pizzaria Familie Bierbaum (Edelweiss)", cats=[3, 24], photo="313f8c_ea17d62b62ab4f6289cda1ca392ee979~mv2.png",
+add(id="restaurante-edelweiss", name="Restaurante e Pizzaria Familie Bierbaum (Edelweiss)", cats=[3], photo="313f8c_ea17d62b62ab4f6289cda1ca392ee979~mv2.png",
     summary="Pratos típicos austríacos, pizzas em forno a lenha, petiscos e chopes Bierbaum fabricados no local.",
     address="Rua Dr. Gaspar Coutinho, 439", phones=["(49) 3537 0531"], email="restaurante@bierbaum.com.br",
     site="http://www.bierbaum.com.br", instagram="https://www.instagram.com/cervejariabierbaum/",
@@ -204,7 +204,7 @@ add(id="chef-haus", name="Chef Haus", **G, photo="313f8c_109e1a3f74144c0094095e8
     address="Av. Afonso Dresch, 298", phones=["(49) 3537 1368", "(49) 9 9994 2209"],
     instagram="https://www.instagram.com/restaurantechefhaus/", facebook="https://www.facebook.com/restaurantechefhaus/",
     map="https://g.page/restaurantechefhaus?share")
-add(id="stube", name="Stube Bistrô & Cervejaria", cats=[3, 24], photo="313f8c_7b56b9ec654f46f99cc26c88367b4789~mv2.jpeg",
+add(id="stube", name="Stube Bistrô & Cervejaria", cats=[3], photo="313f8c_7b56b9ec654f46f99cc26c88367b4789~mv2.jpeg",
     summary="Bistrô austríaco e casa da cervejaria Pubi Bier. Criou o Schnitzel em tiras empanado com malte e a Bierstation, caixa de cerveja 24h.",
     address="Av. Antônio Carlos Altenburger, 269", phones=["(49) 99925 9860"], whatsapp="(49) 99925 9860",
     hours="Sextas das 18h às 0h; sábados das 16h às 0h",
@@ -214,7 +214,8 @@ add(id="cafe-haus", name="Café Haus", **G, photo="58bdae_74ed0e21ddca4d889f8217
     summary="Café ao lado da Prefeitura Municipal.",
     address="Av. Afonso Dresch, 13", ref="Ao lado da Prefeitura Municipal", phones=["(49) 3537 0017"],
     instagram="https://www.instagram.com/cafehaustrezetilias/", facebook="https://www.facebook.com/AlpinDelikatessen",
-    map="https://maps.app.goo.gl/NQEZKLah8y8un8KM7", coords=(-26.9989801, -51.4076257),
+    map="https://maps.app.goo.gl/NQEZKLah8y8un8KM7", coords=(-26.9989801, -51.4076257), legacy=[131],
+    hide=["directions", "facebook"],
     confirm=["O link de mapa e o Facebook levam a “Alpin Delikatessen Bistrô e Cafeteria”; confirmar se é o mesmo estabelecimento.",
              "O cadastro não traz descrição nem horário."])
 add(id="espaco-diversitta", name="Espaço Diversittá", cats=[3, 26], photo="313f8c_2a510d33676d47e4a4531c0f72b9beb9~mv2.jpg",
@@ -224,25 +225,25 @@ add(id="espaco-diversitta", name="Espaço Diversittá", cats=[3, 26], photo="313
     map="https://maps.app.goo.gl/ctKQdBoSWXQbvtQGA", coords=(-26.9950577, -51.413801))
 add(id="sabor-das-tilias", name="Panificadora e Confeitaria Sabor das Tílias", **G, photo="313f8c_1dbbdb095c2f4bb6937ae233c25f7e92~mv2.png",
     address="Rua Pedro Nelcido Käfer", district="Centro", address2="Rua Caçador, Bairro Santa Catarina",
-    phones=["(49) 3537 1080"], map="https://goo.gl/maps/VRRCkdS3wSwcpFHY6", coords=(-26.9997329, -51.4176303),
+    phones=["(49) 3537 1080"], map="https://goo.gl/maps/VRRCkdS3wSwcpFHY6", coords=(-26.9997329, -51.4176303), hide=["directions"],
     confirm=["Duas unidades; o ponto no mapa é de uma delas (não indicada pelo cadastro)."])
 add(id="restaurante-do-gringo", name="Restaurante do Gringo", **G, photo="313f8c_7a3d864d3b434082bcdb7a36b9daa764~mv2.png",
     summary="Buffet no horário de almoço.", address="Rua Pedro Nelcido Käfer", district="Centro", phones=["(49) 3537 1083"],
     map="https://goo.gl/maps/PFUKMipLwLoLxzT98", coords=(-27.0009406, -51.403996))
-add(id="strike-boliche-pizzaria", name="Strike Boliche Pizzaria", cats=[3, 27], photo="58bdae_95092c723d25457c83f64b6159fff14e~mv2.jpg",
+add(id="strike-boliche-pizzaria", name="Strike Boliche Pizzaria", cats=[3], photo="58bdae_95092c723d25457c83f64b6159fff14e~mv2.jpg",
     address="Rua Johann Anrain, s/n", district="Centro", ref="Ao lado do Parque Aquático",
-    phones=["(49) 9905 5474"], instagram="https://www.instagram.com/strike.boliche.pizzaria/",
+    phones=["(49) 9905 5474"], hide=["phone"], instagram="https://www.instagram.com/strike.boliche.pizzaria/",
     map="https://goo.gl/maps/4kpVUiT8RrfBzpdG7", coords=(-26.993383, -51.404461),
     confirm=["Telefone com 8 dígitos no cadastro: (49) 9905-5474; confirmar o número.",
              "Inclusão em Espaço Infantil é minha suposição; confirmar."])
-add(id="chocolates-treze-tilias", name="Chocolates Treze Tílias", **G, photo="313f8c_7a55853d45c641e282e966e9715ea6be~mv2.jpg",
+add(id="chocolates-treze-tilias", name="Chocolates Treze Tílias", cats=[], label="Chocolateria", photo="313f8c_7a55853d45c641e282e966e9715ea6be~mv2.jpg",
     summary="Chocolate artesanal de família, há três décadas.",
     address="Rodovia dos Pioneiros, km 13", phones=["(49) 3537 0156"], whatsapp="(49) 3537 0156",
     email="contato@chocolate13tilias.com.br", site="http://www.chocolate13tilias.com.br",
     instagram="https://www.instagram.com/chocolates13tilias/",
     map="https://goo.gl/maps/GnDRfyRKgV5dd3T87", coords=(-27.0038302, -51.4009765),
     confirm=["Chocolaterias entraram em Gastronomia; no guia atual não há categoria própria."])
-add(id="sabor-dos-alpes", name="Chocolate Artesanal Sabor dos Alpes", **G, photo="313f8c_64e2e88a07ba4d79953209dd8c593016~mv2.jpg",
+add(id="sabor-dos-alpes", name="Chocolate Artesanal Sabor dos Alpes", cats=[], label="Chocolateria", photo="313f8c_64e2e88a07ba4d79953209dd8c593016~mv2.jpg",
     summary="Chocolate puro e totalmente artesanal.",
     address="Rua dos Imigrantes, 304", phones=["(49) 3537 1133", "(49) 9948 0335"],
     email="sabordosalpes@yahoo.com.br", site="http://www.sabordosalpes.com",
@@ -272,7 +273,7 @@ add(id="vinicola-kranz", name="Vinícola Kranz", cats=[24], photo="313f8c_7829b3
     map="https://g.page/vinicolakranz?share")
 add(id="lindenbier", name="LindenBier", cats=[24], photo="58bdae_18cd513631344bdd8d05dc4b53dab398~mv2.jpg",
     summary="Cervejaria artesanal dentro do Treze Tílias Park Hotel.",
-    address="Rua Videira, 585", phones=["(49) 3537 0277"], site="http://www.lindenbier.com.br",
+    address="Rua Videira, 585", hide=["addressNumber"], phones=["(49) 3537 0277"], site="http://www.lindenbier.com.br",
     instagram="https://www.instagram.com/lindenbiercervejaria/",
     map="https://goo.gl/maps/fMsaZxEpDtH1uxQMA", coords=(-26.9964511, -51.403544),
     confirm=["Endereço: Rua Videira, 585 (LindenBier) e Rua Videira, 55 (Park Hotel); confirmar o número."])
@@ -285,8 +286,10 @@ add(id="monumento-aguia-do-tirol", name="Monumento Águia do Tirol", **A, kind="
     summary="A águia de 8 × 7 m saúda quem chega a Treze Tílias, com vista para a cidade.",
     text="Inspirada na águia que desfilou em Innsbruck em 2009, nos 200 anos da revolta tirolesa liderada por Andreas Hofer. Projeto doado pelo austríaco Helmut Strobl, recorte do metal de Bernhard Josef Gratt e pintura de Roberto Anrain.",
     address="SC-355, sentido Iomerê", ref="Início do perímetro urbano",
-    map="https://maps.app.goo.gl/eSXpBTseJDs5Sy9K8", coords=(-26.9975572, -51.4021781),
-    confirm=["Tour virtual: o guia atual tem botão de tour virtual, mas o endereço do tour deste monumento não estava acessível; enviar o link."])
+    map="https://maps.app.goo.gl/eSXpBTseJDs5Sy9K8", coords=(-26.9975572, -51.4021781), legacy=[45],
+    # panorama indicado pela ficha original (pano tehZZ-L6Gfa10ggdnzko3A); conferido: a águia aparece entre 165° e 215°; link abre em 185°
+    tour="https://www.google.com/maps/@?api=1&map_action=pano&pano=tehZZ-L6Gfa10ggdnzko3A&heading=185&pitch=4&fov=75",
+    tourNote="Street View, imagem de 2019")
 add(id="museu-andreas-thaler", name="Museu Municipal Andreas Thaler", **A, kind="monument", photo="313f8c_37e5a94469d64d5f95cc137f832799a2~mv2.png",
     summary="O “Castelinho”, residência de 1934–36 do fundador, com objetos da colonização e ambientes dos anos 30.",
     address="Rua Brasílico C. de Oliveira", district="Centro", phones=["(49) 99164 9034"], whatsapp="(49) 99164 9034",
@@ -294,7 +297,7 @@ add(id="museu-andreas-thaler", name="Museu Municipal Andreas Thaler", **A, kind=
     facebook="https://www.facebook.com/museuandreas.thaler.7",
     map="https://maps.app.goo.gl/8nFNNW7ujfZBYukB6", coords=(-27.0001962, -51.405799),
     phoneLabel="WhatsApp do Centro de Atendimento ao Turista")
-add(id="parque-lindendorf", name="Parque Lindendorf – Minicidade", cats=[4, 27], photo="313f8c_6b27fc3181be4b8dad0141becdfcbd84~mv2.png",
+add(id="parque-lindendorf", name="Parque Lindendorf – Minicidade", cats=[4], photo="313f8c_6b27fc3181be4b8dad0141becdfcbd84~mv2.png",
     summary="Jardins e trilhas em 45 mil m², animais, lago e a Minicidade com as principais construções de Treze Tílias.",
     address="Rua Antônio Pattis, 10", district="Bairro Jardim das Flores", phones=["(49) 3537 0658"],
     whatsapp="(49) 9 9996 0296", email="contato@minicidade.com", site="http://www.minicidade.com",
@@ -302,14 +305,14 @@ add(id="parque-lindendorf", name="Parque Lindendorf – Minicidade", cats=[4, 27
     instagram="https://www.instagram.com/minicidade13tilias/", facebook="https://www.facebook.com/minicidade13tilias",
     map="https://maps.app.goo.gl/jPJtcbQtUAFdBdhQ6", coords=(-27.0029824, -51.4177591),
     confirm=["Inclusão em Espaço Infantil é minha suposição (animais e minicidade); confirmar."])
-add(id="minigolf", name="Minigolf Treze Tílias", cats=[4, 27], photo="313f8c_99bc8942401b4192ba1b73d91a80df2f~mv2.jpg",
+add(id="minigolf", name="Minigolf Treze Tílias", cats=[4], photo="313f8c_99bc8942401b4192ba1b73d91a80df2f~mv2.jpg",
     summary="Circuito de 18 pistas certificado; partida de 45 min a 1h30, para todas as idades.",
     address="Rua Gardina Knollseisen, 171", district="Centro", whatsapp="(49) 9 9836 1256",
     email="atendimento@minigolf13tilias.com.br", site="http://www.minigolf13tilias.com.br",
     hours="Horários variam com as estações; consulte antes", note=OBS,
     instagram="https://www.instagram.com/minigolf13tilias/", facebook="https://www.facebook.com/minigolf13tilias",
     map="https://maps.app.goo.gl/YoUnqpXbNbBSVKrp6", coords=(-26.9968981, -51.4055248))
-add(id="parque-aquatico", name="Parque Aquático Treze Tílias", cats=[4, 27], photo="313f8c_661d4a882acc4e658fed75f4b6358f26~mv2.jpg",
+add(id="parque-aquatico", name="Parque Aquático Treze Tílias", cats=[4], photo="313f8c_661d4a882acc4e658fed75f4b6358f26~mv2.jpg",
     summary="Água de fonte natural a cerca de 32 °C: 7 piscinas externas, piscina coberta, tobogãs, sauna e parquinho infantil.",
     address="Rua Johann Anrain", district="Centro", phones=["(49) 9 9906 5755"], whatsapp="(49) 9 9906 5755",
     email="contato@parqueaquaticotrezetilias.com.br", site="http://www.parqueaquaticotrezetilias.com.br", note=OBS,
@@ -363,6 +366,7 @@ add(id="conrado-e-katharina-moser", name="Conrado e Katharina Moser", **E, photo
     summary="Arte sacra (Conrado) e Kerbschnitzerei, ornamentos geométricos alpinos (Katharina).",
     address="Rua Leoberto Leal, 392", phones=["(49) 3537 0297"], email="reservas@hotel13linden.com.br",
     site="http://www.hotel13linden.com.br", map="https://goo.gl/maps/Qxymqv4BV2gBACMV7", coords=(-27.000471, -51.4043121),
+    hide=["directions", "addressNumber"],
     confirm=["Endereço: Rua Leoberto Leal, 392 e 279 aparecem para o casal; o mapa aponta para o Hotel 13 Linden."])
 add(id="memorial-gotfredo-thaler", name="Memorial Gotfredo Thaler – Ingrid e Ellen Thaler", cats=[5, 6], photo="58bdae_86b588f471a34fa299796ff8df56cda0~mv2.jpg",
     summary="Ateliê com as obras de Gotfredo Thaler e das filhas, as escultoras Ingrid e Ellen.",
@@ -405,7 +409,7 @@ add(id="esquina-do-artesanato", name="Esquina do Artesanato", cats=[6], photo="3
     instagram="https://www.instagram.com/esquinadoartesanatott/",
     map="https://goo.gl/maps/JjRW6Sj7rvYLNDpg6", coords=(-26.9989653, -51.4073676),
     confirm=["O site da Asturtílias lista 26 artesãos com contatos pessoais; nesta versão eles não ganharam fichas individuais."])
-add(id="produtores-rurais", name="Associação dos Produtores Rurais", cats=[6, 7], photo="313f8c_05dfb998fbd847a588a5a0ca777c1eff~mv2.webp",
+add(id="produtores-rurais", name="Associação dos Produtores Rurais", cats=[6], photo="313f8c_05dfb998fbd847a588a5a0ca777c1eff~mv2.webp",
     summary="Pães, bolos, bolachas, queijos, geleias, doces, mel e outros produtos artesanais.",
     address="Concha Acústica", hours="Sábados, das 7h30 às 11h30",
     map="https://goo.gl/maps/JjRW6Sj7rvYLNDpg6", coords=(-26.9989653, -51.4073676))
@@ -427,7 +431,7 @@ add(id="linha-pinhal", name="Linha Pinhal", cats=[7], kind="monument", photo=Non
 # ---------------- Cicloturismo ----------------
 add(id="roteiro-cicloturismo", name="Roteiro de cicloturismo", cats=[8], kind="monument", photo=None,
     summary="Planilha de roteiro criada por Carlos Eduardo Rohrer Felder (Pubi). Ponto de partida: Secretaria de Turismo.",
-    address="Ponto de partida: Secretaria de Turismo", phones=["(49) 3537 0997"], phoneLabel="Secretaria de Turismo",
+    address="Ponto de partida: Secretaria de Turismo", phones=["(49) 3537 0997"], phoneLabel="Secretaria de Turismo", hide=["phone"],
     map="https://goo.gl/maps/oXCUapiivQU72Pv49", coords=(-26.9994138, -51.4056449),
     link=("Ver a planilha no site da Asturtílias", "https://www.trezetilias.com.br/cicloturismo"),
     confirm=["Telefone da Secretaria de Turismo: (49) 3537 0997 aqui e (49) 99164 9034 na página de contato."])
@@ -462,10 +466,10 @@ add(id="bombeiros", name="Corpo de Bombeiros Voluntários", **U, emergency="193"
 add(id="policia", name="Delegacia de Polícia", **U, emergency="190", phones=["(49) 3537 0129"])
 add(id="pronto-atendimento", name="Pronto Atendimento – Saúde", **U, phones=["(49) 99176 5217"])
 add(id="posto-de-saude", name="Posto de Saúde – Recepção", **U, phones=["(49) 99181 1032"])
-add(id="cat", name="CAT – Centro de Atendimento ao Turista", cats=[20, 11], kind="service",
+add(id="cat", name="CAT – Centro de Atendimento ao Turista", cats=[20], kind="service",
     phones=["(49) 99164 9034"], whatsapp="(49) 99164 9034", email="cat@trezetilias.sc.gov.br",
     address="Rua Pedro Nelcido Käfer, 115", district="Centro")
-add(id="secretaria-de-turismo", name="Secretaria de Turismo, Indústria e Comércio", cats=[20, 11], kind="service",
+add(id="secretaria-de-turismo", name="Secretaria de Turismo, Indústria e Comércio", cats=[20], kind="service",
     phones=["(49) 99164 9034"], email="cat@trezetilias.sc.gov.br", address="Rua Pedro Nelcido Käfer, 115", district="Centro")
 add(id="prefeitura", name="Prefeitura Municipal", **U, phones=["(49) 3536 0166", "(49) 3537 0176"], site="https://trezetilias.atende.net/")
 add(id="casan", name="CASAN – Água e saneamento", **U, phones=["(49) 3537 0419"])
@@ -476,10 +480,11 @@ for tid, tname, ph in [("taxi-sergio-boesing", "Táxi – Sérgio Boesing", "(49
                        ("taxi-sebastiao", "Táxi – Sebastião", "(49) 9 9828 2723"),
                        ("taxi-morais", "Táxi – Morais", "(49) 9 9828 2723")]:
     add(id=tid, name=tname, **U, group="Táxi", phones=[ph],
+        hide=["phone"] if tid in ("taxi-sebastiao", "taxi-morais") else None,
         confirm=["Sebastião e Morais aparecem com o mesmo número no cadastro."] if tid in ("taxi-sebastiao", "taxi-morais") else None)
 
 # ---------------- Entidades ----------------
-add(id="asturtilias", name="Asturtílias – Associação de Turismo de Treze Tílias", cats=[11, 20], kind="service",
+add(id="asturtilias", name="Asturtílias – Associação de Turismo de Treze Tílias", cats=[20], kind="service",
     phones=["(49) 99982 1987"], whatsapp="(49) 99982 1987", email="asturtilias@gmail.com",
     address="Rua Pedro Nelcido Käfer, 115", district="Centro",
     instagram="https://www.instagram.com/visitetrezetilias/", facebook="https://www.facebook.com/Asturtilias",

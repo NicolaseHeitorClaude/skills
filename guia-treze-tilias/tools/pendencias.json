@@ -1,0 +1,203 @@
+[
+ {
+  "id": "hotel-tirol",
+  "name": "Hotel Tirol",
+  "hidden": [
+   "email"
+  ],
+  "notes": [
+   "E-mail: o site da Asturtílias traz dois endereços diferentes (hotelstirol e hoteltirol)."
+  ]
+ },
+ {
+  "id": "pousada-adler",
+  "name": "Pousada Adler",
+  "hidden": [
+   "ref"
+  ],
+  "notes": [
+   "Distância: o cadastro diz “1,4 m da Prefeitura”; provavelmente 1,4 km."
+  ]
+ },
+ {
+  "id": "treze-tilias-park-hotel",
+  "name": "Treze Tílias Park Hotel",
+  "hidden": [],
+  "notes": [
+   "Inclusão em Espaço de Eventos é minha suposição; confirmar."
+  ]
+ },
+ {
+  "id": "gastehaus-enzien",
+  "name": "Gästehaus Enzien",
+  "hidden": [],
+  "notes": [
+   "Grafia: o cadastro usa “Enzien”; o mapa e o Instagram usam “Enzian”."
+  ]
+ },
+ {
+  "id": "hospedagem-da-oma",
+  "name": "Hospedagem da Oma",
+  "hidden": [],
+  "notes": [
+   "Localização: o link do cadastro aponta para outro estabelecimento (uma oficina mecânica); sem ponto no mapa."
+  ]
+ },
+ {
+  "id": "viena-hospedaria-1",
+  "name": "Viena Hospedaria 1",
+  "hidden": [],
+  "notes": [
+   "Localização: os links de mapa das duas unidades Viena estão trocados ou ambíguos no cadastro; sem ponto no mapa."
+  ]
+ },
+ {
+  "id": "viena-hospedaria-2",
+  "name": "Viena Hospedaria 2 (Dolce Vitta)",
+  "hidden": [],
+  "notes": [
+   "Localização: os links de mapa das duas unidades Viena estão trocados ou ambíguos no cadastro; sem ponto no mapa."
+  ]
+ },
+ {
+  "id": "trudi-haus",
+  "name": "Trudi Haus",
+  "hidden": [],
+  "notes": [
+   "Localização: o link do cadastro leva ao Minigolf; sem ponto no mapa."
+  ]
+ },
+ {
+  "id": "cabana-refugio-alpino",
+  "name": "Cabana Refúgio Alpino",
+  "hidden": [],
+  "notes": [
+   "Localização: o link do cadastro leva ao Eiskaffee Trudi; sem ponto no mapa."
+  ]
+ },
+ {
+  "id": "hospedaria-felder",
+  "name": "Hospedaria Felder",
+  "hidden": [],
+  "notes": [
+   "Inclusão em Receptivo Turístico (Felder Viagens) é minha suposição; confirmar.",
+   "Foto do cadastro não pôde ser baixada."
+  ]
+ },
+ {
+  "id": "cafe-haus",
+  "name": "Café Haus",
+  "hidden": [
+   "directions",
+   "facebook"
+  ],
+  "notes": [
+   "O link de mapa e o Facebook levam a “Alpin Delikatessen Bistrô e Cafeteria”; confirmar se é o mesmo estabelecimento.",
+   "O cadastro não traz descrição nem horário."
+  ]
+ },
+ {
+  "id": "sabor-das-tilias",
+  "name": "Panificadora e Confeitaria Sabor das Tílias",
+  "hidden": [
+   "directions"
+  ],
+  "notes": [
+   "Duas unidades; o ponto no mapa é de uma delas (não indicada pelo cadastro)."
+  ]
+ },
+ {
+  "id": "strike-boliche-pizzaria",
+  "name": "Strike Boliche Pizzaria",
+  "hidden": [
+   "phone"
+  ],
+  "notes": [
+   "Telefone com 8 dígitos no cadastro: (49) 9905-5474; confirmar o número.",
+   "Inclusão em Espaço Infantil é minha suposição; confirmar."
+  ]
+ },
+ {
+  "id": "chocolates-treze-tilias",
+  "name": "Chocolates Treze Tílias",
+  "hidden": [],
+  "notes": [
+   "Chocolaterias entraram em Gastronomia; no guia atual não há categoria própria."
+  ]
+ },
+ {
+  "id": "lindenbier",
+  "name": "LindenBier",
+  "hidden": [
+   "addressNumber"
+  ],
+  "notes": [
+   "Endereço: Rua Videira, 585 (LindenBier) e Rua Videira, 55 (Park Hotel); confirmar o número."
+  ]
+ },
+ {
+  "id": "parque-lindendorf",
+  "name": "Parque Lindendorf – Minicidade",
+  "hidden": [],
+  "notes": [
+   "Inclusão em Espaço Infantil é minha suposição (animais e minicidade); confirmar."
+  ]
+ },
+ {
+  "id": "conrado-e-katharina-moser",
+  "name": "Conrado e Katharina Moser",
+  "hidden": [
+   "addressNumber",
+   "directions"
+  ],
+  "notes": [
+   "Endereço: Rua Leoberto Leal, 392 e 279 aparecem para o casal; o mapa aponta para o Hotel 13 Linden."
+  ]
+ },
+ {
+  "id": "esquina-do-artesanato",
+  "name": "Esquina do Artesanato",
+  "hidden": [],
+  "notes": [
+   "O site da Asturtílias lista 26 artesãos com contatos pessoais; nesta versão eles não ganharam fichas individuais."
+  ]
+ },
+ {
+  "id": "roteiro-cicloturismo",
+  "name": "Roteiro de cicloturismo",
+  "hidden": [
+   "phone"
+  ],
+  "notes": [
+   "Telefone da Secretaria de Turismo: (49) 3537 0997 aqui e (49) 99164 9034 na página de contato."
+  ]
+ },
+ {
+  "id": "ferramenta-de-viagem",
+  "name": "Ferramenta de viagem (Turista Fácil)",
+  "hidden": [],
+  "notes": [
+   "Não consegui abrir a ferramenta (o site bloqueia navegação automatizada). Confirmar o que ela faz e o link direto."
+  ]
+ },
+ {
+  "id": "taxi-sebastiao",
+  "name": "Táxi – Sebastião",
+  "hidden": [
+   "phone"
+  ],
+  "notes": [
+   "Sebastião e Morais aparecem com o mesmo número no cadastro."
+  ]
+ },
+ {
+  "id": "taxi-morais",
+  "name": "Táxi – Morais",
+  "hidden": [
+   "phone"
+  ],
+  "notes": [
+   "Sebastião e Morais aparecem com o mesmo número no cadastro."
+  ]
+ }
+]
