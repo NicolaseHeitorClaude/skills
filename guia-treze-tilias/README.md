@@ -27,5 +27,5 @@ npm start            # http://localhost:4173/
 
 ## Pendências de marca
 
-- Logo da Asturtílias: espaço reservado no cabeçalho (`.logo-slot`), aguardando o arquivo original.
-- Cor principal provisória `--accent: #9b1c2c` (vermelho da Águia do Tirol), em `public/styles.css`.
+- Logo: `public/assets/brand/` foi recortada do JPG oficial (1080 px) com fundo transparente. Um SVG original ainda seria melhor.
+- Cores da logo: vermelho `#FF2E34` e grafite `#353132`. Botões usam `#E60007` (mesmo matiz, contraste AA) — ver `public/styles.css`.
