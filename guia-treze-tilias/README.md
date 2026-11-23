@@ -43,3 +43,11 @@ completa quando vem da lista; no computador abre ao lado do mapa). Tempos em `pu
 `--t-indicator`, `--t-sheet`). Com `prefers-reduced-motion` tudo vai direto ao estado final.
 
 No mapa, o toque escolhe o ponto mais próximo do dedo (até 26 px); lugares com a mesma coordenada ficam lado a lado.
+
+No celular, quando uma ficha abre a partir do mapa, a busca e as categorias recolhem numa barra compacta com o filtro
+atual e o botão “Filtros”. O mapa ocupa a tela inteira por baixo da barra, então recolher a barra não muda o tamanho do
+mapa: a câmera faz um único movimento (e aproxima até o nível das ruas se o zoom estiver longe). Ao fechar, a barra volta
+e o mapa retorna ao zoom e à região anteriores.
+
+Na primeira abertura do mapa, os pontos ficam ocultos e aparece “Carregando mapa…” até 70% do trecho visível carregar.
+Se as imagens do mapa falharem, a área mostra um botão para a lista de lugares.

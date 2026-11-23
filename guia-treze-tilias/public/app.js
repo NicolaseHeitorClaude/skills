@@ -167,7 +167,7 @@ function searchForm(q = '', idSuffix = 'home') {
   return `<form class="search" role="search" data-search>
     <label for="q-${idSuffix}">Busque um lugar ou uma experiência</label>
     <div class="search-row">
-      <input id="q-${idSuffix}" name="q" type="search" value="${esc(q)}" placeholder="Ex.: águia, cerveja, pousada, táxi"
+      <input id="q-${idSuffix}" name="q" type="search" value="${esc(q)}" placeholder="Ex.: águia, café, hotel"
         autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" aria-autocomplete="list" aria-controls="sug-${idSuffix}">
       <button type="submit" class="btn-primary">Buscar</button>
     </div>
@@ -209,6 +209,20 @@ function wireSearch(root) {
     input.blur();
     go(exploreUrl({ q: input.value.trim(), vista: S.route.vista }));
   });
+}
+// exemplo do campo: a frase mais longa que cabe inteira ao lado da lupa e do botão
+const PLACEHOLDERS = { wide: ['Ex.: águia, cerveja, pousada, táxi', 'Ex.: águia, café, hotel', 'Ex.: águia, café'], narrow: ['Ex.: águia, café, hotel', 'Ex.: águia, café'] };
+let measureCtx;
+function fitPlaceholders(root = document) {
+  measureCtx ||= document.createElement('canvas').getContext('2d');
+  for (const input of $$('.search input', root)) {
+    const cs = getComputedStyle(input);
+    const room = input.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 2;
+    if (room <= 0) continue;
+    measureCtx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+    const list = isDesktop() ? PLACEHOLDERS.wide : PLACEHOLDERS.narrow;
+    input.placeholder = list.find((t) => measureCtx.measureText(t).width <= room) || list[list.length - 1];
+  }
 }
 const idSuffixOf = (form) => $('input', form).id.replace('q-', '');
 
@@ -262,6 +276,7 @@ function renderHome(firstVisit) {
     </div>
   </div>`;
   wireSearch($('#home'));
+  fitPlaceholders($('#home'));
 }
 
 // ---------- Explorar: lista ----------
@@ -285,7 +300,8 @@ function renderToolbar(r) {
   const tabs = g ? [{ id: null, name: 'Tudo' }, ...g.cats.map((id) => S.cat.get(id))] : [];
   const scope = r.q ? currentList({ ...r, cat: null }).places : null;
   const countFor = (cid) => (r.q ? scope.filter((p) => (cid ? p.cats.includes(cid) : true)).length : placesIn(cid ? { cat: cid } : { group: r.group }).length);
-  $('#toolbar').innerHTML = `${searchForm(r.q, 'bar')}
+  const label = r.q ? `“${esc(r.q)}”${r.cat ? ` · ${esc(catName(r.cat))}` : ''}` : r.cat ? esc(catName(r.cat)) : r.group ? esc(g.name) : 'Todos os lugares';
+  $('#toolbar').innerHTML = `<div class="tb-full">${searchForm(r.q, 'bar')}
     <div class="groups" aria-label="Caminhos">
       ${S.data.groups.map((x) => `<a class="group-chip" href="${exploreUrl({ group: x.id, q: r.q, vista: r.vista })}" data-link ${x.id === r.group ? 'aria-current="true"' : ''}>${esc(x.name)}</a>`).join('')}
       ${r.q ? `<a class="group-chip" href="${exploreUrl({ q: r.q, vista: r.vista })}" data-link ${!r.group ? 'aria-current="true"' : ''}>Todos os resultados</a>` : ''}
@@ -299,13 +315,52 @@ function renderToolbar(r) {
         <button type="button" data-view="lista" aria-pressed="${r.vista !== 'mapa'}">${icon('list', 16)}Lista</button>
         <button type="button" data-view="mapa" aria-pressed="${r.vista === 'mapa'}">${icon('map', 16)}Mapa</button>
       </div>
+      <button type="button" class="filters-hide" data-filters-hide>Ocultar filtros</button>
+    </div></div>
+    <div class="compactbar" aria-hidden="true" inert>
+      <p class="compact-label"><span class="compact-k">Filtro</span> <b>${label}</b></p>
+      <button type="button" class="filters-btn" data-filters aria-expanded="false">${icon('list', 16)}Filtros</button>
     </div>`;
   wireSearch($('#toolbar'));
   const chip = $('.group-chip[aria-current="true"]', $('#toolbar'));
   if (chip) revealInScroller(chip.parentElement, chip, false);
   $$('.cat-tab', $('#toolbar')).forEach((b) => b.addEventListener('click', () => switchCategory(b.dataset.cat ? Number(b.dataset.cat) : null)));
   $$('.seg button', $('#toolbar')).forEach((b) => b.addEventListener('click', () => switchView(b.dataset.view)));
+  $('[data-filters]', $('#toolbar')).addEventListener('click', () => showFilters(true));
+  $('[data-filters-hide]', $('#toolbar')).addEventListener('click', () => showFilters(false));
   placeIndicator(false);
+  fitPlaceholders($('#toolbar'));
+  if (S.compact) setCompact(true, { instant: true });
+}
+
+// ---------- Barra compacta (só no mapa do celular, com ficha aberta) ----------
+const COMPACT_H = 56;
+const mobileMap = () => !isDesktop() && S.route.name === 'explore' && S.route.vista === 'mapa';
+// recolhe a busca e as categorias numa barra com o filtro atual; desliza junto com a ficha (mesma duração e curva)
+function setCompact(on, { instant = false } = {}) {
+  const ex = $('#explore'), tb = $('#toolbar'), full = $('.tb-full', tb), bar = $('.compactbar', tb);
+  if (!tb || !full) return;
+  S.compact = on;
+  const shift = Math.max(0, tb.offsetHeight - COMPACT_H);
+  document.documentElement.style.setProperty('--tb-shift', `${shift}px`);
+  if (instant) ex.classList.add('no-anim');
+  ex.classList.toggle('is-compact', on);
+  ex.classList.remove('filters-open');
+  full.inert = on;
+  bar.setAttribute('aria-hidden', String(!on));
+  bar.inert = !on;
+  $('[data-filters]', tb)?.setAttribute('aria-expanded', 'false');
+  if (instant) { void ex.offsetWidth; ex.classList.remove('no-anim'); }
+}
+// “Filtros”: mostra a busca e as categorias por cima do mapa, sem fechar a ficha
+function showFilters(open) {
+  const ex = $('#explore'), tb = $('#toolbar');
+  if (!S.compact) return;
+  ex.classList.toggle('filters-open', open);
+  $('.tb-full', tb).inert = !open;
+  $('[data-filters]', tb).setAttribute('aria-expanded', String(open));
+  if (open) { placeIndicator(false); (tb.querySelector('.cat-tab[aria-pressed="true"]') || tb.querySelector('#q-bar'))?.focus({ preventScroll: true }); }
+  else $('[data-filters]', tb).focus({ preventScroll: true });
 }
 
 // desloca uma barra horizontal só o suficiente para mostrar o item inteiro
@@ -334,11 +389,13 @@ function switchCategory(cat) {
   if ((S.route.cat ?? null) === cat) return;
   $$('.cat-tab', $('#toolbar')).forEach((b) => b.setAttribute('aria-pressed', String((b.dataset.cat ? Number(b.dataset.cat) : null) === cat)));
   placeIndicator(true);
-  history.replaceState(null, '', routeUrl({ cat }));
+  if (!$('#sheet').hidden) { S.savedView = null; S.openedInApp = false; hideSheet({ restoreFocus: false }); }
+  history.replaceState(null, '', routeUrl({ cat, place: null }));
   S.route = parse();
   S.selected = null;
   S.lastListKey = listKey(S.route);
-  renderResults(S.route, { keepPosition: true, fade: true });
+  // a lista troca de uma vez, legível; o sublinhado vermelho é o sinal da mudança
+  renderResults(S.route, { keepPosition: true });
   updateMap(S.route, { fit: true });
   renderMenu();
 }
@@ -444,7 +501,7 @@ function renderResults(r, { keepPosition = false, fade = false } = {}) {
     const target = Math.min(before, Math.max(0, listTop));
     if (pane) pane.scrollTop = target; else scrollTo({ top: target, behavior: 'instant' });
   }
-  if (fade) animate(el, 'results', [{ opacity: 0.35 }, { opacity: 1 }], { duration: 160, easing: 'ease-out' });
+  if (fade) animate(el, 'results', [{ opacity: 0.8 }, { opacity: 1 }], { duration: 140, easing: 'ease-out' });
 }
 
 // animações JS interrompíveis: uma nova chamada com a mesma chave cancela a anterior
@@ -465,31 +522,37 @@ function applyView() {
 // ---------- Mapa ----------
 function ensureMap() {
   if (S.map || S.mapFailed) return;
-  const loading = $('#mapLoading');
-  if (!window.L) { mapFail('O mapa não carregou. A lista, os endereços e os contatos continuam disponíveis.'); return; }
+  if (!window.L) { mapFail(); return; }
+  const loading = $('#mapLoading'), pane = $('#paneMap');
   try {
     loading.hidden = false;
+    pane.classList.add('is-loading');            // pontos escondidos até as ruas chegarem
     S.map = L.map('map', { zoomControl: true, scrollWheelZoom: true, keyboard: true, zoomSnap: 0.5, fadeAnimation: true }).setView([-26.9995, -51.4075], 14);
-    let errors = 0;
+    let started = 0, loaded = 0, errors = 0;
     const layer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(S.map);
-    const done = () => {
+    const reveal = () => {
       if (S.mapLoaded) return; S.mapLoaded = true;
+      clearTimeout(S.mapTimer);
+      pane.classList.remove('is-loading');
       loading.classList.add('is-done');
       setTimeout(() => { loading.hidden = true; }, reduceMotion() ? 0 : 220);
     };
-    layer.on('load', done);
-    let firstTiles = 0;
-    layer.on('tileload', () => { if (++firstTiles >= 4) setTimeout(done, 120); });
-    layer.on('tileerror', () => { if (++errors > 6 && !S.mapLoaded) mapFail('As imagens do mapa não carregaram. Use a lista e o botão “Como chegar” de cada lugar.'); });
+    layer.on('tileloadstart', () => { started++; });
+    // ruas suficientes para se orientar: todo o trecho visível, ou ao menos 70% dele
+    layer.on('tileload', () => { loaded++; if (started && loaded >= Math.max(4, Math.ceil(started * 0.7))) reveal(); });
+    layer.on('load', reveal);
+    layer.on('tileerror', () => { if (++errors > 6 && !loaded) mapFail(); });
+    S.mapTimer = setTimeout(() => { if (!loaded) mapFail(); else reveal(); }, 15000);
     // toque no mapa: escolhe o ponto mais próximo do dedo (até 26 px). Áreas de toque grandes não "roubam" o vizinho.
     S.map.on('click', (e) => {
-      if (!e.containerPoint) return;
+      if (!e.containerPoint || !S.mapLoaded) return;
       const id = nearestMarker(e.containerPoint, 26);
       if (id) tapMarker(id);
       else if (S.sheetMode === 'half') closeSheet();
     });
-    S.map.on('mousemove', (e) => { $('#map').style.cursor = nearestMarker(e.containerPoint, 26) ? 'pointer' : ''; });
-  } catch { mapFail('O mapa não carregou. A lista, os endereços e os contatos continuam disponíveis.'); }
+    S.map.on('movestart', () => { S.moves = (S.moves || 0) + 1; });
+    S.map.on('mousemove', (e) => { $('#map').style.cursor = S.mapLoaded && nearestMarker(e.containerPoint, 26) ? 'pointer' : ''; });
+  } catch { mapFail(); }
 }
 function nearestMarker(pt, max) {
   let best = null, bd = max;
@@ -500,10 +563,15 @@ function nearestMarker(pt, max) {
   }
   return best;
 }
-function mapFail(msg) {
+function mapFail() {
   S.mapFailed = true;
+  clearTimeout(S.mapTimer);
   $('#mapLoading').hidden = true;
-  const f = $('#mapFallback'); f.hidden = false; f.innerHTML = `<p>${esc(msg)}</p>`;
+  $('#paneMap').classList.remove('is-loading');
+  const f = $('#mapFallback'); f.hidden = false;
+  f.innerHTML = `<div><p><b>O mapa não carregou.</b><br>Os endereços, contatos e o “Como chegar” de cada lugar continuam disponíveis na lista.</p>
+    ${isDesktop() ? '' : '<button type="button" class="btn-primary map-fallback-btn" data-to-list>Ver a lista de lugares</button>'}</div>`;
+  $('[data-to-list]', f)?.addEventListener('click', () => { if (!$('#sheet').hidden) { S.openedInApp = false; hideSheet({ restoreFocus: false }); } switchView('lista'); });
 }
 function pinIcon(p, off = [0, 0]) {
   const cls = isStay(p) ? 'is-stay' : isFood(p) ? 'is-food' : '';
@@ -530,7 +598,7 @@ function updateMap(r, { fit = false } = {}) {
   markSelected();
   if (fit && places.length) {
     const b = L.latLngBounds(places.map((p) => p.coords));
-    S.map.fitBounds(b, { padding: [36, 36], maxZoom: 16, animate: !reduceMotion() && S.mapLoaded });
+    S.map.fitBounds(b, { paddingTopLeft: [32, topCover() + 28], paddingBottomRight: [32, 32], maxZoom: 16, animate: !reduceMotion() && S.mapLoaded });
   }
 }
 function markSelected() {
@@ -567,19 +635,34 @@ function selectPlace(id, { ring = true, scroll = false } = {}) {
 }
 
 // área do mapa que fica visível com a ficha aberta (coordenadas do contêiner do mapa)
+const topCover = () => (mobileMap() ? (S.compact && !$('#explore').classList.contains('filters-open') ? COMPACT_H : $('#toolbar').offsetHeight) : 0);
 function visibleMapRect(mode) {
   const size = S.map.getSize();
   const mapBox = $('#map').getBoundingClientRect();
   let left = 0, bottom = size.y;
+  const top = topCover();
   if (isDesktop() && mode) left = Math.max(0, $('#sheet').getBoundingClientRect().width - ($('#paneList').getBoundingClientRect().width));
   if (!isDesktop() && mode === 'half') bottom = Math.min(size.y, innerHeight - halfHeight() - mapBox.top);
-  return { left, top: 0, right: size.x, bottom };
+  return { left, top, right: size.x, bottom };
 }
 // câmera: se o ponto já está bem enquadrado, fica parada; senão, um único deslocamento suave.
 function frameMarker(id, mode) {
   const m = S.markers.get(id);
   if (!m || !S.map) return false;
   const v = visibleMapRect(mode), pad = 40;
+  const dur = (ms('--t-sheet') / 1000) || 0.36;
+  // celular, vindo de um zoom em que as ruas não se leem: um único movimento que aproxima e centraliza o ponto
+  // na área livre entre a barra compacta e a ficha (ao fechar, volta ao zoom e à região de antes)
+  if (mode === 'half' && !isDesktop() && S.map.getZoom() < STREET_ZOOM) {
+    const z = STREET_ZOOM + 1;
+    const size = S.map.getSize();
+    const want = L.point((v.left + v.right) / 2, (v.top + v.bottom) / 2);
+    const markerPx = S.map.project(m.getLatLng(), z).add(L.point(m.pinOff || [0, 0]));
+    const centerPx = markerPx.subtract(want).add(size.divideBy(2));
+    if (reduceMotion()) S.map.setView(S.map.unproject(centerPx, z), z, { animate: false });
+    else S.map.flyTo(S.map.unproject(centerPx, z), z, { duration: Math.max(dur, 0.45), easeLinearity: 0.3 });
+    return true;
+  }
   const pt = S.map.latLngToContainerPoint(m.getLatLng()).add(L.point(m.pinOff || [0, 0]));
   const ok = pt.x > v.left + pad && pt.x < v.right - pad && pt.y > v.top + pad && pt.y < v.bottom - pad;
   if (ok) return false;
@@ -670,6 +753,7 @@ function sheetHtml(p, r) {
     </div>`;
 }
 
+const STREET_ZOOM = 15;   // a partir deste zoom os nomes de rua do OpenStreetMap ficam legíveis
 const halfHeight = () => Math.round(Math.min(innerHeight * 0.5, Math.max(innerHeight * 0.42, $('#sheet .sheet-head')?.offsetHeight + 72 || 0)));
 
 let lastFocus = null;
@@ -720,11 +804,13 @@ function showSheet(p, mode) {
     // posição inicial fora da tela, depois sobe até o estado pedido
     sheet.classList.remove('is-open');
     if (!isDesktop()) { sheet.style.transition = 'none'; sheet.style.setProperty('--sheet-y', `${sheet.offsetHeight + 24}px`); void sheet.offsetWidth; sheet.style.transition = ''; }
-    // câmera e ficha no mesmo quadro: o ponto termina visível acima do resumo
+    // barra, câmera e ficha no mesmo quadro: o ponto termina visível entre a barra compacta e o resumo
+    if (mobileMap()) setCompact(true);
     if (mode === 'half' && S.map) frameMarker(p.id, 'half');
     if (isDesktop() && S.map) requestAnimationFrame(() => frameMarker(p.id, 'full'));
     requestAnimationFrame(() => { sheet.classList.add('is-open'); setSheetMode(mode); });
   } else {
+    if (mobileMap() && !S.compact) setCompact(true);
     setSheetMode(mode, { instant: prevMode === mode });
     if (mode === 'half' && S.map) frameMarker(p.id, 'half');
     if (isDesktop() && S.map) frameMarker(p.id, 'full');
@@ -747,11 +833,15 @@ function hideSheet({ restoreFocus = true } = {}) {
   const wasHalfOnMap = !isDesktop() && S.route.vista === 'mapa';
   sheet.classList.remove('is-open');
   if (!isDesktop()) sheet.style.setProperty('--sheet-y', `${sheet.offsetHeight + 24}px`);
+  if (S.compact) setCompact(false);   // controles voltam junto com a descida da ficha
   back.classList.remove('is-open');
   S.sheetMode = null;
   // movimento inverso: a câmera volta à região de antes, sem mudar o zoom
   if (wasHalfOnMap && S.map && S.savedView) {
-    S.map.panTo(S.savedView.center, { animate: !reduceMotion(), duration: ms('--t-sheet') / 1000 || 0.3, easeLinearity: 0.25 });
+    const { center, zoom } = S.savedView;
+    if (reduceMotion()) S.map.setView(center, zoom, { animate: false });
+    else if (zoom !== S.map.getZoom()) S.map.flyTo(center, zoom, { duration: Math.max(ms('--t-sheet') / 1000, 0.45), easeLinearity: 0.3 });
+    else S.map.panTo(center, { animate: true, duration: ms('--t-sheet') / 1000 || 0.3, easeLinearity: 0.25 });
   }
   S.savedView = null;
   const t = ms('--t-sheet');
@@ -814,7 +904,9 @@ function render({ fromPop = false } = {}) {
   const viewChanged = prev.vista !== r.vista;
   const listChanged = key !== S.lastListKey || prev.name !== 'explore';
   if (listChanged || viewChanged) {
-    const fade = prev.name === 'explore' && listChanged;
+    // busca nova: realce breve e leve; nomes continuam legíveis
+    const fade = prev.name === 'explore' && listChanged && prev.q !== r.q;
+    if (listChanged && !r.place) S.savedView = null;
     renderToolbar(r);
     applyView();
     if (listChanged) S.selected = r.place || (fromPop ? S.selected : null);
@@ -861,13 +953,15 @@ function render({ fromPop = false } = {}) {
     return;
   }
   S.headerH = $('.masthead').offsetHeight;
+  // diagnóstico só de leitura, usado pelos testes automatizados
+  window.__guia = Object.freeze({ moves: () => S.moves || 0, zoom: () => S.map?.getZoom(), center: () => S.map && [S.map.getCenter().lat, S.map.getCenter().lng] });
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   render();
   let rt;
   addEventListener('resize', () => {
     clearTimeout(rt);
     rt = setTimeout(() => {
-      placeIndicator(false); applyView(); S.map?.invalidateSize();
+      placeIndicator(false); applyView(); S.map?.invalidateSize(); fitPlaceholders();
       if (S.sheetMode) setSheetMode(S.sheetMode, { instant: true });
     }, 80);
   });
