@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Guia turístico de Treze Tílias</title>
+  <meta name="description" content="Guia turístico de Treze Tílias, o Tirol brasileiro: o que fazer, onde comer, onde ficar e telefones úteis.">
+  <meta name="theme-color" content="#f5efe3">
+  <link rel="preload" href="/assets/vendor/fonts/fraunces-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/vendor/fonts/atkinson-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/data.json" as="fetch" crossorigin>
+  <link rel="stylesheet" href="/assets/vendor/leaflet.css">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <a class="skip" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="masthead">
+    <a class="brand" href="/" data-link aria-label="Guia turístico de Treze Tílias, página inicial">
+      <!-- Espaço reservado para a logo oficial da Asturtílias (arquivo original pendente). -->
+      <span class="logo-slot" title="Logo Asturtílias: aguardando o arquivo original">Logo<br>Asturtílias</span>
+      <span class="brand-text">
+        <span class="brand-kicker">Guia turístico</span>
+        <span class="brand-name">Treze Tílias</span>
+      </span>
+    </a>
+    <nav class="mainnav" aria-label="Caminhos do guia">
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <span>Menu</span>
+      </button>
+      <ul id="menu" class="menu"></ul>
+    </nav>
+  </header>
+
+  <main id="conteudo" tabindex="-1">
+    <section class="view view-home" id="home" hidden></section>
+    <section class="view view-explore" id="explore" hidden>
+      <div class="explore-grid">
+        <div class="pane-list" id="paneList">
+          <div class="toolbar" id="toolbar"></div>
+          <div class="results" id="results" aria-live="polite"></div>
+        </div>
+        <div class="pane-map" id="paneMap">
+          <div class="map" id="map" role="region" aria-label="Mapa dos lugares listados"></div>
+          <div class="map-fallback" id="mapFallback" hidden></div>
+          <div class="map-peek" id="mapPeek" hidden></div>
+        </div>
+      </div>
+      <button class="view-toggle" id="viewToggle" type="button" hidden></button>
+    </section>
+  </main>
+
+  <div class="sheet-backdrop" id="sheetBackdrop" hidden></div>
+  <article class="sheet" id="sheet" role="dialog" aria-modal="false" aria-labelledby="sheetTitle" hidden></article>
+
+  <footer class="site-footer">
+    <p>Conteúdo e cadastros: <strong>Asturtílias</strong> – Associação de Turismo de Treze Tílias ·
+      <a href="https://www.trezetilias.com.br" rel="noopener">trezetilias.com.br</a></p>
+    <p>Informações de tarifas e horários podem mudar: confirme direto com cada estabelecimento.
+      Mapa © colaboradores do <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a>.</p>
+  </footer>
+
+  <script src="/assets/vendor/leaflet.js" defer onerror="window.__leafletFailed=true"></script>
+  <script src="/app.js" type="module"></script>
+</body>
+</html>
